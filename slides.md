@@ -2107,8 +2107,6 @@ As we want the model to assign as much probability as possible to the correct to
 
 ---
 
----
-
 # Cross-Entropy Loss
 
 <div class="grid grid-cols-2 gap-6">
@@ -2164,8 +2162,6 @@ $$\mathcal{L}(\theta) = \sum_{t=1}^{T} -\log p_\theta(x_t \mid x_{<t})$$
 In practice: average over **batch** and over **tokens** to get the training loss
 
 </div>
-
----
 
 ---
 
