@@ -2458,7 +2458,7 @@ def train_reward_model(preferences):
 (Proximal Policy Optimization)
 </div>
 <div class="flex justify-center items-center mt-5">
-<img src="/figs/InstructGPT.png" class="w-4/5" />
+<img src="./figs/InstructGPT.png" class="w-4/5" />
 </div>
 <div class="text-right text-sm mt-2 mr-8">
 - from InstructGPT (Ouyang et al., 2022)
