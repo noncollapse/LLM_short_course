@@ -124,7 +124,7 @@ llm_short_course/
 
 - 🏠 Homepage: [https://noncollapse.github.io/](https://noncollapse.github.io/)
 - 🎓 Google Scholar: [Profile](https://scholar.google.com/citations?user=a7G8Yo8AAAAJ)
-- 🤗 Hugging Face: [@noncollapse](https://huggingface.co/Kyleyee)
+- 🤗 Hugging Face: [@Kyleyee](https://huggingface.co/Kyleyee)
 
 ## 🛠️ Technology Stack
 
