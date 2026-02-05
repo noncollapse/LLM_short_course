@@ -57,18 +57,45 @@ Visit the live presentation: [https://noncollapse.github.io/LLM_short_course/](h
 
 ### 🔧 Want to Contribute or Deploy Locally?
 
-#### Prerequisites
+#### Step 1: Fork the Repository
 
-- Node.js >= 14
-- npm or yarn
+1. Navigate to [https://github.com/noncollapse/LLM_short_course](https://github.com/noncollapse/LLM_short_course)
+2. Click the **Fork** button in the top-right corner
 
-#### Installation
+
+#### Step 2: Clone Your Fork
+
+```bash
+# Clone your forked repository
+git clone https://github.com/YOUR_USERNAME/LLM_short_course.git
+
+# Navigate to the project directory
+cd LLM_short_course
+```
+
+Replace `YOUR_USERNAME` with your GitHub username.
+
+#### Step 3: Prerequisites
+
+Make sure you have the following installed:
+- Node.js >= 14 ([Download here](https://nodejs.org/))
+- npm (comes with Node.js) or yarn
+
+Check your installation:
+```bash
+node --version
+npm --version
+```
+
+#### Step 4: Install Dependencies
 
 ```bash
 npm install
 ```
 
-#### Local Development
+This will install all required packages including Slidev, Vue.js, and other dependencies.
+
+#### Step 5: Local Development
 
 Start the development server:
 
@@ -78,25 +105,50 @@ npm run dev
 
 Then open [http://localhost:3030](http://localhost:3030) in your browser.
 
-#### 🎨 Customization
+The development server supports:
+- 🔥 Hot Module Replacement (HMR) - changes reflect instantly
+- 📝 Live editing of `slides.md`
+- 🎨 Real-time preview
+
+#### Step 6: Make Your Changes
 
 Edit `slides.md` to modify the presentation content. The file uses Markdown with extended Slidev syntax for slides, layouts, and components.
 
-#### Build for Production
 
-Generate static website:
+
+#### Step 7: Build for Production (Optional)
+
+Test the production build locally:
 
 ```bash
 npm run build
 ```
 
-The built files will be in the `dist/` directory.
+The built files will be in the `dist/` directory. 
 
-#### 🚢 Deploy with GitHub Pages
+#### Step 8: Commit and Push Your Changes
 
-1. Go to Repository Settings → Pages
-2. Set Source to: **GitHub Actions**
-3. The workflow in `.github/workflows/deploy.yml` will automatically help you to handle deployment
+
+
+#### Step 9: Deploy with GitHub Pages (Optional)
+
+If you want to deploy your version to GitHub Pages:
+
+1. Go to your forked repository on GitHub
+2. Navigate to **Settings** → **Pages**
+3. Under **Source**, select: **GitHub Actions**
+4. The workflow in `.github/workflows/deploy.yml` will automatically handle deployment
+5. Your site will be available at: `https://YOUR_USERNAME.github.io/LLM_short_course/`
+
+#### Step 10: Create a Pull Request (Optional)
+
+If you want to contribute your changes back to the original repository:
+
+1. Go to your forked repository on GitHub
+2. Click **Pull requests** → **New pull request**
+3. Select the base repository: `noncollapse/LLM_short_course`
+4. Add a title and description for your changes
+5. Click **Create pull request**
 
 
 
