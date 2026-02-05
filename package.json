@@ -4,7 +4,7 @@
   "description": "Large Language Models Presentation with Slidev",
   "scripts": {
     "dev": "slidev",
-    "build": "slidev build --base /LLM_short_course/",
+    "build": "slidev build --base /LLM_short_course/ --download false",
     "export": "slidev export"
   },
   "dependencies": {
