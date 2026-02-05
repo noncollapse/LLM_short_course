@@ -13,7 +13,6 @@ transition: slide-left
 title: Large Language Models
 mdc: true
 routerMode: hash
-download: true
 ---
 
 <style>
