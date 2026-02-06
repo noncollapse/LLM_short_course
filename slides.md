@@ -13,6 +13,10 @@ transition: slide-left
 title: Large Language Models
 mdc: true
 routerMode: hash
+fonts:
+  sans: 'Inter, Noto Sans SC'
+  serif: 'Merriweather'
+  mono: 'Fira Code'
 ---
 
 <style>
@@ -20,6 +24,21 @@ routerMode: hash
   border-bottom: 1px solid #010d21;
   padding-bottom: 0.5rem;
   margin-bottom: 1rem;
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+}
+
+.slidev-layout {
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+}
+
+.slidev-layout p, .slidev-layout li {
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  line-height: 1.6;
+}
+
+code {
+  font-family: 'Fira Code', monospace;
 }
 </style>
 
@@ -61,7 +80,7 @@ layout: default
 
 ## Part 1: Foundations
 - Introduction to LLMs
-- Transformer Architecture
+- Transformer Foundations and Architecture
 
 ## Part 2: Pre-training and Supervised Fine-Tuning
 - Pre-training Methods
@@ -89,11 +108,11 @@ layout: section
 </div>
 
 <div class="relative h-32">
-<img src="/figs/gpt.png" class="rounded w-20 absolute" style="left: 0px; top: -20px;" />
+<img src="/figs/gpt.png" class="rounded w-20 absolute" style="left: 0px; top: -30px;" />
 <div class="text-center mt-8 text-2xl font-bold">
 We can ask the LLMs themselves!
 </div>
-<img src="/figs/deepseek.png" class="rounded w-20 absolute" style="left: 780px; top: -20px;" />
+<img src="/figs/deepseek.png" class="rounded w-20 absolute" style="left: 780px; top: -30px;" />
 </div>
 
 
@@ -109,7 +128,7 @@ We can ask the LLMs themselves!
 
 <style>
 .mermaid svg text {
-  font-size: 3rem !important;
+  font-size: 5rem !important;
   font-weight: bold !important;
 }
 </style>
@@ -155,7 +174,7 @@ LLM Development Timeline
 layout: section
 ---
 
-# Transformer Architecture
+# Transformer Foundations
 
 ---
 
@@ -165,7 +184,7 @@ layout: section
 Understanding Embeddings is the <span class="text-blue-500 font-bold">KEY</span> to understanding Transformer
 </div>
 
-<div class="mt-12 grid grid-cols-3 gap-8">
+<div class="mt-18 grid grid-cols-3 gap-8">
 
 <div class="text-center">
 <div class="text-6xl mb-4">🐱</div>
@@ -174,7 +193,7 @@ Understanding Embeddings is the <span class="text-blue-500 font-bold">KEY</span>
 </div>
 
 <div class="text-center flex items-center justify-center">
-<div class="text-6xl">→</div>
+<div class="text-6xl -mt-16">→</div>
 </div>
 
 <div class="text-center">
@@ -277,7 +296,7 @@ vocab_size = 50000
 ## Embedding
 
 ```python
-embedding_dim = 768
+embedding_dim = 4096
 
 "cat" → [0.2, 0.8, -0.1, ..., 0.5]
 "dog" → [0.3, 0.7, -0.2, ..., 0.4]
@@ -285,7 +304,7 @@ embedding_dim = 768
 ```
 
 **Benefits:**
-- ✓ Low dimension (e.g., 768)
+- ✓ Low dimension (e.g., 4096)
 - ✓ Dense (all values meaningful)
 - ✓ **Cosine similarity** captures meaning
 
@@ -397,44 +416,6 @@ embeddings = [
 
 ---
 
-# Putting It All Together
-
-
-
-<div class="mt-8 grid grid-cols-3 gap-4">
-
-<div class="p-4 border rounded">
-<div class="font-bold mb-2">① Tokenization</div>
-Text → Token sequence
-</div>
-
-<div class="p-4 border rounded">
-<div class="font-bold mb-2">② Static Embedding</div>
-Token → Initial vector
-</div>
-
-<div class="p-4 border rounded">
-<div class="font-bold mb-2">③ Contextualization</div>
-Vector updated by context<br/>(This is where Transformer works!)
-</div>
-
-</div>
-
-```mermaid
-
-graph LR
-    A["Raw Text: 'The cat sits'"] --> B["Tokenization: ['The', 'cat', 'sits']"]
-    B --> C["Token IDs: [103, 2456, 7854]"]
-    C --> D["Embedding Layer: 768-dim vectors"]
-    D --> E["Contextual Update: Transformer layers"]
-    E --> F["Output vectors with context"]
-    
-    style A fill:#e1f5ff
-    style D fill:#fff4e1
-    style F fill:#d4edda
-```
-
----
 
 # Positional Encoding: Teaching Position to Transformers
 
@@ -497,12 +478,18 @@ PE(pos, 2i+1) &= \cos\left(\frac{pos}{10000^{2i/d}}\right)
 \end{aligned}
 $$
 
-<div class="mt-6">
+<div class="mt-4">
 
 - `pos`: position in sequence (0, 1, 2, ...)
 - `i`: dimension index
-- `d`: embedding dimension (e.g., 768)
+- `d`: embedding dimension (e.g., 4096)
 
+<div class="mt-2">
+
+- **High-frequency** dimensions change **rapidly**, helping the model distinguish nearby positions 
+
+- **Low-frequency** dimensions vary **slowly**, providing long-range positional signals 
+</div>
 </div>
 
 </div>
@@ -521,7 +508,7 @@ $$
 
 </div>
 
-<div class="mt-8">
+<div class="mt--2">
 
 <style>
   .vector-box {
@@ -599,7 +586,7 @@ $$
   }
 </style>
 
-<div class="text-center text-lg font-bold mb-4">
+<div class="text-center text-lg font-bold mb-0">
 Token "cat" at Position 1
 </div>
 
@@ -618,7 +605,7 @@ Token "cat" at Position 1
   </div>
 
   <!-- Step 2: Show Position Encoding (visible on click 2, hidden on click 3+) -->
-  <div v-click="2" class="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg mt-4">
+  <div v-click="2" class="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg mt-2">
     <div class="label" style="color: #f093fb;">🔴 Position Encoding (pos=1)</div>
     <div class="vector-row">
       <div class="vector-box pos-box">0.8</div>
@@ -627,10 +614,6 @@ Token "cat" at Position 1
       <div class="vector-box pos-box">0.9</div>
       <div class="vector-box pos-box">0.2</div>
       <div class="vector-box pos-box">-0.3</div>
-    </div>
-    <div class="text-center mt-4 mb-2">
-      <div class="operator">⬇</div>
-      <div class="text-sm font-semibold">Element-wise Addition</div>
     </div>
   </div>
 </div>
@@ -724,138 +707,102 @@ Applied to every 2 dimensions (2D rotation for each pair)
 
 ---
 
-# RoPE: Rotation in Action 🌀
+# RoPE: Rotary Position Embedding 🌀
 
-<div class="mt-4">
+<div class="text-center text-xl opacity-80 mb-8">
+Encode position through <b>rotation</b> - a mathematically elegant approach
+</div>
 
-## Step-by-step Process
+<div class="grid grid-cols-2 gap-8">
 
-<v-clicks>
+<!-- LEFT: How it Works -->
+<div>
 
-<div class="grid grid-cols-2 gap-8 mt-6">
+<div class="space-y-4">
+
+<div class="p-4 rounded-lg bg-amber-50 border-2 border-amber-300">
+<div class="font-bold text-amber-900 mb-3 text-lg">1️⃣ Pair Dimensions</div>
+<div class="font-mono text-center text-base bg-white/70 rounded p-2">
+[q₀, q₁], [q₂, q₃], [q₄, q₅], ...
+</div>
+<div class="text-sm mt-2 opacity-80">
+Group adjacent dimensions into 2D pairs
+</div>
+</div>
+
+<div class="p-4 rounded-lg bg-green-50 border-2 border-green-300">
+<div class="font-bold text-green-900 mb-3 text-lg">2️⃣ Apply Rotation</div>
+<div class="text-sm mb-2">
+For position <span class="font-mono bg-white px-2 py-1 rounded">m</span>, rotate each pair by angle <span class="font-mono bg-white px-2 py-1 rounded">θ·m</span>:
+</div>
+
+$$
+\begin{bmatrix} q_{2i}' \\ q_{2i+1}' \end{bmatrix} = \begin{bmatrix} \cos m\theta_{2i} & -\sin m\theta_{2i} \\ \sin m\theta_{2i} & \cos m\theta_{2i} \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+$$
+
+</div>
+
+
+
+
+</div>
+
+</div>
 
 <div>
 
-**1. Original Query Vector (768-dim)**
 
-```python
-q = [q₀, q₁, q₂, q₃, q₄, q₅, ...]
-     ↓   ↓   ↓   ↓   ↓   ↓
-   pair pair pair pair...
-```
 
-**2. Apply 2D Rotation to Each Pair**
+<!-- RIGHT: Visual & Benefits -->
 
-```python
-# For dimensions (q₀, q₁):
-q'₀ = q₀·cos(pos·θ₀) - q₁·sin(pos·θ₀)
-q'₁ = q₀·sin(pos·θ₀) + q₁·cos(pos·θ₀)
-
-# For dimensions (q₂, q₃):
-q'₂ = q₂·cos(pos·θ₁) - q₃·sin(pos·θ₁)
-q'₃ = q₂·sin(pos·θ₁) + q₃·cos(pos·θ₁)
-```
-
+<div class="p-4 rounded-lg bg-purple-50 border-2 border-purple-300 mb-4 mt-0">
+<div class="font-bold text-purple-900 mb-3 text-lg"> Attention Magic ✨</div>
+<div class="text-sm leading-relaxed mb-3">
+After rotating both Q and K, the attention score <span class="font-mono bg-white px-2 py-1 rounded">Q·Kᵀ</span> depends on <b>relative distance (m-n)</b>
 </div>
 
-<div>
+$$
+(q_{m}')^{\top} k_{n}' = q_{m}^{\top} R((n-m)\theta) k_{n}
+$$
 
-**3. Visual Intuition**
+</div>
+<div class="p-4 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-300">
 
-<div class="text-center mt-4">
-<div class="text-6xl">🔄</div>
-<div class="text-base mt-4">
-Each position rotates vectors by different angles
+<div class="font-bold text-indigo-900 mb-3 text-center">🎯 Key Advantages</div>
+<div class="space-y-2 text-sm">
+<div class="flex items-start">
+<div class="mr-2">✅</div>
+<div><b>No extra parameters</b> - just rotation</div>
+</div>
+<div class="flex items-start">
+<div class="mr-2">✅</div>
+<div><b>Relative position</b> - natural encoding</div>
+</div>
+<div class="flex items-start">
+<div class="mr-2">✅</div>
+<div><b>Efficient</b> - simple matrix multiplication</div>
+</div>
+<div class="flex items-start">
+<div class="mr-2">✅</div>
+<div><b>Extrapolation</b> - handles unseen lengths</div>
 </div>
 </div>
-
-<div class="mt-6 p-4 bg-green-100 rounded">
-**Why it works:**
-
-Position 0: 0° rotation  
-Position 1: θ rotation  
-Position 2: 2θ rotation  
-...
-
-Relative position encoded in rotation difference!
 </div>
 
 </div>
 
 </div>
 
-</v-clicks>
 
-</div>
+---
+layout: section
+---
+
+# Transformer Architecture
 
 ---
 
-# RoPE vs Sinusoidal PE: Comparison
-
-<div class="grid grid-cols-2 gap-6 mt-8">
-
-<div>
-
-## Sinusoidal PE
-
-**Method:**
-```python
-x = embedding + PE
-```
-
-**Pros:**
-- ✓ Simple and intuitive
-- ✓ Fast to compute
-- ✓ Works well for short sequences
-
-**Cons:**
-- ✗ Position info can decay in deep layers
-- ✗ Less effective for very long contexts
-
-**Used in:**
-- Original Transformer (2017)
-- BERT
-- Early GPT models
-
-</div>
-
-<div>
-
-## RoPE (Rotary PE)
-
-**Method:**
-```python
-q' = rotate(q, pos)
-k' = rotate(k, pos)
-# In attention layer
-```
-
-**Pros:**
-- ✓ Position info preserved in rotations
-- ✓ Better for long contexts
-- ✓ Relative position naturally encoded
-
-**Cons:**
-- ✗ Slightly more complex
-- ✗ Requires rotation computation
-
-**Used in:**
-- **LLaMA series** 🦙
-- **GPT-NeoX**
-- **PaLM**
-- Most modern LLMs
-
-</div>
-
-</div>
-
-<div class="mt-6 text-center p-4 bg-purple-100 rounded">
-<strong>Trend:</strong> Modern LLMs prefer <span class="text-purple-600">RoPE</span> for better long-context performance! 📈
-</div>
-
----
-
-# Transformer: The Foundation
+# Transformer: The Architecture
 
 <div class="grid grid-cols-2 gap-4">
 
@@ -864,17 +811,17 @@ k' = rotate(k, pos)
 ## Core Components
 
 - **Positional Encoding**
-  - Preserves sequence order information
+  <div class="ml-4  mt--4">• Preserves sequence order information</div>
 
 - **Self-Attention Mechanism**
-  - Captures long-range dependencies
-  - High parallel computation efficiency
+  <div class="ml-4  mt--4">• Captures long-range dependencies</div>
+  <div class="ml-4  mt--1">• High parallel computation efficiency</div>
 
 - **Multi-Head Attention**
-  - Learns representations from multiple subspaces
+  <div class="ml-4  mt--4">•  Learns representations from multiple subspaces</div>
 
 - **Feed-Forward Neural Network**
-  - Non-linear transformations
+  <div class="ml-4  mt--4">• Non-linear transformations</div>
 
 </div>
 
@@ -983,38 +930,38 @@ def attention(Q, K, V):
     border-radius: 8px;
   }
   .matrix-input {
-    grid-template-columns: repeat(7, 30px);
-    grid-template-rows: repeat(6, 30px);
+    grid-template-columns: repeat(5, 30px);
+    grid-template-rows: repeat(4, 30px);
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   }
   .matrix-weight-q {
     grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(7, 30px);
+    grid-template-rows: repeat(5, 30px);
     background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 100%);
   }
   .matrix-weight-k {
     grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(7, 30px);
+    grid-template-rows: repeat(5, 30px);
     background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
   }
   .matrix-weight-v {
     grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(7, 30px);
+    grid-template-rows: repeat(5, 30px);
     background: linear-gradient(135deg, #e1d5e7 0%, #d4c5d9 100%);
   }
   .matrix-result-q {
     grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(6, 30px);
+    grid-template-rows: repeat(4, 30px);
     background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
   }
   .matrix-result-k {
     grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(6, 30px);
+    grid-template-rows: repeat(4, 30px);
     background: linear-gradient(135deg, #aed581 0%, #7cb342 100%);
   }
   .matrix-result-v {
     grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(6, 30px);
+    grid-template-rows: repeat(4, 30px);
     background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%);
   }
   .matrix-cell {
@@ -1072,12 +1019,10 @@ $$
   <div>
     <div class="matrix-label" style="color: #4facfe;">Input X</div>
     <div class="matrix-box matrix-input">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
     </div>
     <div class="text-sm text-center mt-2">seq_len × d_model</div>
   </div>
@@ -1092,8 +1037,6 @@ $$
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
     </div>
     <div class="text-sm text-center mt-2">d_model × d_k</div>
   </div>
@@ -1103,8 +1046,6 @@ $$
   <div>
     <div class="matrix-label" style="color: #ffc107;">Q</div>
     <div class="matrix-box matrix-result-q">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
@@ -1135,12 +1076,10 @@ $$
   <div>
     <div class="matrix-label" style="color: #4facfe;">Input X</div>
     <div class="matrix-box matrix-input">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
     </div>
     <div class="text-sm text-center mt-2">seq_len × d_model</div>
   </div>
@@ -1155,8 +1094,6 @@ $$
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
     </div>
     <div class="text-sm text-center mt-2">d_model × d_k</div>
   </div>
@@ -1166,8 +1103,6 @@ $$
   <div>
     <div class="matrix-label" style="color: #66bb6a;">K</div>
     <div class="matrix-box matrix-result-k">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
@@ -1198,12 +1133,10 @@ $$
   <div>
     <div class="matrix-label" style="color: #4facfe;">Input X</div>
     <div class="matrix-box matrix-input">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
+      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
     </div>
     <div class="text-sm text-center mt-2">seq_len × d_model</div>
   </div>
@@ -1218,8 +1151,6 @@ $$
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
     </div>
     <div class="text-sm text-center mt-2">d_model × d_v</div>
   </div>
@@ -1229,8 +1160,6 @@ $$
   <div>
     <div class="matrix-label" style="color: #9c27b0;">V</div>
     <div class="matrix-box matrix-result-v">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
       <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
@@ -1858,10 +1787,9 @@ for example in instruction_data:
 
 ```python
 """
-═══════════════════════════════════════════════════════
-Step 4: Result
-A model that understands instructions and generates quality responses
-═══════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════════════════════════════════
+Step 4: Result - A model that understands instructions and generates quality responses
+══════════════════════════════════════════════════════════════════════════════════════════
 """
 
 # Before SFT:
@@ -1879,8 +1807,7 @@ Neural networks are computational models inspired by
 the human brain. They consist of:
 1. Input layer - receives data
 2. Hidden layers - process information
-3. Output layer - produces predictions
-...
+3. Output layer - produces predictions ...
 """
 ```
 ````
@@ -1987,7 +1914,7 @@ the human brain. They consist of:
 <div class="text-center relative z-10">
 <div class="text-lg font-semibold mb-2">Transformer</div>
 <div class="transformer-box w-40 h-40 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center text-white text-3xl font-bold">
-🤖
+<img src="/figs/network.png" class="w-24 h-24" />
 </div>
 </div>
 
@@ -2098,11 +2025,11 @@ $$P_\theta(x_{1:T}) = \prod_{t=1}^{T} P_\theta(x_t \mid x_{<t})$$
 
 </div>
 
-<div class="mt-6 p-5 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-300 rounded-lg">
+<div class="mt-7 p-5 pt-4 pb-0 bg-gradient-to-r from-blue-50 to-purple-50 border-5 border-blue-300 rounded-lg">
 
 ### Training Goal
 $$\max_\theta \prod_{t=1}^{T} P_\theta(x_t \mid x_{<t})$$
-As we want the model to assign as much probability as possible to the correct token $x_t$ at position $t$
+We want the model to assign as much probability as possible to the correct token $x_t$ at position $t$
 
 </div>
 
@@ -2130,7 +2057,7 @@ As we want the model to assign as much probability as possible to the correct to
 
 At position $t$:
 
-<div class="text-sm">
+<div class="text-sm mt--3">
 
 $$H(q_t, p_t) = -\sum_{v=1}^{|V|} q_t(v) \log p_t(v)$$
 
@@ -2138,7 +2065,7 @@ $$H(q_t, p_t) = -\sum_{v=1}^{|V|} q_t(v) \log p_t(v)$$
 
 Since $q_t$ is one-hot:
 
-<div class="text-sm">
+<div class="text-sm mt--3">
 
 $$H(q_t, p_t) = -\log p_t(x_t)$$
 
@@ -2150,18 +2077,17 @@ This is also the **Negative Log-Likelihood (NLL)**
 
 </div>
 
-<div class="mt-0 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+<div class="mt--3 px-4 pt-4 pb-0 bg-blue-50 border-5 border-blue-200 rounded-lg">
 
 ### Loss for Entire Sequence
 
-<div class="text-sm">
+<div class="text-m">
 
 $$\mathcal{L}(\theta) = \sum_{t=1}^{T} -\log p_\theta(x_t \mid x_{<t})$$
 
 </div>
 
 In practice: average over **batch** and over **tokens** to get the training loss
-
 </div>
 
 ---
@@ -2196,11 +2122,11 @@ In practice: average over **batch** and over **tokens** to get the training loss
 
 </div>
 
-<div class="mt-4">
+<div class="mt--2">
 
 ## SFT Loss Masking
 
-<div class="flex flex-col gap-4 mt-0">
+<div class="flex flex-col gap-4 mt-2">
 
 <div class="flex items-center gap-4">
 <div class="w-32 text-sm font-semibold text-blue-600">input_ids</div>
@@ -2304,8 +2230,8 @@ layout: section
 
 # Reinforcement Learning
 
-<div class="flex justify-center items-center mt--5">
-<img src="/figs/sdm.png" class="w-4.6/5" />
+<div class="flex justify-center items-center mt--3">
+<img src="/figs/sdm.png" class="w-4.2/5" />
 </div>
 
 ---
@@ -2516,7 +2442,7 @@ def rlhf_training(policy_model, reward_model, prompts):
             # Get reward from reward model
             reward = reward_model(prompt, response)
             # Add KL penalty (stay close to old policy)
-            kl_penalty = kl_divergence(policy_model, old_policy, prompt)
+            kl_penalty = kl_divergence(policy_model, old_policy)
             final_reward = reward - beta * kl_penalty
             experiences.append((prompt, response, final_reward))
         # PPO update
@@ -2535,7 +2461,9 @@ def rlhf_training(policy_model, reward_model, prompts):
 
 ---
 
-<div class="grid grid-cols-2 gap-4">
+# PPO Training Loop(Cont'd)
+
+<div class="grid grid-cols-2 gap-6 mt-4">
 
 <div>
 
@@ -2849,7 +2777,7 @@ No separate value network needed!
 
 <div class="grid grid-cols-1 gap-4 mt-4">
 
-<div class="p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
+<div class="p-4 bg-blue-50 border-4 border-blue-300 rounded-lg">
 <div class="text-sm font-semibold text-blue-700 mb-2">PPO Objective:</div>
 <div class="text-sm text-left">
 
@@ -2871,7 +2799,7 @@ $$
 </div>
 </div>
 
-<div class="p-4 bg-purple-50 border-2 border-purple-300 rounded-lg">
+<div class="p-4 bg-purple-50 border-4 border-purple-300 rounded-lg">
 <div class="text-sm font-semibold text-purple-700 mb-2">GRPO Objective:</div>
 <div class="text-xs text-left">
 
