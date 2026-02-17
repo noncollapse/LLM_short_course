@@ -206,7 +206,7 @@ Understanding Embeddings is the <span class="text-blue-500 font-bold">KEY</span>
 
 ---
 
-# Why Not Just Use Word IDs?
+# Why Not Just Word IDs or One-Hot Encoding?
 
 <div class="grid grid-cols-2 gap-8 mt-8">
 
@@ -217,19 +217,18 @@ Understanding Embeddings is the <span class="text-blue-500 font-bold">KEY</span>
 ```python
 word_to_id = {
     "cat": 1,
-    "dog": 2,
+    "airplane": 2,
     "kitten": 3,
     ...
-    "airplane": 9999
+    "dog": 9999
 }
 ```
 
 <div class="mt-6">
 
 **Problems:**
-- No semantic meaning
-- "cat" (1) vs "dog" (2): distance = 1
-- "cat" (1) vs "airplane" (9999): distance = 9998
+- "cat" is closer to "airplane" than "dog"
+- "dog" may be  more important than "airplane"
 - A numeric index has no semantic meaning!
 
 </div>
@@ -238,13 +237,46 @@ word_to_id = {
 
 <div>
 
+## One-Hot Encoding ❌
+
+```python
+vocab_size = 500000
+
+"cat" → [1, 0, 0, 0, ..., 0]
+"airplane" → [0, 1, 0, 0, ..., 0]
+"kitten" → [0, 0, 1, 0, ..., 0]
+...
+"dog"→ [0, 0, 0, 0, ..., 1]
+```
+
+**Issues:**
+-  Dimension = vocabulary size (huge!)
+-  Sparse (99.9% are zeros)
+-  No similarity (all perpendicular)
+
+
+</div>
+
+</div>
+
+<div class="mt-4 p-4 bg-green-100 rounded text-center">
+<strong>Key Idea:</strong> a efficient, trainable, and generalizable continuous space to support generalization.
+</div>
+
+---
+
+# From One-Hot to Embedding
+
+<div class="grid grid-cols-2 gap-8">
+
+<div>
+
 ## What We Need ✓
 
 <div class="mt-4">
 
 **Semantic Distance:**
-- Similar words → Close in space
-- Different words → Far in space
+- Similar words → Close in a continuous space
 
 </div>
 
@@ -258,37 +290,9 @@ Airplane ✈️
 </div>
 </div>
 
-<div class="mt-8 p-4 bg-blue-100 rounded">
-💡 Neural networks need <strong>distance = similarity</strong>
-</div>
+- high-dimensional one-hot vector → low-dimensional dense vector
 
-</div>
-
-</div>
-
----
-
-# From One-Hot to Embedding
-
-<div class="grid grid-cols-2 gap-8">
-
-<div>
-
-## One-Hot Encoding
-
-```python
-vocab_size = 50000
-
-"cat" → [0, 1, 0, 0, ..., 0]
-"dog" → [0, 0, 1, 0, ..., 0]
-"the" → [1, 0, 0, 0, ..., 0]
-```
-
-**Issues:**
-- ❌ Dimension = vocabulary size (huge!)
-- ❌ Sparse (99.9% are zeros)
-- ❌ No similarity (all perpendicular)
-
+$$ \operatorname{onehot}(i)^\top E = E[i] $$
 </div>
 
 <div>
@@ -296,7 +300,8 @@ vocab_size = 50000
 ## Embedding
 
 ```python
-embedding_dim = 4096
+embedding_dim = 4096(Llama3) 
+embedding_dim = 3584(Qwen2.5) 
 
 "cat" → [0.2, 0.8, -0.1, ..., 0.5]
 "dog" → [0.3, 0.7, -0.2, ..., 0.4]
@@ -306,7 +311,8 @@ embedding_dim = 4096
 **Benefits:**
 - ✓ Low dimension (e.g., 4096)
 - ✓ Dense (all values meaningful)
-- ✓ **Cosine similarity** captures meaning
+- ✓ Cosine similarity captures meaning
+- ✓ Learnable continuous starting representation
 
 
 
@@ -314,46 +320,124 @@ embedding_dim = 4096
 
 </div>
 
-<div class="mt-6 p-4 bg-green-100 rounded text-center">
-<strong>Key Idea:</strong> Compress 50,000 dimensions → 4096 dimensions in Llama3 and 3584 in Qwen2.5
-</div>
 
 ---
 
 # Where Does Semantic Meaning Come From?
 
-<div class="mt-8">
+<div class="mt-4">
 
-## 🎯 Task-Driven Learning
-
-<v-clicks>
-
-<div class="text-xl mt-6">
-<strong>Critical Point 1:</strong> Embeddings are <span class="text-red-500">NOT hand-crafted</span>
+<div class="p-6 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl border-3 border-purple-300 mb-6">
+<div class="text-2xl font-bold text-purple-800 mb-3">Critical 1: Task-Driven Learning</div>
+<div class="text-lg">
+ Embeddings are <span class="font-bold text-purple-700">learned automatically</span> during training to optimize task performance instead of Hand-Crafted.
+</div>
 </div>
 
-<div class="text-xl mt-4">
-They are <span class="text-blue-500">learned automatically</span> during training to accomplish a task
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+
+<div class="px-5 pt-5 pb-2.5 bg-blue-50 rounded-lg border-2 border-blue-200">
+<div class="text-lg font-bold text-blue-700 mb-2"> 💡 The Learning Process</div>
+<div class="text-base leading-relaxed">
+
+<div class="text-base leading-relaxed">
+  If two tokens behave similarly in many contexts:
+  <div class="mt-2 ml-4 text-sm opacity-90">
+    • They appear in similar sentences and co-occur with similar words<br>
+    • They help predict similar next tokens<br>
+    • The loss produces similar gradients for their embeddings<br>
+  </div>
+  <div class="mt-2">
+    → Gradient descent updates their vectors in similar directions, so they become
+    <span class="text-blue-600 font-semibold">more similar</span>.
+  </div>
 </div>
 
-<!-- <div class="mt-8 p-4 bg-yellow-100 rounded">
-
-**Example: Word2Vec**
-- Task: Predict surrounding words
-- "The cat sits on the ___" → model learns "mat" is likely
-- Through millions of examples, "cat", "dog", "kitten" end up close in space
-
-</div> -->
-
-<div class="text-xl mt-8">
-<strong>Critical Point 2:</strong> In LLMs, embeddings are <span class="text-purple-500">dynamic</span>
 </div>
+</div>
+
+</div>
+
+<div>
+
+<div class="p-5 bg-green-50 rounded-lg border-2 border-green-200 mb-4">
+<div class="text-lg font-bold text-green-700 mb-3">🐱 Example: Semantic Similarity</div>
+<div class="text-base mb-3">
+      <code class="bg-white px-2 py-1 rounded">cat</code> and <code class="bg-white px-2 py-1 rounded">kitten</code> often appear in similar patterns:
+    </div>
+    <div class="text-sm italic opacity-80 ml-4">
+      • "a ___ is a pet"<br>
+      • "feed the ___"<br>
+      • "the ___ is sleeping"
+    </div>
+    <div class="text-base mt-3">
+      → Model updates their embeddings in similar directions
+</div>
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+---
+
+# Where Does Semantic Meaning Come From?
 
 <div class="mt-4">
-They get updated by context → <strong>Contextual Embeddings</strong> (foundation of BERT/GPT)
+
+<div class="p-6 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl border-3 border-purple-300 mb-6">
+<div class="text-2xl font-bold text-purple-800 mb-3">Critical 2: Embeddings are Dynamic</div>
+<div class="text-lg">
+In LLMs, the representation after Transformer layers creates <span class="font-bold text-purple-700">Contextual Embeddings</span> — the same token becomes different vectors in different contexts
+</div>
 </div>
 
-</v-clicks>
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+
+<div class="px-5 pt-5 pb--2 bg-blue-50 rounded-lg border-2 border-blue-200">
+<div class="text-lg font-bold text-blue-700 mb--4"> Pipeline</div>
+<div class="text-base leading-relaxed">
+
+1. **Start**: Static lookup + positional encoding
+
+2. **Transform**: Apply self-attention + MLP layers repeatedly
+
+3. **Result**: Each layer mixes information from other tokens. Final representation <span class="font-mono bg-white px-2 py-1 rounded">h_L</span> depends on full context.
+
+
+</div>
+</div>
+
+</div>
+
+<div>
+
+<div class="p-5 bg-green-50 rounded-lg border-2 border-green-200 mb-4">
+<div class="text-lg font-bold text-green-700 mb-3">🏦 Example: "bank"</div>
+<div class="text-base mb-3">
+<div class="bg-white p-3 rounded mb-2">
+<span class="italic">"river <span class="font-bold text-blue-600">bank</span>"</span><br>
+<span class="text-sm text-gray-600">→ Vector encodes "shoreline"</span>
+</div>
+<div class="bg-white p-3 rounded">
+<span class="italic">"investment <span class="font-bold text-green-600">bank</span>"</span><br>
+<span class="text-sm text-gray-600">→ Vector encodes "financial institution"</span>
+</div>
+</div>
+</div>
+
+
+</div>
+
+</div>
 
 </div>
 
@@ -436,6 +520,13 @@ embeddings = [
 
 <div class="mt-4">
 Without position info, these look <span class="text-red-500">identical</span> to the model!
+</div>
+
+<div class="mt-4 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
+<div class="text-center text-lg">
+
+$$ \mathrm{Attn}(PX) = P\,\mathrm{Attn}(X) $$
+</div>
 </div>
 
 </div>
@@ -1698,119 +1789,6 @@ layout: section
 # Part 2: Pre-training and Supervised Fine-Tuning
 
 
----
-
-
-
-# Training Pipeline
-
-<style scoped>
-.slidev-code {
-  font-size: 1.5em !important;
-}
-.slidev-code .line {
-  line-height: 1.6 !important;
-}
-</style>
-
-````md magic-move
-```python
-"""
-═══════════════════════════════════════════════════════
-Step 1: Data Preparation
-First we collect massive text corpora from various sources
-such as Wikipedia, Books, and code repositories
-═══════════════════════════════════════════════════════
-"""
-
-data = load_corpus([
-    "CommonCrawl",   # Web pages
-    "Wikipedia",     # Knowledge base
-    "Books",         # Literature
-    "Code",          # Programming
-    "Academic"       # Research papers
-])
-
-tokenized_data = tokenize(data)  # Tokenize and clean
-
-```
-
-```python
-"""
-═══════════════════════════════════════════════════════
-Step 2: Pre-training
-With those data we use autoregressive next-token prediction
-Train the model to predict the next token at each position
-═══════════════════════════════════════════════════════
-"""
-
-model = Transformer(
-    vocab_size=50000,
-    hidden_size=4096,
-    num_layers=32,
-    num_heads=32
-)
-
-for batch in tokenized_data:
-    logits = model(batch.input)  # Forward pass
-    loss = cross_entropy(logits, batch.target)  # Compute loss
-    
-    loss.backward()  # Backpropagation
-    optimizer.step()  # Update weights
-
-```
-
-```python
-"""
-═══════════════════════════════════════════════════════
-Step 3: Supervised Fine-Tuning (SFT)
-Use high-quality human-written instruction-response pairs
-to teach the model to follow instructions
-═══════════════════════════════════════════════════════
-"""
-
-instruction_data = [
-    {
-        "input": "Explain quantum computing",
-        "output": "Quantum computing is..."
-    },
-]
-
-for example in instruction_data:
-    output = model(example.input)  # Generate response
-    loss = cross_entropy(output, example.output)  # Compare with target
-    
-    loss.backward()
-    optimizer.step()
-
-```
-
-```python
-"""
-══════════════════════════════════════════════════════════════════════════════════════════
-Step 4: Result - A model that understands instructions and generates quality responses
-══════════════════════════════════════════════════════════════════════════════════════════
-"""
-
-# Before SFT:
-input = "Explain neural networks："
-output = "Explain neural networks: Neural networks are a class of machine learning [continues with raw text]"
-
-# After SFT:
-input = "Explain neural networks"
-prompt = """
-User: Explain neural networks.
-Assistant:
-"""
-output = """
-Neural networks are computational models inspired by 
-the human brain. They consist of:
-1. Input layer - receives data
-2. Hidden layers - process information
-3. Output layer - produces predictions ...
-"""
-```
-````
 
 ---
 
@@ -1999,6 +1977,120 @@ Just view Transformer as a box: give it a sequence, <br>
 it tells you the probability of each token in the vocabulary being next.
 </p>
 </div>
+
+---
+
+
+
+# Training Pipeline
+
+<style scoped>
+.slidev-code {
+  font-size: 1.5em !important;
+}
+.slidev-code .line {
+  line-height: 1.6 !important;
+}
+</style>
+
+````md magic-move
+```python
+"""
+═══════════════════════════════════════════════════════
+Step 1: Data Preparation
+First we collect massive text corpora from various sources
+such as Wikipedia, Books, and code repositories
+═══════════════════════════════════════════════════════
+"""
+
+data = load_corpus([
+    "CommonCrawl",   # Web pages
+    "Wikipedia",     # Knowledge base
+    "Books",         # Literature
+    "Code",          # Programming
+    "Academic"       # Research papers
+])
+
+tokenized_data = tokenize(data)  # Tokenize and clean
+
+```
+
+```python
+"""
+═══════════════════════════════════════════════════════
+Step 2: Pre-training
+With those data we use autoregressive next-token prediction
+Train the model to predict the next token at each position
+═══════════════════════════════════════════════════════
+"""
+
+model = Transformer(
+    vocab_size=50000,
+    hidden_size=4096,
+    num_layers=32,
+    num_heads=32
+)
+
+for batch in tokenized_data:
+    logits = model(batch.input)  # Forward pass
+    loss = cross_entropy(logits, batch.target)  # Compute loss
+    
+    loss.backward()  # Backpropagation
+    optimizer.step()  # Update weights
+
+```
+
+```python
+"""
+═══════════════════════════════════════════════════════
+Step 3: Supervised Fine-Tuning (SFT)
+Use high-quality human-written instruction-response pairs
+to teach the model to follow instructions
+═══════════════════════════════════════════════════════
+"""
+
+instruction_data = [
+    {
+        "input": "Explain quantum computing",
+        "output": "Quantum computing is..."
+    },
+]
+
+for example in instruction_data:
+    output = model(example.input)  # Generate response
+    loss = cross_entropy(output, example.output)  # Compare with target
+    
+    loss.backward()
+    optimizer.step()
+
+```
+
+```python
+"""
+══════════════════════════════════════════════════════════════════════════════════════════
+Step 4: Result - A model that understands instructions and generates quality responses
+══════════════════════════════════════════════════════════════════════════════════════════
+"""
+
+# Before SFT:
+input = "Explain neural networks："
+output = "Explain neural networks: Neural networks are a class of machine learning [continues with raw text]"
+
+# After SFT:
+input = "Explain neural networks"
+prompt = """
+User: Explain neural networks.
+Assistant:
+"""
+output = """
+Neural networks are computational models inspired by 
+the human brain. They consist of:
+1. Input layer - receives data
+2. Hidden layers - process information
+3. Output layer - produces predictions ...
+"""
+```
+````
 
 ---
 
@@ -2336,6 +2428,10 @@ and entanglement to perform computations..."
 3. Humans choose better one
 4. Create pairwise comparisons
 
+<div class="space-y-4 text-sm mt-7" >
+</div>
+
+
 ## Training Objective
 
 $$
@@ -2344,6 +2440,7 @@ $$
 
 - $y_w$: chosen response
 - $y_l$: rejected response
+
 
 </div>
 
@@ -2377,7 +2474,7 @@ def train_reward_model(preferences):
 ---
 
 # Algorithm I: PPO-based approach 
-<div class="text-right text-sm mt--10 mr-30">
+<div class="text-right text-sm mt--10 mr-20">
 (Proximal Policy Optimization)
 </div>
 <div class="flex justify-center items-center mt-5">
@@ -2407,11 +2504,14 @@ The LLM we update (the "actor")
 
 Scores a response $y$ given prompt $x$
 
-Trained from human preference data (pairwise comparisons)
 
-#### 3) Constraint (KL Penalty)
+#### 3) Value Model $V_\phi(x)$
 
-To prevent reward hacking / distribution shift:
+The baseline we use to calculate the advantage function to stable training
+
+#### 4) Reference policy  $\pi_{\text{ref}}$
+
+To prevent reward hacking / distribution shift by KL penalty:
 
 <div class="text-xs">
 
@@ -2419,8 +2519,6 @@ $$r_{\text{final}} = r_{\text{RM}}(x, y) - \beta \cdot KL(\pi_\theta(\cdot | x) 
 
 </div>
 
-- $\pi_{\text{ref}}$ is typically the SFT model
-- $\beta$ controls how conservative updates are
 
 </div>
 
@@ -2431,25 +2529,27 @@ $$r_{\text{final}} = r_{\text{RM}}(x, y) - \beta \cdot KL(\pi_\theta(\cdot | x) 
 <div class="flex justify-center items-center mt-0">
 
 ```python
-def rlhf_training(policy_model, reward_model, prompts):
-    old_policy = copy(policy_model)
-    for epoch in range(num_epochs):
+def rlhf_training(policy_model,reward_model,value_model,prompts):
+    ref_policy = freeze(copy(policy_model)) 
+    for step in range(num_steps):
         experiences = []
-        # Sample trajectories
         for prompt in prompts:
             # Generate response
             response = policy_model.generate(prompt)
             # Get reward from reward model
             reward = reward_model(prompt, response)
-            # Add KL penalty (stay close to old policy)
-            kl_penalty = kl_divergence(policy_model, old_policy)
+            logp_old = policy_model.logprob(prompt, response)
+            # Add KL penalty (stay close to reference policy)
+            kl_penalty = kl_divergence(policy_model, ref_policy)
             final_reward = reward - beta * kl_penalty
-            experiences.append((prompt, response, final_reward))
+            experiences.append((prompt, response, 
+            final_reward, logp_old))
+            # Advantage（usually estimated by GAE）
+            adv = compute_advantages(experiences, value_model)
+            experience.append(adv)
         # PPO update
         for _ in range(ppo_epochs):
-            ppo_step(policy_model, old_policy, experiences)
-        # Update old policy
-        old_policy = copy(policy_model)
+            ppo_step(policy_model, experiences)
     return policy_model
 ```
 
@@ -2492,21 +2592,24 @@ where:
 
 ```python
 # PPO Update
-def ppo_step(policy, old_policy, experiences):
-    for (state, action, reward) in experiences:
+def ppo_step(policy, value_model, experiences):
+    for (states, actions, advs, old_probs) in experiences:
         # Probability ratio
-        new_prob = policy.log_prob(state, action)
-        old_prob = old_policy.log_prob(state, action)
-        ratio = exp(new_prob - old_prob)
+        new_prob = policy.log_prob(states, actions)
+        ratio = exp(new_probs - old_probs)
         
-        # Advantage
-        advantage = reward - baseline(state)
+        # loss of the policy
+        surr1 = ratios * advs
+        surr2 = clip(ratios, 1-eps, 1+eps) * adv
+        policy_loss = -mean(min(surr1, surr2))
+
+        # loss of the value model
+        returns = adv + values_old
+        value_loss = mean((values_new - returns)**2)
+
+        loss = policy_loss + c_v * value_loss
         
-        # Clipped objective
-        surr1 = ratio * advantage
-        surr2 = clip(ratio, 1-eps, 1+eps) * advantage
-        loss = -min(surr1, surr2)
-        
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 ```
@@ -2517,13 +2620,137 @@ def ppo_step(policy, old_policy, experiences):
 
 ---
 
+# Some insights about policy gradient and PPO
+
+<div class="text-base">
+
+**Our original objective:**
+
+$$J(\theta) \;=\; \mathbb{E}_{y \sim \pi_\theta(\cdot \mid x)}\big[A(x,y)\big]$$
+
+**What we have:** a dataset $\mathcal{D} = \{x,y\}$, where $x \sim q(x), y \sim \pi_\theta(\cdot \mid x)$
+
+<div class="mt-2">
+
+$$J(\theta) = \sum_{y} \pi_\theta(y\mid x)\,A(x,y)$$
+
+$$\nabla_\theta J(\theta) = \sum_{y} \nabla_\theta \pi_\theta(y\mid x)\,A(x,y)$$
+<div class="mt--5">
+
+Using $\nabla_\theta \pi_\theta(y\mid x) = \pi_\theta(y\mid x)\,\nabla_\theta \log \pi_\theta(y\mid x)$:
+
+$$\nabla_\theta J(\theta) = \sum_{y} \pi_\theta(y\mid x)\,\nabla_\theta \log \pi_\theta(y\mid x)\,A(x,y)$$
+
+$$= \mathbb{E}_{x,y\sim \mathcal{D}}\Big[\nabla_\theta \log \pi_\theta(y\mid x)\,A(x,y)\Big]$$
+
+<div class="mt--6">
+
+**Surrogate objective:**
+
+$$J(\theta) = \mathbb{E}_{x,y\sim \mathcal{D}}\Big[\log \pi_\theta(y\mid x)\,A(x,y)\Big]$$
+
+</div>
+</div>
+</div>
+</div>
+
+---
+
+# Problem: Our Data Come from an Old Policy
+
+<div class="text-base">
+
+In PPO step (> 1), we collect trajectories with a **frozen snapshot** policy $\pi_{\text{old}}$:
+
+$$\mathcal{D}_{\text{old}} = \{x,y\}, \text{where } x \sim q(x), y \sim \pi_\text{old}(\cdot \mid x)$$
+
+If we *naively* plug off-policy data into the policy gradient estimator:
+
+$$\widehat{g}_{\text{naive}} = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{old}}}\Big[\nabla_\theta \log \pi_\theta(y\mid x)\; A(x,y)\Big]$$
+
+<div class="mt-7 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+<div class="text-red-700 font-bold">⚠️ This is generally <span class="text-xl">biased</span></div>
+
+Because the expectation is taken under $\pi_{\text{old}}$ rather than $\pi_\theta$:
+
+$$\widehat{g}_{\text{naive}} \neq \nabla_\theta J(\theta)$$
+</div>
+
+
+
+</div>
+
+---
+
+# Fix: Importance Sampling (IS)
+
+<div class="text-base">
+
+**What we want:** Use $\mathcal{D}_{\text{old}}$ to estimate $\nabla_\theta J(\theta)$
+
+**Key insight — Importance weighted gradient:**
+
+$$
+\begin{aligned}
+\nabla_\theta J(\theta)
+&= \sum_{y} \pi_\theta(y\mid x)\,\nabla_\theta \log \pi_\theta(y\mid x)\,A(x,y) \\
+&= \sum_{y}\left[\frac{\pi_\theta(y\mid x)}{\pi_{\text{old}}(y\mid x)}\nabla_\theta \log \pi_\theta(y\mid x)\,A(x,y)\, \pi_{\text{old}}(y\mid x)\right] \\
+&= \sum_{y}\left[\frac{\nabla_\theta\pi_\theta(y\mid x)}{\pi_{\text{old}}(y\mid x)}A(x,y)\, \pi_{\text{old}}(y\mid x)\right] \\
+&= \mathbb{E}_{y\sim \mathcal{D}_{\text{old}}}\left[\frac{\nabla_\theta \pi_\theta(y\mid x)}{\pi_{\text{old}}(y\mid x)}\, A(x,y)\right]
+\end{aligned}
+$$
+
+**PPO surrogate objective:**
+
+$$L(\theta) = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{old}}}\left[\frac{ \pi_\theta(y\mid x)}{\pi_{\text{old}}(y\mid x)}\, A(x,y)\right]$$
+
+
+
+
+</div>
+
+
+
+
+---
+
+
 # Algorithm II: DPO-based approach
-<div class="text-right text-sm mt--10 mr-25">
+<div class="text-right text-sm mt--10 mr-10">
 (Direct Preference Optimization)
 </div>
 <div class="flex justify-center items-center mt-15">
 <img src="/figs/DPO.png" class="w-5/5" />
 </div>
+
+---
+
+# Insights of  DPO 
+
+<div class="text-base">
+
+Under any reward function $r(x,y)$, reference model $\pi_{\mathrm{ref}}$ and a general non-parametric policy class.
+
+</div>
+
+$$
+\begin{aligned}
+&\max_{\pi}\;\mathbb{E}_{x\sim\mathcal{D},\,y\sim\pi}\!\Big[r(x,y)\Big]
+-\beta\,\mathbb{D}_{\mathrm{KL}}\!\Big(\pi(y|x)\,\|\,\pi_{\mathrm{ref}}(y|x)\Big) \\
+&=\max_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
+\Big[r(x,y)-\beta\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)}\Big] \\
+&=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
+\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)}-\frac{1}{\beta}r(x,y)\Big] \\
+&=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
+\Big[\log\frac{\pi(y|x)}{\frac{1}{Z(x)}\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}
+-\log Z(x)\Big]
+\end{aligned}
+$$
+
+$$
+\pi^{\star}(y|x)=\frac{1}{Z(x)}\,\pi_{\mathrm{ref}}(y|x)\exp\!\Big(\frac{1}{\beta}r(x,y)\Big), \text{where } Z(x)=\sum_{y}\pi_{\mathrm{ref}}(y|x)\exp\!\Big(\frac{1}{\beta}r(x,y)\Big)
+$$
+is a valid probability distribution as $\pi^{\star}(y|x)\ge 0$ for all $y$ and $\sum_y \pi^{\star}(y|x)=1$.
 
 ---
 
@@ -2615,18 +2842,20 @@ Gradient descent on $\mathcal{L}_{\text{DPO}}$ to update $\pi_\theta$
 
 <div class="space-y-4 text-sm">
 
-#### 1. Reward Hacking
-Model exploits reward model weaknesses
-
-#### 2. Expensive Human Feedback
-Requires thousands of comparisons
-
-#### 3. Reward Model Limitations
+#### 1. Reward\Preference Model Limitations
 Can't capture all preferences
 
-#### 4. Training Instability
+#### 2. Training Instability
 - PPO sensitive to reward model
 - DPO sensitive to reference policy
+
+#### 3. Reward Hacking
+Model exploits reward model weaknesses
+
+#### 4. Expensive Human Feedback
+Requires thousands of comparisons
+
+
 
 </div>
 
@@ -2728,9 +2957,9 @@ $$
 
 ### Motivation
 
-**Problem with PPO/DPO:**
-- PPO requires value network (complex)
-- DPO needs paired preference data
+**Problem with PPO:**
+- a separate value model/critic increases GPU memory.
+- a poorly learned value model makes advantages noisy, destabilizing updates.
 
 
 **GRPO Solution:**
@@ -2744,7 +2973,7 @@ $$
 
 ### Key Idea
 
-Instead of comparing to a baseline **across time**, compare responses **within a group**:
+Instead of comparing to a baseline **by model**, compare responses **within a group**:
 
 1. Generate **multiple responses** for same prompt
 2. Score all responses with reward model
