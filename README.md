@@ -1,4 +1,4 @@
-# Large Language Models (LLM) - Comprehensive Principles and Training Guide
+# Large Language Models (LLMs) - Principles and Training Guide
 
 A comprehensive short course covering the principles and training methods of Large Language Models, including Pre-training, Supervised Fine-tuning (SFT), Reinforcement Learning from Human Feedback (RLHF), and Reinforcement Learning from Verifiable Rewards (RLVR).
 
