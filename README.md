@@ -157,11 +157,12 @@ If you want to contribute your changes back to the original repository:
 ```
 llm_short_course/
 ├── slides.md              # Main presentation content
-├── figs/                  # Image assets
-│   ├── InstructGPT.png
-│   ├── grpo.png
-│   ├── DPO.png
-│   └── ...
+├── public/
+│   └── figs/              # Image assets served at /figs/*
+│       ├── InstructGPT.png
+│       ├── grpo.png
+│       ├── DPO.png
+│       └── ...
 ├── package.json           # Dependencies and scripts
 ├── .github/
 │   └── workflows/

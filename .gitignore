@@ -1,6 +1,33 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 .slidev/
+.vite/
+
+# Slidev/local exports and generated stats
+slides-export/
+slidesStatLLM/
+*.pdf
+*.pptx
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment and machine-specific config
+.env
+.env.*
 *.local
 .DS_Store
-slidesStatLLM/
+Thumbs.db
+
+# Editor/cache folders
+.vscode/
+.idea/
+.cache/
