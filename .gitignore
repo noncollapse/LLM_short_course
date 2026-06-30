@@ -9,6 +9,7 @@ dist/
 # Slidev/local exports and generated stats
 slides-export/
 slidesStatLLM/
+backups/
 *.pdf
 *.pptx
 

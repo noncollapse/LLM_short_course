@@ -78,23 +78,42 @@ layout: default
 
 # Table of Contents
 
-## Part 1: Foundations
-- Introduction to LLMs
-- Transformer Foundations and Architecture
+<div class="mt-6 space-y-7 text-[0.95em] leading-tight">
 
-## Part 2: Pre-training and Supervised Fine-Tuning
-- Pre-training Methods
-- Supervised Fine-Tuning (SFT)
+<div>
+  <h2 class="!text-3xl !mb-2">Part 1: LLM Background</h2>
+  <ul class="!mt-0 !space-y-1">
+    <li>What are Large Language Models?</li>
+    <li>Evolution of LLMs</li>
+  </ul>
+</div>
 
-## Part 3: Reinforcement Learning
-- RLHF (Reinforcement Learning from Human Feedback)
-- RLVR (Reinforcement Learning with Verifiable Rewards)
+<div>
+  <h2 class="!text-3xl !mb-2">Part 2: Transformer</h2>
+  <ul class="!mt-0 !space-y-1">
+    <li>Transformer Foundation: From text to tokens and embeddings</li>
+    <li>Transformer Architecture</li>
+  </ul>
+</div>
+
+<div>
+  <h2 class="!text-3xl !mb-2">Part 3: Training and developing</h2>
+  <ul class="!mt-0 !space-y-1">
+    <li>Stage 1: Pre-training and Supervised Fine-Tuning</li>
+    <li>Stage 2: Preference optimization and RLHF</li>
+    <li>Stage 3: Reasoning and RLVR</li>
+  </ul>
+</div>
+
+
+
+</div>
 
 ---
 layout: section
 ---
 
-# Part 1: Foundations
+# Part 1: LLM Background
 
 ---
 
@@ -118,45 +137,20 @@ We can ask the LLMs themselves!
 
 
 ---
+layout: full
+title: Evolution of LLM
+clicks: 5
+---
 
-# Evolution of LLM
+<LLMEvolutionTimeline :step="$clicks" />
 
-<div class="flex justify-center">
-<div class="w-full">
+---
+layout: full
+title: What Is a GPT?
+clicks: 3
+---
 
-<div class="mt-15"></div>
-
-<style>
-.mermaid svg text {
-  font-size: 5rem !important;
-  font-weight: bold !important;
-}
-</style>
-
-```mermaid
-timeline
-    2017 : Transformer Architecture
-      : Attention is All You Need
-    2018 : BERT, GPT-1
-      : Pre-training + Fine-tuning Paradigm
-    2019 : GPT-2
-      : Parameter Scale Increase
-    2020 : GPT-3
-      : Few-shot Learning Capability
-    2022 : ChatGPT
-      : RLHF Alignment
-    2023 : GPT-4, Claude 3
-      : Multimodal Capabilities
-    2024-2026 : Open-source LLM Boom
-        : LLaMA, Qwen, GLM Series
-```
-
-</div>
-</div>
-
-<div class="text-center mt-4 text-xl font-semibold">
-LLM Development Timeline
-</div>
+<GPTIntroAnimation :step="$clicks"/>
 
 ---
 
@@ -174,7 +168,11 @@ LLM Development Timeline
 layout: section
 ---
 
-# Transformer Foundations
+# Part 2: Transformer
+
+<div class="text-2xl mt-8 opacity-80">
+From <b>tokens and vectors</b> to <b>attention blocks</b>
+</div>
 
 ---
 
@@ -1786,13 +1784,18 @@ $X = \text{append}(X, \text{token}_{t+1})$
 layout: section
 ---
 
-# Part 2: Pre-training and Supervised Fine-Tuning
+# Part 3: Training &amp; Developing
+
+<div class="text-2xl mt-8 opacity-80">
+From <b>pre-training</b> to <b>post-training</b> and <b>reasoning</b>
+</div>
 
 
 
 ---
 
 # Autoregressive next-token prediction
+
 <style>
 @keyframes flowInput {
   0% {
@@ -1978,11 +1981,12 @@ it tells you the probability of each token in the vocabulary being next.
 </p>
 </div>
 
+
+
 ---
 
 
-
-# Training Pipeline
+# Training Pipeline (Three Stages)
 
 <style scoped>
 .slidev-code {
@@ -1997,7 +2001,7 @@ it tells you the probability of each token in the vocabulary being next.
 ```python
 """
 ═══════════════════════════════════════════════════════
-Step 1: Data Preparation
+Step 1: Pre-training (Data Preparation)
 First we collect massive text corpora from various sources
 such as Wikipedia, Books, and code repositories
 ═══════════════════════════════════════════════════════
@@ -2013,12 +2017,18 @@ data = load_corpus([
 
 tokenized_data = tokenize(data)  # Tokenize and clean
 
+data_example = [
+    {
+      "Neural networks are a class of machine learning ..."
+    },
+]
+
 ```
 
 ```python
 """
 ═══════════════════════════════════════════════════════
-Step 2: Pre-training
+Step 1: Pre-training (Training)
 With those data we use autoregressive next-token prediction
 Train the model to predict the next token at each position
 ═══════════════════════════════════════════════════════
@@ -2043,7 +2053,7 @@ for batch in tokenized_data:
 ```python
 """
 ═══════════════════════════════════════════════════════
-Step 3: Supervised Fine-Tuning (SFT)
+Step 2: Supervised Fine-Tuning (SFT)
 Use high-quality human-written instruction-response pairs
 to teach the model to follow instructions
 ═══════════════════════════════════════════════════════
@@ -2051,8 +2061,8 @@ to teach the model to follow instructions
 
 instruction_data = [
     {
-        "input": "Explain quantum computing",
-        "output": "Quantum computing is..."
+        "input": "Explain neural networks",
+        "output": "Neural networks are..."
     },
 ]
 
@@ -2067,34 +2077,72 @@ for example in instruction_data:
 
 ```python
 """
-══════════════════════════════════════════════════════════════════════════════════════════
-Step 4: Result - A model that understands instructions and generates quality responses
-══════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════
+Step 3: Reinforcement Learning (RL)
+Use rewards to make the assistant more helpful, safe,
+or correct beyond simply imitating demonstrations
+═══════════════════════════════════════════════════════
 """
 
-# Before SFT:
-input = "Explain neural networks："
-output = "Explain neural networks: Neural networks are a class of machine learning [continues with raw text]"
+RL_data = [{ "prompt": "Explain neural networks to a beginner"},]
+ref_model = copy(model)  # Frozen SFT model for KL control
+reward_fn = choose_reward_source(
+    human_preference_model=reward_model,  # RLHF
+    rule_based_verifier=verifier          # RLVR
+)
+for prompt in rl_prompts:
+    responses = model.generate(prompt, n)
+    rewards = [reward_fn(prompt, r) for r in responses]
+    advantages = normalize(rewards)  # Good answers go up
+    loss = policy_gradient_loss(model, responses, advantages, beta * kl_divergence) 
+    
+    loss.backward()
+    optimizer.step()
 
+```
+
+```python
+"""
+══════════════════════════════════════════════════════════════════════════════════════════
+Result - A model that follows instructions and optimizes for rewarded behavior
+══════════════════════════════════════════════════════════════════════════════════════════
+"""
+# Before SFT:
+input = "Neural networks are"
+output = "Neural networks are a class of machine learning [continues with raw text]"
 # After SFT:
 input = "Explain neural networks"
-prompt = """
-User: Explain neural networks.
-Assistant:
-"""
 output = """
 Neural networks are computational models inspired by 
 the human brain. They consist of:
 1. Input layer - receives data
-2. Hidden layers - process information
-3. Output layer - produces predictions ...
+2. Hidden layers - process information ...
+"""
+# After RL:
+input = "Explain neural networks to a beginner"
+output = """
+Neural networks are pattern-learning systems. 
+They learn by example and improves by adjusting itself based on errors
 """
 ```
 ````
 
+
+---
+layout: section
 ---
 
-# Training Objective: Next-Token Prediction
+# Stage 1: Pre-training &amp; Supervised Fine-Tuning
+
+<div class="text-xl mt-8 opacity-80">
+<b>Pre-training</b> provides the foundation; <b>supervised fine-tuning</b> turns it into an instruction-following model.
+</div>
+
+---
+
+
+
+# Training Objective: Minimize Surprise
 
 <div class="grid grid-cols-2 gap-8">
 
@@ -2104,20 +2152,23 @@ the human brain. They consist of:
 
 $\mathcal{D} = \{x_i\}_{i=1}^N$  
 
-Each $x_i = (x_1, \ldots, x_T)$
+Each $x_i = (x_1, \ldots, x_T)$ is a token sequence.
 
 </div>
 
 <div>
 
-### Model Output:
-$$P_\theta(x_{1:T}) = \prod_{t=1}^{T} P_\theta(x_t \mid x_{<t})$$
+### Autoregressive factorization：
+
+$$P_\theta(x_{1:T}) = \prod_{t=1}^{T} P_\theta(x_t \mid x_{\lt t})$$
+
+The causal mask prevents the model from peeking at future tokens.
 
 </div>
 
 </div>
 
-<div class="mt-7 p-5 pt-4 pb-0 bg-gradient-to-r from-blue-50 to-purple-50 border-5 border-blue-300 rounded-lg">
+<div class="mt-3 p-4 pt-3 pb-0 bg-gradient-to-r from-blue-50 to-purple-50 border-5 border-blue-300 rounded-lg">
 
 ### Training Goal
 $$\max_\theta \prod_{t=1}^{T} P_\theta(x_t \mid x_{<t})$$
@@ -2127,23 +2178,28 @@ We want the model to assign as much probability as possible to the correct token
 
 ---
 
-# Cross-Entropy Loss
+# Cross-Entropy: The Surprise Meter
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-2 gap-4 mt-3 text-[0.96em]">
 
 <div>
 
-### Definitions
+### One position
 
-**True distribution** $q_t$: one-hot vector  
-- 1 at correct token $x_t$
-- 0 elsewhere
+If the true next token is <b>mat</b>, the target distribution is one-hot:
+
+<div class="mt--3 space-y-1.5 text-sm">
+<div class="flex items-center gap-2"><span class="w-16 font-semibold">mat</span><div class="h-5 bg-green-500 rounded" style="width: 200px;"></div><span>target = 1</span></div>
+<div class="flex items-center gap-2"><span class="w-16">table</span><div class="h-5 bg-gray-300 rounded" style="width: 30px;"></div><span>target = 0</span></div>
+<div class="flex items-center gap-2"><span class="w-16">floor</span><div class="h-5 bg-gray-300 rounded" style="width: 20px;"></div><span>target = 0</span></div>
+</div>
 
 **Model distribution** $p_t$: softmax output over vocabulary $|V|$
 
 </div>
 
 <div>
+
 
 ### 
 
@@ -2169,52 +2225,47 @@ This is also the **Negative Log-Likelihood (NLL)**
 
 </div>
 
-<div class="mt--3 px-4 pt-4 pb-0 bg-blue-50 border-5 border-blue-200 rounded-lg">
+<div class="mt--3 px-4 pt-1 pb-0 bg-blue-50 border-5 border-blue-200 rounded-lg">
 
 ### Loss for Entire Sequence
-
 <div class="text-m">
 
-$$\mathcal{L}(\theta) = \sum_{t=1}^{T} -\log p_\theta(x_t \mid x_{<t})$$
-
+$$\mathcal{L}(\theta) = \sum_{i=1}^{N}\sum_{t=1}^{T} -\log p_\theta(x_{i,t} \mid x_{i,<t})$$
 </div>
 
 In practice: average over **batch** and over **tokens** to get the training loss
+
 </div>
 
 ---
 
-# Difference between Pre-training and SFT
 
-<div class="grid grid-cols-2 gap-6">
+# SFT: From Base Model to Assistant
 
-<div>
+<div class="grid grid-cols-2 gap-6 mt-5">
 
-## Pre-training
-
-**Data:** Massive unlabeled text
-
-**Loss:** Computed on **all tokens**
-
-**Goal:** Learn general language patterns
-
+<div class="p-5 bg-slate-50 border-2 border-slate-300 rounded">
+<div class="text-xl font-bold mb-3">Pre-training: learn the world</div>
+<div class="space-y-3 text-base">
+<div><b>Data:</b> massive unlabeled text</div>
+<div><b>Loss:</b> all next-token positions</div>
+<div><b>Behavior:</b> continue whatever distribution the prompt resembles</div>
+</div>
 </div>
 
-<div>
-
-## Supervised Fine-Tuning (SFT)
-
-**Data:** High-quality instruction-response pairs
-
-**Loss:** Only on **assistant responses**
-
-**Goal:** Learn to follow instructions
-
+<div class="p-5 bg-purple-50 border-2 border-purple-300 rounded">
+<div class="text-xl font-bold mb-3">SFT: learn the interface</div>
+<div class="space-y-3 text-base">
+<div><b>Data:</b> instruction-response demonstrations</div>
+<div><b>Loss:</b> assistant response tokens only</div>
+<div><b>Behavior:</b> answer in the desired role, style, and format</div>
+</div>
 </div>
 
 </div>
 
-<div class="mt--2">
+
+<div class="mt-3">
 
 ## SFT Loss Masking
 
@@ -2311,13 +2362,23 @@ Label = -100 means "ignore this token in loss computation" (PyTorch convention)
 </div>
 
 ---
+---
+
+# SFT Training Mechanism
+
+<SFTLossFlowAnimation />
+
+---
 layout: section
 ---
 
-# Part 3: Reinforcement Learning For LLM
+# Stage 2: Preference Optimization &amp; RLHF
+
+<div class="text-xl mt-8 opacity-80">
+<b>Preference optimization and RLHF</b> teach the model to better follow human preferences.
+</div>
 
 ---
-
 
 
 # Reinforcement Learning
@@ -2334,11 +2395,6 @@ layout: section
 </div>
 
 
----
-layout: section
----
-
-# RLHF: Reinforcement Learning From Human Feedback
 
 ---
 
@@ -2435,11 +2491,11 @@ and entanglement to perform computations..."
 ## Training Objective
 
 $$
-\mathcal{L} = -\mathbb{E}\left[\log\sigma(r(x,y_w) - r(x,y_l))\right]
+\mathcal{L}_{\text{RM}} = -\mathbb{E}\left[\log\sigma(r_{\text{RM}}(x,y^+) - r_{\text{RM}}(x,y^-))\right]
 $$
 
-- $y_w$: chosen response
-- $y_l$: rejected response
+- $y^+$: chosen response
+- $y^-$: rejected response
 
 
 </div>
@@ -2515,7 +2571,7 @@ To prevent reward hacking / distribution shift by KL penalty:
 
 <div class="text-xs">
 
-$$r_{\text{final}} = r_{\text{RM}}(x, y) - \beta \cdot KL(\pi_\theta(\cdot | x) \| \pi_{\text{ref}}(\cdot | x))$$
+$$r_{\text{final}} = r_{\text{RM}}(x, y) - \beta \cdot KL(\pi_\theta(\cdot \mid x) \| \pi_{\text{ref}}(\cdot \mid x))$$
 
 </div>
 
@@ -2576,14 +2632,14 @@ def rlhf_training(policy_model,reward_model,value_model,prompts):
 <div class="text-sm">
 
 $$
-L^{CLIP}(\theta) = \mathbb{E}\left[\min(r_t\hat{A}_t, \text{clip}(r_t, 1-\epsilon, 1+\epsilon)\hat{A}_t)\right]
+L^{\text{CLIP}}(\theta) = \mathbb{E}\left[\min(\rho_t\hat{A}_t, \text{clip}(\rho_t, 1-\epsilon, 1+\epsilon)\hat{A}_t)\right]
 $$
 
 </div>
 
 where:
-- $r_t = \frac{\pi_\theta(a|s)}{\pi_{old}(a|s)}$ (Important sampling ratio)
-- $\hat{A}_t \thickapprox Q(s_t, a_t) - V(s_t)$ (Advantage estimated by GAE)
+- $\rho_t = \frac{\pi_\theta(y_t \mid x,y_{<t})}{\pi_{\text{old}}(y_t \mid x,y_{<t})}$ (importance sampling ratio)
+- $\hat{A}_t \thickapprox Q(x,y_{\le t}) - V_\phi(x,y_{<t})$ (token-level advantage)
 - $\epsilon$  (clip parameter)
 
 </div>
@@ -2593,18 +2649,19 @@ where:
 ```python
 # PPO Update
 def ppo_step(policy, value_model, experiences):
-    for (states, actions, advs, old_probs) in experiences:
+    for (contexts, tokens, advs, old_logps, values_old) in experiences:
         # Probability ratio
-        new_prob = policy.log_prob(states, actions)
-        ratio = exp(new_probs - old_probs)
+        new_logps = policy.log_prob(contexts, tokens)
+        ratios = exp(new_logps - old_logps)
         
         # loss of the policy
         surr1 = ratios * advs
-        surr2 = clip(ratios, 1-eps, 1+eps) * adv
+        surr2 = clip(ratios, 1-eps, 1+eps) * advs
         policy_loss = -mean(min(surr1, surr2))
 
         # loss of the value model
-        returns = adv + values_old
+        values_new = value_model(contexts)
+        returns = advs + values_old
         value_loss = mean((values_new - returns)**2)
 
         loss = policy_loss + c_v * value_loss
@@ -2620,55 +2677,154 @@ def ppo_step(policy, value_model, experiences):
 
 ---
 
-# Some insights about policy gradient and PPO
+# Policy Gradient and PPO Surrogate
 
-<div class="text-base">
+<div class="text-[18px] leading-snug mt-4">
 
-**Our original objective:**
+### The objective
 
-$$J(\theta) \;=\; \mathbb{E}_{y \sim \pi_\theta(\cdot \mid x)}\big[A(x,y)\big]$$
+$$
+J(\theta)
+=
+\mathbb{E}_{x\sim q(x),\,y\sim\pi_\theta(\cdot\mid x)}
+\left[
+R(x,y)
+\right]
+$$
 
-**What we have:** a dataset $\mathcal{D} = \{x,y\}$, where $x \sim q(x), y \sim \pi_\theta(\cdot \mid x)$
+<div class="mt-6 border-2 border-blue-300 bg-blue-50 px-5 py-4 rounded text-[17px]">
 
-<div class="mt-2">
+The model samples a discrete response $y$, so the sample operation itself is not differentiable.
+Policy gradient gives us a gradient estimator that avoids backpropagating through the sample.
+</div>
 
-$$J(\theta) = \sum_{y} \pi_\theta(y\mid x)\,A(x,y)$$
+<div class="mt-6">
 
-$$\nabla_\theta J(\theta) = \sum_{y} \nabla_\theta \pi_\theta(y\mid x)\,A(x,y)$$
-<div class="mt--5">
+If the response space were tiny, we could enumerate all possible $y$:
 
-Using $\nabla_\theta \pi_\theta(y\mid x) = \pi_\theta(y\mid x)\,\nabla_\theta \log \pi_\theta(y\mid x)$:
-
-$$\nabla_\theta J(\theta) = \sum_{y} \pi_\theta(y\mid x)\,\nabla_\theta \log \pi_\theta(y\mid x)\,A(x,y)$$
-
-$$= \mathbb{E}_{x,y\sim \mathcal{D}}\Big[\nabla_\theta \log \pi_\theta(y\mid x)\,A(x,y)\Big]$$
-
-<div class="mt--6">
-
-**Surrogate objective:**
-
-$$J(\theta) = \mathbb{E}_{x,y\sim \mathcal{D}}\Big[\log \pi_\theta(y\mid x)\,A(x,y)\Big]$$
+$$
+J(\theta)
+=
+\mathbb{E}_{x\sim q(x)}
+\left[
+\sum_y
+\pi_\theta(y\mid x)R(x,y)
+\right]
+$$
 
 </div>
+
 </div>
+
+---
+
+# Policy Gradient: Why the Trick Is Needed
+
+<div class="text-[18px] leading-snug mt-4">
+
+For language models, the response space is enormous, so training should use Monte Carlo samples:
+
+$$
+x\sim q(x),
+\qquad
+y\sim\pi_\theta(\cdot\mid x)
+$$
+
+However the sample $y$ is a discrete token sequence and we cannot directly differentiate through the act of sampling it.
+
+<div class="mt-6">
+
+Start from the enumerable form and differentiate the probability mass:
+
+$$
+\begin{aligned}
+J(\theta)
+&=
+\mathbb{E}_{x\sim q(x)}
+\left[
+\sum_y
+\pi_\theta(y\mid x)R(x,y)
+\right] \\
+\nabla_\theta J(\theta)
+&=
+\mathbb{E}_{x\sim q(x)}
+\left[
+\sum_y
+\nabla_\theta \pi_\theta(y\mid x)R(x,y)
+\right]
+\end{aligned}
+$$
+
 </div>
+
+</div>
+
+---
+
+# Policy Gradient: Log-Derivative Trick
+
+<div class="text-[17px] leading-tight mt-3">
+
+Rewrite the derivative of the probability using:
+
+$$
+\nabla_\theta \pi_\theta(y\mid x)
+=
+\pi_\theta(y\mid x)
+\nabla_\theta \log\pi_\theta(y\mid x)
+$$
+
+This turns the gradient into an expectation over sampled responses:
+
+$$
+\begin{aligned}
+\nabla_\theta J(\theta)
+&=
+\mathbb{E}_{x\sim q(x)}
+\left[
+\sum_y
+\pi_\theta(y\mid x)
+\nabla_\theta\log\pi_\theta(y\mid x)
+R(x,y)
+\right] \\
+&=
+\mathbb{E}_{x\sim q(x),\,y\sim\pi_\theta(\cdot\mid x)}
+\left[
+\nabla_\theta\log\pi_\theta(y\mid x)R(x,y)
+\right]
+\end{aligned}
+$$
+
+So the on-policy surrogate has the same gradient:
+
+$$
+J_{\mathrm{PG}}(\theta)
+=
+\mathbb{E}_{x,y\sim\mathcal{D}}
+\left[
+\log \pi_\theta(y\mid x)\,R(x,y)
+\right]
+$$
+
+PPO uses an advantage estimate instead of the raw reward $R(x,y)$ to reduce estimation variance.
 </div>
 
 ---
 
 # Problem: Our Data Come from an Old Policy
 
-<div class="text-base">
+<div class="text-[17px] leading-tight mt-3">
 
 In PPO step (> 1), we collect trajectories with a **frozen snapshot** policy $\pi_{\text{old}}$:
 
-$$\mathcal{D}_{\text{old}} = \{x,y\}, \text{where } x \sim q(x), y \sim \pi_\text{old}(\cdot \mid x)$$
+$$\mathcal{D}_{\text{old}} = \{x,y\}, \text{where } x \sim q(x), y \sim \pi_{\text{old}}(\cdot \mid x)$$
+
 
 If we *naively* plug off-policy data into the policy gradient estimator:
 
 $$\widehat{g}_{\text{naive}} = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{old}}}\Big[\nabla_\theta \log \pi_\theta(y\mid x)\; A(x,y)\Big]$$
 
-<div class="mt-7 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+<div class="mt-10 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
 <div class="text-red-700 font-bold">⚠️ This is generally <span class="text-xl">biased</span></div>
 
 Because the expectation is taken under $\pi_{\text{old}}$ rather than $\pi_\theta$:
@@ -2714,6 +2870,14 @@ $$L(\theta) = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{old}}}\left[\frac{ \pi_\t
 
 ---
 
+# PPO Pipeline Overview
+
+<div class="flex justify-center items-center mt-7">
+<img src="/figs/ppo_pipeline_003.png" style="width: 110%; max-height: 550px; object-fit: contain;" />
+</div>
+
+---
+
 
 # Algorithm II: DPO-based approach
 <div class="text-right text-sm mt--10 mr-10">
@@ -2725,13 +2889,58 @@ $$L(\theta) = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{old}}}\left[\frac{ \pi_\t
 
 ---
 
-# Insights of  DPO 
+# DPO: From Preferences to Log-Probability Ratios
 
-<div class="text-base">
+<div class="flex justify-center items-center mt-3">
+<img src="/figs/dpo-logprob-flow.png" style="width: 98%; max-height: 470px; object-fit: contain;" />
+</div>
 
-Under any reward function $r(x,y)$, reference model $\pi_{\mathrm{ref}}$ and a general non-parametric policy class.
+---
+
+# DPO Derivation: Setup
+
+<div class="text-[21px] leading-normal mt-4">
+
+### Preference data:
+
+$$
+\mathcal{D}=\{(x^{(i)},y^{+(i)},y^{-(i)})\}_{i=1}^{N},
+\qquad
+y^+\succ y^- \mid x
+$$
+
+### KL-regularized RLHF objective:
+
+$$
+\max_{\pi}\;
+\mathbb{E}_{x\sim\mathcal{D},\,y\sim\pi(y\mid x)}
+\left[r(x,y)\right]
+-\beta\,
+\mathbb{D}_{\mathrm{KL}}
+\left[
+\pi(y\mid x)\,\|\,\pi_{\text{ref}}(y\mid x)
+\right]
+$$
+
+### DPO purpose:
+
+<div class="text-[18px] leading-snug mt-3">
+Find an objective function directly optimizes for the policy best satisfying the preferences with a simple classification
+objective, without fitting a reward model first, and then use RL to find a policy that maximizes the learned reward.
+</div>
 
 </div>
+
+---
+
+# DPO Derivation: Objective Transformation
+
+<div class="text-[15px] leading-snug mt-1">
+
+Under any reward function $r(x,y)$, reference model $\pi_{\mathrm{ref}}$ and a general non-parametric policy class，we have:
+
+</div>
+
 
 $$
 \begin{aligned}
@@ -2742,19 +2951,173 @@ $$
 &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
 \Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)}-\frac{1}{\beta}r(x,y)\Big] \\
 &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
-\Big[\log\frac{\pi(y|x)}{\frac{1}{Z(x)}\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}
--\log Z(x)\Big]
+\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}
+-1\Big]
 \end{aligned}
 $$
 
+
+<div class="text-[15px] leading-snug mt-1">
+
+  Gibbs' inequality tells us that the KL divergence is minimized at 0 if and only if the
+  two distributions are identical. Following this observation, we can reformulate the
+  optimization problem as finding a policy $\pi'$ that transforms the objective into the following form:
+
+</div>
+
 $$
-\pi^{\star}(y|x)=\frac{1}{Z(x)}\,\pi_{\mathrm{ref}}(y|x)\exp\!\Big(\frac{1}{\beta}r(x,y)\Big), \text{where } Z(x)=\sum_{y}\pi_{\mathrm{ref}}(y|x)\exp\!\Big(\frac{1}{\beta}r(x,y)\Big)
+\begin{aligned}
+\min_{\pi}\;
+\mathbb{E}_{x\sim\mathcal{D},\,y\sim\pi}
+\left[
+\mathbb{D}_{\mathrm{KL}}
+\left(\pi(y\mid x)\,\|\,\pi^{'}(y\mid x)\right)
+-C(x)
+\right]
+\end{aligned},
+\quad
+\text{where } C(x) \text{ does not depend on } \pi
 $$
-is a valid probability distribution as $\pi^{\star}(y|x)\ge 0$ for all $y$ and $\sum_y \pi^{\star}(y|x)=1$.
 
 ---
 
-# DPO 
+# DPO Derivation: Partition Function
+
+<div class="text-[17px] leading-snug mt-4">
+
+Here, $\pi'$ should be independent of the current policy $\pi$, while still defining a valid probability distribution. Specifically, it must satisfy
+$$
+\pi'(y \mid x) \geq 0 \quad \text{for all } y,
+\qquad
+\sum_y \pi'(y \mid x) = 1.
+$$
+To ensure normalization, we define the partition function
+$$
+Z(x)
+=
+\sum_y
+\pi_{\text{ref}}(y \mid x)
+\exp\left(\frac{1}{\beta} r(x,y)\right), \text{and get } \pi'(y \mid x)
+=
+\frac{1}{Z(x)}
+\pi_{\text{ref}}(y \mid x)
+\exp\left(\frac{1}{\beta} r(x,y)\right),
+
+$$
+This gives
+$$
+\begin{aligned} &\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
+\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}
+-1\Big] \\ &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)} \Big[\log\frac{\pi(y|x)}{\frac{1}{Z(x)}\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)} -\log Z(x)\Big] \end{aligned}
+$$
+</div>
+
+---
+
+# DPO Derivation: Closed-form Reward
+
+<div class="text-[17px] leading-snug mt-4">
+Hence, the optimal policy induced by the reward function can be written as
+</div>
+
+$$
+\pi_r^{\star}(y \mid x)
+=
+\pi'(y \mid x)
+=
+\frac{1}{Z(x)}
+\pi_{\mathrm{ref}}(y \mid x)
+\exp\left(\frac{1}{\beta} r(x,y)\right).
+$$
+
+<div class="text-[17px] leading-snug mt-4">
+Rearranging this expression gives the corresponding closed-form reward:
+</div>
+
+$$
+r(x,y)
+=
+\beta
+\log
+\frac{\pi_r^{\star}(y \mid x)}
+{\pi_{\mathrm{ref}}(y \mid x)}
++
+\beta \log Z(x).
+$$
+
+<div class="text-[17px] leading-snug mt-4">
+
+Under the Bradley--Terry preference model, the probability that $y^+$ is preferred over $y^-$ is
+</div>
+
+$$
+p^{\star}(y^+ \succ y^-  \mid x)
+=
+\frac{\exp\left(r^{\star}(x,y^+)\right)}
+{\exp\left(r^{\star}(x,y^+)\right)
++
+\exp\left(r^{\star}(x,y^-)\right)}.
+$$
+
+<div class="text-[17px] leading-snug mt-4">
+Using the optimal-policy form above, the ground-truth reward can be expressed as
+</div>
+
+$$
+r^{\star}(x,y)
+=
+\beta
+\log
+\frac{\pi^{\star}(y \mid x)}
+{\pi_{\mathrm{ref}}(y \mid x)}
++
+\beta \log Z(x).
+$$
+
+---
+
+# DPO Derivation: DPO Objective
+
+
+<div class="text-[20px] leading-tight mt-7">
+
+We can formulate a maximum-likelihood objective for a parametrized policy $\pi_\theta$.
+Analogous to the reward-modeling objective, the policy objective becomes
+</div>
+<div class="text-[16px] leading-tight mt-20">
+  
+</div>
+$$
+\mathcal{L}_{\mathrm{DPO}}(\pi_{\theta};\pi_{\mathrm{ref}})
+=
+-
+\mathbb{E}_{(x,y^+,y^-)\sim\mathcal{D}}
+\left[
+\log
+\sigma
+\left(
+\beta
+\log
+\frac{\pi_{\theta}(y^+ \mid x)}
+{\pi_{\mathrm{ref}}(y^+ \mid x)}
+-
+\beta
+\log
+\frac{\pi_{\theta}(y^- \mid x)}
+{\pi_{\mathrm{ref}}(y^- \mid x)}
+\right)
+\right].
+$$
+<div class="text-[16px] leading-tight mt-20">
+  
+</div>
+<div class="text-[20px] leading-tight mt-7">
+
+In this way, DPO fits an implicit reward through an alternative parameterization, whose optimal policy is directly represented by $\pi_\theta$.
+</div>
+---
+
+# DPO: Training Loop Summary
 
 <div class="grid grid-cols-2 gap-6 mt-4">
 
@@ -2774,10 +3137,10 @@ Frozen copy of initial SFT model
 
 #### 3) Preference Data
 
-Pairs of $(x, y_w, y_l)$ where:
+Pairs of $(x, y^+, y^-)$ where:
 - $x$: prompt
-- $y_w$: preferred (chosen) response
-- $y_l$: rejected response
+- $y^+$: preferred (chosen) response
+- $y^-$: rejected response
 
 **Key Difference:** No separate reward model needed!
 
@@ -2793,13 +3156,13 @@ Pairs of $(x, y_w, y_l)$ where:
 
 #### 1. Sample Preference Pair
 
-Get $(x, y_w, y_l)$ from preference dataset
+Get $(x, y^+, y^-)$ from preference dataset
 
 #### 2. Compute Implicit Rewards
 
 <div class="text-xs">
 
-$$r_\theta(x, y) = \beta \log \frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)} - C(x)$$
+$$r_\theta(x, y) + C(x) = \beta \log \frac{\pi_\theta(y\mid x)}{\pi_{\text{ref}}(y\mid x)} $$
 
 </div>
 
@@ -2807,7 +3170,7 @@ $$r_\theta(x, y) = \beta \log \frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)} - C(
 
 <div class="text-xs">
 
-$$\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(x,y_w,y_l)} \left[\log \sigma\left(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)\right]$$
+$$\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(x,y^+,y^-)} \left[\log \sigma\left(\beta \log \frac{\pi_\theta(y^+\mid x)}{\pi_{\text{ref}}(y^+\mid x)} - \beta \log \frac{\pi_\theta(y^-\mid x)}{\pi_{\text{ref}}(y^-\mid x)}\right)\right]$$
 
 </div>
 
@@ -2891,110 +3254,584 @@ Requires thousands of comparisons
 layout: section
 ---
 
-# RLVR: Reinforcement Learning with Verifiable Rewards
+# Stage 3: Reasoning &amp; RLVR
+
+<div class="text-xl mt-8 opacity-80">
+<b>Reasoning and RLVR</b> further improve the model’s ability to solve complex or verifiable tasks.
+</div>
 
 ---
 
-# What is RLVR?
+# Why Reasoning Became a Separate Chapter
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-2 gap-8 mt-6">
 
 <div>
 
-## Motivation
+### Ordinary generation
 
-**Problem with RLHF:**
-- Human preferences are subjective
-- Reward model can be inaccurate
-- Hard to verify correctness
+<div class="text-lg mt-4">
 
-**RLVR Solution:**
-- Use objective, verifiable rewards
-- Automatic verification
-- Ground truth available
-- Scalable and reliable
+$$x \rightarrow y$$
+
+</div>
+
+- The model learns to produce the next token.
+- The answer can be fluent while the internal path is fragile.
+- Failure is often hidden until the final answer is checked.
 
 </div>
 
 <div>
 
-## Key Principle
+### Reasoning generation
 
-Instead of "Is this good?" ask "Is this correct?"
+<div class="text-lg mt-4">
 
-**Suitable for:**
-- **Code**: Run unit tests ✓
-- **Math**: Check answer ✓
-- **Logic**: Verify proof ✓
+$$x \rightarrow z_1 \rightarrow z_2 \rightarrow \cdots \rightarrow y$$
 
+</div>
+
+- The model spends tokens on intermediate state.
+- Search, verification, and revision become possible.
+- Training can reward not just style, but correctness.
+
+</div>
+
+</div>
+
+<div class="mt-8 text-xl font-semibold text-center">
+Reasoning is not only "longer output"; it is a different way of allocating computation.
+</div>
+
+---
+
+# Inference-Time Reasoning: Make the Model Think More
+
+<div class="grid grid-cols-4 gap-4 mt-8 text-sm">
+
+<div class="p-4 border-2 border-blue-300 rounded bg-blue-50">
+<div class="font-bold text-blue-700 mb-2">CoT</div>
+Generate intermediate steps before the answer.
+</div>
+
+<div class="p-4 border-2 border-cyan-300 rounded bg-cyan-50">
+<div class="font-bold text-cyan-700 mb-2">Self-Consistency</div>
+Sample multiple chains and vote by final answer.
+</div>
+
+<div class="p-4 border-2 border-purple-300 rounded bg-purple-50">
+<div class="font-bold text-purple-700 mb-2">ToT</div>
+Branch, evaluate, backtrack, and search over thoughts.
+</div>
+
+<div class="p-4 border-2 border-green-300 rounded bg-green-50">
+<div class="font-bold text-green-700 mb-2">ReAct</div>
+Interleave reasoning with actions, tools, and observations.
+</div>
+
+</div>
+
+<div class="mt-10 text-base">
+
+These methods improve reasoning at test time. They change the **trajectory we ask the model to follow**, but they do not by themselves change the model's parameters.
+
+</div>
+
+<div class="text-xs mt-6 opacity-70">
+Representative papers: CoT (Wei et al., 2022), Self-Consistency (Wang et al., 2022), ToT (Yao et al., 2023), ReAct (Yao et al., 2022).
+</div>
+
+---
+
+# Chain-of-Thought: Put Latent Work on the Page
+
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+## How to do it
+
+Give the model examples where the answer is preceded by intermediate reasoning:
+
+<div class="text-sm mt-4 p-3 bg-blue-50 border-l-4 border-blue-400">
+Question -> reasoning steps -> final answer
+</div>
+
+At inference time, ask the model to generate the same kind of reasoning trace before producing the answer.
+
+</div>
+
+<div>
+
+## Why it helps
+
+- The model can decompose a problem into smaller steps.
+- Intermediate tokens act as scratch space.
+- Later tokens condition on earlier reasoning, not only on the original prompt.
+- Best gains appear on multi-step arithmetic, symbolic, and commonsense tasks.
+
+</div>
+
+</div>
+
+<div class="mt-7 text-lg text-center font-semibold">
+CoT turns reasoning from an implicit hidden computation into an explicit generated trajectory.
+</div>
+
+---
+
+# Self-Consistency: Sample Many Paths, Vote on the Answer
+
+<div class="grid grid-cols-3 gap-4 mt-6 text-sm">
+
+<div class="p-4 border-2 border-cyan-300 rounded bg-cyan-50">
+<div class="font-bold text-cyan-700 mb-2">1. Sample</div>
+Use temperature to draw multiple chain-of-thought paths.
+</div>
+
+<div class="p-4 border-2 border-cyan-300 rounded bg-cyan-50">
+<div class="font-bold text-cyan-700 mb-2">2. Extract</div>
+Take the final answer from each sampled reasoning path.
+</div>
+
+<div class="p-4 border-2 border-cyan-300 rounded bg-cyan-50">
+<div class="font-bold text-cyan-700 mb-2">3. Marginalize</div>
+Choose the answer that appears most consistently.
+</div>
+
+</div>
+
+<div class="mt-8 text-base">
+
+The key idea is not "longer reasoning", but **diverse reasoning**. If several different paths converge to the same answer, that answer is more reliable than a single greedy chain.
+
+</div>
+
+<div class="text-lg mt-6 text-center">
 
 $$
-R_{\text{RLVR}}(x, y) = \begin{cases}
-+1 & \text{if correct} \\
-0 & \text{if wrong}
+\hat y = \arg\max_y \sum_{k=1}^{K} \mathbf{1}\{\mathrm{answer}(z_k)=y\}
+$$
+
+</div>
+
+---
+
+# Tree of Thoughts: Search Over Intermediate States
+
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+## From chain to tree
+
+CoT commits to one path:
+
+$$
+z_1 \rightarrow z_2 \rightarrow z_3 \rightarrow y
+$$
+
+ToT keeps multiple partial thoughts alive:
+
+$$
+\{z_1^{(1)}, z_1^{(2)}, \ldots\}
+\rightarrow
+\{z_2^{(1)}, z_2^{(2)}, \ldots\}
+$$
+
+</div>
+
+<div>
+
+## Search loop
+
+1. Propose several candidate thoughts.
+2. Evaluate whether each partial state is promising.
+3. Keep, prune, or backtrack.
+4. Continue until a final solution is found.
+
+Useful when early mistakes are costly and backtracking matters.
+
+</div>
+
+</div>
+
+<div class="mt-7 p-4 bg-purple-50 border-l-4 border-purple-500">
+ToT treats the LLM as both a generator and a heuristic evaluator inside a search procedure.
+</div>
+
+---
+
+# ReAct: Interleave Reasoning and Acting
+
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+## Reasoning trace
+
+The model writes what it is trying to infer:
+
+<div class="text-sm p-3 bg-green-50 border-l-4 border-green-400">
+Thought: I need the current fact before answering.
+</div>
+
+## Action trace
+
+The model calls an external tool or environment:
+
+<div class="text-sm p-3 bg-gray-50 border-l-4 border-gray-400">
+Action: search / lookup / calculate / query database
+</div>
+
+</div>
+
+<div>
+
+## Observation loop
+
+The environment returns information:
+
+<div class="text-sm p-3 bg-yellow-50 border-l-4 border-yellow-400">
+Observation: result returned by the tool
+</div>
+
+Then the model reasons again, acts again if needed, and eventually answers.
+
+<div class="text-lg mt-6">
+
+$$
+\text{Thought} \rightarrow \text{Action} \rightarrow \text{Observation} \rightarrow \text{Thought}
+$$
+
+</div>
+
+</div>
+
+</div>
+
+---
+
+# Choosing an Inference-Time Reasoning Strategy
+
+<div class="grid grid-cols-4 gap-3 mt-5 text-xs">
+
+<div class="p-3 border-2 border-blue-300 rounded bg-blue-50">
+<div class="font-bold text-blue-700 mb-2">CoT</div>
+Use when a single explicit reasoning trace is enough.
+</div>
+
+<div class="p-3 border-2 border-cyan-300 rounded bg-cyan-50">
+<div class="font-bold text-cyan-700 mb-2">Self-Consistency</div>
+Use when answers are easy to compare but paths may vary.
+</div>
+
+<div class="p-3 border-2 border-purple-300 rounded bg-purple-50">
+<div class="font-bold text-purple-700 mb-2">ToT</div>
+Use when search and backtracking can recover from bad partial choices.
+</div>
+
+<div class="p-3 border-2 border-green-300 rounded bg-green-50">
+<div class="font-bold text-green-700 mb-2">ReAct</div>
+Use when the model must gather external facts or interact with tools.
+</div>
+
+</div>
+
+<div class="mt-5">
+
+| Method | Extra compute | Main benefit | Main cost |
+|---|---:|---|---|
+| CoT | low | exposes reasoning path | can be confidently wrong |
+| Self-Consistency | medium | reduces single-path errors | multiple samples |
+| ToT | high | explicit search and backtracking | controller complexity |
+| ReAct | variable | grounds reasoning in observations | tool reliability |
+
+</div>
+
+<div class="mt-3 text-sm text-center font-semibold">
+Inference-time methods change how the model spends compute; the parameters stay fixed.
+</div>
+
+---
+
+# From Search to Training
+
+<div class="grid grid-cols-2 gap-8 mt-6">
+
+<div>
+
+## Search-style reasoning
+
+- Spend more compute at inference time.
+- Try several paths, then select or vote.
+- Works even when no training data are available.
+- Cost grows with the number of sampled paths.
+
+</div>
+
+<div>
+
+## RL-style reasoning
+
+- Sample reasoning paths during training.
+- Score them with a verifier or reward.
+- Move probability mass toward successful paths.
+- Cost is paid during post-training, not every query.
+
+</div>
+
+</div>
+
+<div class="mt-8 p-4 bg-gray-50 border-l-4 border-gray-500 text-lg">
+The bridge is simple: if a final answer can be verified, the reasoning path becomes trainable.
+</div>
+
+---
+
+# RLVR: Verifiable Rewards for Reasoning
+
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+## What changes?
+
+Instead of asking a reward model "is this response preferred?", RLVR asks a verifier:
+
+<div class="text-xl mt-4">
+
+$$\text{Did the solution pass?}$$
+
+</div>
+
+Examples:
+- Math: final answer matches ground truth.
+- Code: unit tests pass.
+- Logic: constraints are satisfied.
+
+</div>
+
+<div>
+
+## Reward signal
+
+<div class="text-sm">
+
+$$
+R(x,y)=
+\begin{cases}
+1, & \text{verified correct}\\
+0, & \text{not verified}
 \end{cases}
 $$
 
 </div>
 
+The reward is sparse, but it is cheap, scalable, and less subjective than human preference labels.
+
+</div>
+
+</div>
+
+<div class="text-xs mt-6 opacity-70">
+DeepSeek-R1-Zero is a prominent example: large-scale RL from rule-based rewards produced strong reasoning behaviors, but also readability and language-mixing issues that required later training stages.
 </div>
 
 ---
 
-# RLVR for Reasoning
+# Reasoning Models Made RL Visible
+
 <div class="flex justify-center items-center mt-8">
 <img src="/figs/DeepSeek_nature.png" class="w-5/5" />
 </div>
+
 ---
 
-# Algorithm: GRPO-based approach
+# Look Deeper into RL: The Sequence Is the Action
 
-## Group Relative Policy Optimization
+For a prompt $x$, a completion $y=(y_1,\ldots,y_T)$ is one sampled action:
 
-<div class="grid grid-cols-2 gap-6 mt-6">
+$$
+\log \pi_\theta(y\mid x)=\sum_{t=1}^{T}\log \pi_\theta(y_t\mid x,y_{<t})
+$$
 
-<div>
+The vanilla policy-gradient direction is:
 
-### Motivation
+$$
+\nabla_\theta J(\theta)
+=
+\mathbb{E}_{y\sim\pi_\theta(\cdot\mid x)}
+\left[
+R(x,y)\nabla_\theta \log \pi_\theta(y\mid x)
+\right]
+$$
 
-**Problem with PPO:**
-- a separate value model/critic increases GPU memory.
-- a poorly learned value model makes advantages noisy, destabilizing updates.
+<div class="mt-6 grid grid-cols-3 gap-4 text-sm">
 
-
-**GRPO Solution:**
-- No value network needed
-- Uses group-based advantages
-
-
-</div>
-
-<div>
-
-### Key Idea
-
-Instead of comparing to a baseline **by model**, compare responses **within a group**:
-
-1. Generate **multiple responses** for same prompt
-2. Score all responses with reward model
-3. Use **group statistics** for advantage
-4. Update policy based on relative quality
-
-<div class="text-sm mt-4">
-
-$$\hat{A}_i = \frac{r_i - \text{mean}(r_{\text{group}})}{\text{std}(r_{\text{group}})}$$
-
-</div>
-
-No separate value network needed!
-
-</div>
+<div class="p-3 bg-blue-50 border border-blue-200 rounded">If reward is high, increase the probability of that reasoning trace.</div>
+<div class="p-3 bg-red-50 border border-red-200 rounded">If reward is low, decrease the probability of that trace.</div>
+<div class="p-3 bg-yellow-50 border border-yellow-200 rounded">But raw reward is a noisy training signal.</div>
 
 </div>
 
 ---
 
-# GRPO Algorithm
+# Why Advantage Is the Real Signal
+
+The model should not ask: "was this answer good in absolute terms?"
+
+It should ask:
+
+<div class="text-2xl text-center font-bold mt-6">
+Was this completion better than what we expected for this prompt?
+</div>
+
+<div class="mt-7 text-lg">
+
+$$
+A(x,y)=R(x,y)-b(x)
+$$
+
+</div>
+
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+### Why not raw reward?
+- Easy prompts give many correct samples.
+- Hard prompts give mostly wrong samples.
+- Reward scale mixes prompt difficulty with completion quality.
+
+</div>
+
+<div>
+
+### Why advantage?
+- Centers the reward within a local context.
+- Positive means "better than baseline".
+- Negative means "worse than baseline".
+
+</div>
+
+</div>
+
+---
+
+# Why a Baseline Can Reduce Variance
+
+For any baseline $b(x)$ that does not depend on the sampled completion $y$:
+
+$$
+\mathbb{E}_{y\sim\pi_\theta}\left[
+b(x)\nabla_\theta\log\pi_\theta(y\mid x)
+\right]
+=
+b(x)\nabla_\theta \sum_y \pi_\theta(y\mid x)
+=0
+$$
+
+So we can subtract it without changing the expected gradient:
+
+$$
+\nabla_\theta J(\theta)
+=
+\mathbb{E}
+\left[
+(R(x,y)-b(x))\nabla_\theta\log\pi_\theta(y\mid x)
+\right]
+$$
+
+<div class="mt-6 p-4 bg-green-50 border-l-4 border-green-500">
+The baseline removes shared noise. The update is driven by relative surprise: better or worse than expected.
+</div>
+
+---
+
+# Why PPO Is Not the Natural End Point
+
+<div class="grid grid-cols-2 gap-8 mt-6">
+
+<div>
+
+## PPO in RLHF
+
+- Uses a policy model.
+- Uses a reward model.
+- Often uses a value model / critic to estimate $V(x)$.
+- Uses clipping and KL control to avoid destructive updates.
+
+</div>
+
+<div>
+
+## Problem for reasoning RL
+
+- The completion is long and high-dimensional.
+- Reward is often final-answer only.
+- A critic is expensive and may be inaccurate.
+- Many samples for the same prompt are already available.
+
+</div>
+
+</div>
+
+<div class="mt-8 text-lg text-center font-semibold">
+This motivates critic-free, group-based baselines.
+</div>
+
+---
+
+# GRPO: The Base Move
+
+Group Relative Policy Optimization replaces the learned value baseline with a group baseline.
+
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+### Sampling
+
+For one prompt $x$, sample a group:
+
+$$
+y_1,\ldots,y_G \sim \pi_{\text{old}}(\cdot\mid x)
+$$
+
+Score each completion:
+
+$$
+r_i=R(x,y_i)
+$$
+
+</div>
+
+<div>
+
+### Relative advantage
+
+Use the group statistics:
+
+$$
+\hat{A}_i=\frac{r_i-\mathrm{mean}(r_1,\ldots,r_G)}
+{\mathrm{std}(r_1,\ldots,r_G)+\epsilon}
+$$
+
+No separate value network is needed.
+
+</div>
+
+</div>
+
+<div class="mt-6 p-4 bg-purple-50 border-l-4 border-purple-500">
+GRPO is powerful because the baseline is local: it compares answers to other answers for the same prompt.
+</div>
+
+---
+
+# GRPO as a Reasoning Training Loop
 
 <div class="flex justify-center items-center mt-4">
 <img src="/figs/grpo.png" class="w-4.8/5" />
@@ -3002,109 +3839,291 @@ No separate value network needed!
 
 ---
 
-# GRPO vs PPO 
+# RLOO: Make the Group Baseline Less Self-Coupled
 
-<div class="grid grid-cols-1 gap-4 mt-4">
+GRPO uses the whole group to center rewards. RLOO asks a sharper question:
 
-<div class="p-4 bg-blue-50 border-4 border-blue-300 rounded-lg">
-<div class="text-sm font-semibold text-blue-700 mb-2">PPO Objective:</div>
-<div class="text-sm text-left">
+<div class="text-xl text-center font-semibold mt-5">
+How good is this completion compared with the other completions, excluding itself?
+</div>
+
+<div class="text-base mt-6">
 
 $$
-\begin{align*}
-\mathcal{J}_{\mathrm{PPO}}(\theta)
-&= \mathbb{E}\left[q \sim P(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(o\mid q)\right] \\
-&\quad \frac{1}{|o|}\sum_{t=1}^{|o|}
-\min\!\left(
-\frac{\pi_{\theta}(o_t\mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t\mid q, o_{<t})} A_t,\;
-\mathrm{clip}\!\left(
-\frac{\pi_{\theta}(o_t\mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t\mid q, o_{<t})},
-1-\epsilon,\,1+\epsilon
-\right) A_t
-\right)
-\end{align*}
+b_i=\frac{1}{G-1}\sum_{j\ne i} r_j,
+\qquad
+A_i=r_i-b_i
 $$
 
 </div>
-</div>
 
-<div class="p-4 bg-purple-50 border-4 border-purple-300 rounded-lg">
-<div class="text-sm font-semibold text-purple-700 mb-2">GRPO Objective:</div>
-<div class="text-xs text-left">
+<div class="grid grid-cols-2 gap-8 mt-5">
 
-$$
-\begin{align*}
-\mathcal{J}_{\mathrm{GRPO}}(\theta)
-&= \mathbb{E}\left[q \sim P(Q),\, \{o_i\}_{i=1}^{G} \sim \pi_{\theta_{\mathrm{old}}}(o\mid q)\right] \\
-&\quad \frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}
-\Bigg(
-\min\!\left(
-\frac{\pi_{\theta}(o_{i,t}\mid q, o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q, o_{i,<t})}\,\hat{A}_{i,t},\;
-\mathrm{clip}\!\left(
-\frac{\pi_{\theta}(o_{i,t}\mid q, o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q, o_{i,<t})},
-1-\epsilon,\,1+\epsilon
-\right)\hat{A}_{i,t}
-\right) \\
-&\qquad -\beta D_{\mathrm{KL}}\!\left[\pi_{\theta}\,\|\,\pi_{\mathrm{ref}}\right]
-\Bigg)
-\end{align*}
-$$
+<div>
+
+### Why it helps
+- The sample is not part of its own baseline.
+- The comparison remains prompt-local.
+- It keeps the critic-free spirit.
 
 </div>
+
+<div>
+
+### Mental picture
+Each answer is judged against its siblings, not against itself and not against a separate value model.
+
 </div>
 
 </div>
 
 ---
 
-# Since then.... More than 100 GxPO were developed
+# GSPO: Move the Ratio to the Sequence Level
 
-<div class="text-xs space-y-2 mt-2">
+GRPO inherits a PPO-style token-level importance ratio:
 
-**Rollout Selection & Bias Correction:**
-- **SRPO** (Zhang et al., 2025c): history resampling
-- **DAPO** (Yu et al., 2025): dynamic sampling
-- **Dr.GRPO** (Liu et al., 2025): mitigates length bias
-- **OPO** (Hao et al., 2025): optimal baseline to reduce gradient variance
+$$
+\rho_{i,t}=
+\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}
+{\pi_{\text{old}}(y_{i,t}\mid x,y_{i,<t})}
+$$
 
-**Reward Shaping & Advantage Estimation:**
-- **EMPO** (Zhang et al., 2025b): fully unsupervised / minimizes predictive entropy
-- **AAPO** (Xiong et al., 2025a): advantage momentum
-- **BNPO** (Xiao et al., 2025): adaptively normalizes rewards via Beta distribution
-- **SEED-GRPO** (Chen et al., 2025): ：uses semantic entropy to scale updates by uncertainty
-- **GRPO-lead** (Zhang & Zuo, 2025): length-dependent accuracy, explicit penalties, difficulty-aware reweighting
+GSPO changes the unit of optimization:
 
-**Efficiency-Driven Methods:**
-- **CPPO** (Lin et al., 2025): pruning low-advantage completions
-- **S-GRPO** (Dai et al., 2025b): early exit to cut redundancy
-- **Ada-GRPO** (Wu et al., 2025): adaptive reasoning formats
-- **GVPO** (Zhang et al., 2025a): analytical KL-constrained weighting
-- **GRPO-$\lambda$** (Dai et al., 2025a): ddynamic switch between length-penalized vs length-agnostic rewards to avoid collapse
+<div class="grid grid-cols-2 gap-8 mt-5">
+
+<div>
+
+### Token-level ratio
+- Fine-grained, but noisy for long chains.
+- One odd token can dominate clipping behavior.
+- Can be awkward for MoE routing and long reasoning traces.
+
+</div>
+
+<div>
+
+### Sequence-level ratio
+- Compute the ratio from the whole completion likelihood.
+- Clip and optimize at the sequence level.
+- Better matches the reward, which is usually sequence-level.
+
+</div>
+
+</div>
+
+<div class="text-xs mt-5 opacity-70">
+GSPO was proposed as a stable and efficient alternative to GRPO and reported as contributing to Qwen3-style reasoning improvements.
+</div>
+
+---
+
+# GPG: What If We Strip the Scaffold?
+
+Once we have a verifier and grouped rollouts, another question appears:
+
+<div class="text-2xl font-bold text-center mt-5">
+Do we need PPO-style surrogate machinery at all?
+</div>
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+### GRPO keeps stabilizers
+- Old policy ratio
+- Clipping
+- KL/reference control
+- Group-normalized advantage
+
+</div>
+
+<div>
+
+### GPG simplifies
+- Directly optimizes the original RL objective.
+- Removes critic and reference models.
+- Avoids surrogate loss design.
+- Treats group policy gradient as the basic estimator.
+
+</div>
+
+</div>
+
+<div class="mt-6 p-4 bg-gray-50 border-l-4 border-gray-500">
+GPG is useful conceptually because it shows how much of reasoning RL is really policy gradient plus a good baseline.
+</div>
+
+---
+
+# Dr.GRPO: Fix the Length Bias
+
+GRPO was a strong base move, but later work found an optimization bias:
+
+$$
+\text{incorrect long responses can receive distorted optimization pressure}
+$$
+
+Dr.GRPO, from *Understanding R1-Zero-Like Training: A Critical Perspective*, is a "Done Right GRPO" correction.
+
+<div class="grid grid-cols-2 gap-8 mt-6">
+
+<div>
+
+### What goes wrong in GRPO
+- Length normalization can change the effective objective.
+- Long incorrect outputs may be unintentionally favored.
+- Token efficiency becomes worse even when accuracy looks stable.
+
+</div>
+
+<div>
+
+### What Dr.GRPO changes
+- Keeps the critic-free group comparison idea.
+- Removes the artificial response-length incentive.
+- Improves token efficiency while preserving reasoning performance.
+
+</div>
+
+</div>
+
+<div class="text-xs mt-6 opacity-70">
+Conceptually, Dr.GRPO says: if the reward is sequence-level, the optimizer should not secretly prefer longer sequences unless the verifier really rewards them.
+</div>
+
+---
+
+# The Algorithmic Story, Not a Method List
+
+<div class="relative mt-8">
+
+<div class="grid grid-cols-6 gap-3 text-xs text-center">
+
+<div class="p-3 border-2 border-gray-300 rounded bg-gray-50">
+<div class="font-bold">PPO</div>
+critic + clipping
+</div>
+
+<div class="p-3 border-2 border-purple-300 rounded bg-purple-50">
+<div class="font-bold">GRPO</div>
+replace critic with group baseline
+</div>
+
+<div class="p-3 border-2 border-pink-300 rounded bg-pink-50">
+<div class="font-bold">Dr.GRPO</div>
+remove length bias
+</div>
+
+<div class="p-3 border-2 border-blue-300 rounded bg-blue-50">
+<div class="font-bold">RLOO</div>
+leave-one-out group baseline
+</div>
+
+<div class="p-3 border-2 border-green-300 rounded bg-green-50">
+<div class="font-bold">GSPO</div>
+sequence-level ratio and clipping
+</div>
+
+<div class="p-3 border-2 border-orange-300 rounded bg-orange-50">
+<div class="font-bold">GPG</div>
+simpler group policy gradient
+</div>
+
+</div>
+
+</div>
+
+<div class="mt-8 text-lg text-center font-semibold">
+The common thread: better baselines, less length bias, better ratios, cleaner feedback, and less unnecessary machinery.
+</div>
+
+---
+
+# A Practical Reasoning Post-Training Recipe
+
+<div class="grid grid-cols-2 gap-8 mt-6">
+
+<div>
+
+## Data and rewards
+
+1. Start with a model that can follow instructions.
+2. Use a small amount of high-quality reasoning data if readability matters.
+3. Sample multiple completions per prompt.
+4. Score with verifiers where possible.
+5. Use preference data where correctness is not directly verifiable.
+
+</div>
+
+<div>
+
+## Optimization
+
+1. Convert rewards into advantages.
+2. Use group or leave-one-out baselines.
+3. Stabilize long completions with sequence-level control when needed.
+4. Keep KL/reference control only when it is doing useful work.
+5. Monitor length, diversity, calibration, and reward hacking.
+
+</div>
 
 </div>
 
 ---
 
-# More GxPO Variants (Cont'd)
+# What Can Go Wrong?
 
-<div class="text-xs space-y-2">
+<div class="grid grid-cols-2 gap-8 mt-5">
 
-**Rollout Usage Improvements:**
-- **PODS** (Xu et al., 2025): trains only on informative subsets of parallel rollouts
-- **RePO** (Li et al., 2025): retrieves diverse off-policy samples via replay
-- **RAFT** (Xiong et al., 2025b): trains solely on positive samples yet rivals GRPO
-- **INTUITOR** (Zhao et al., 2025): eliminates external rewards by using model self-certainty
-- **PRIME** (Cui et al., 2025a): scalable RL framework for reasoning
+<div>
 
-**Exploration-Focused Techniques:**
-- **80/20 rule** (Wang et al., 2025): emphasizes high-entropy minority tokens
-- **Entropy-based advantage augmentation** (Cheng et al., 2025)
+## Optimization failures
 
-**Data-Centric Approaches:**
-- **Open-Reasoner-Zero** (Hu et al., 2025): 129k diverse, high-quality samples with curriculum learning
-- **Eurus** (Yuan et al., 2024): large-scale alignment dataset and novel reward modeling
+- Sparse rewards produce weak gradients.
+- Group normalization can distort reward scale.
+- Long answers may get rewarded for style rather than correctness.
+- Too much clipping can freeze learning.
 
-</div> 
+</div>
+
+<div>
+
+## Reasoning failures
+
+- The model learns answer patterns, not logic.
+- Verifiers can be incomplete.
+- Exploration collapses to one format.
+- More tokens can mean more confident mistakes.
+
+</div>
+
+</div>
+
+<div class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-500">
+Reasoning RL works best when the reward checks the thing we actually care about: correct reasoning, not just a lucky final answer.
+</div>
+
+---
+
+# Selected References for Reasoning RL
+
+<div class="text-sm space-y-3 mt-4">
+
+- **CoT / Zero-shot CoT / Self-Consistency / ToT / ReAct:** reasoning as prompting, sampling, search, and tool interaction.
+- **DeepSeek-R1:** large-scale RL with rule-based rewards can induce strong reasoning behavior.
+- **GRPO:** group-relative advantage removes the critic and compares completions within the same prompt.
+- **Dr.GRPO:** corrects GRPO's length-related optimization bias and improves token efficiency.
+- **RLOO:** leave-one-out baseline keeps the comparison local while avoiding self-inclusion.
+- **GSPO:** sequence-level importance ratio and clipping better match sequence-level rewards.
+- **GPG:** a minimalist group policy-gradient view that removes several PPO-style stabilizers.
+
+</div>
+
+<div class="text-xs mt-8 opacity-70">
+The conceptual spine: CoT teaches the model to expose reasoning; verifiers make reasoning trainable; policy gradient decides which reasoning traces become more likely.
+</div>
 
 ---
 layout: section
@@ -3392,5 +4411,3 @@ class: text-center
     <carbon-logo-github />
   </a>
 </div>
-
-
