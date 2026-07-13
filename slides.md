@@ -44,7 +44,7 @@ code {
 
 # **Large Language Models (LLM)**
 
-A Comprehensive Guide to Principles and Training Method
+A Comprehensive Guide to Principles and Training Methods
 
 <div class="pt-15">
   <div class="text-lg">
@@ -83,25 +83,25 @@ layout: default
 <div>
   <h2 class="!text-3xl !mb-2">Part 1: LLM Background</h2>
   <ul class="!mt-0 !space-y-1">
-    <li>What are Large Language Models?</li>
-    <li>Evolution of LLMs</li>
+    <li>Introduction to LLMs</li>
+    <li>Transformer Foundations and Architecture</li>
   </ul>
 </div>
 
 <div>
-  <h2 class="!text-3xl !mb-2">Part 2: Transformer</h2>
+  <h2 class="!text-3xl !mb-2">Part 2: 3 Stage training</h2>
   <ul class="!mt-0 !space-y-1">
-    <li>Transformer Foundation: From text to tokens and embeddings</li>
-    <li>Transformer Architecture</li>
+    <li>Stage 1: Pre-training</li>
+    <li>Stage 2: Supervised Fine-Tuning</li>
+    <li>Stage 3: Preference optimization and RLHF</li>
   </ul>
 </div>
 
 <div>
-  <h2 class="!text-3xl !mb-2">Part 3: Training and developing</h2>
+  <h2 class="!text-3xl !mb-2">Part 3: The Development of Reasoning in LLMs</h2>
   <ul class="!mt-0 !space-y-1">
-    <li>Stage 1: Pre-training and Supervised Fine-Tuning</li>
-    <li>Stage 2: Preference optimization and RLHF</li>
-    <li>Stage 3: Reasoning and RLVR</li>
+    <li>Inference-Time Reasoning</li>
+    <li>Reinforcement Learning with Verifiable Rewards</li>
   </ul>
 </div>
 
@@ -168,7 +168,7 @@ clicks: 3
 layout: section
 ---
 
-# Part 2: Transformer
+# Transformer Foundations
 
 <div class="text-2xl mt-8 opacity-80">
 From <b>tokens and vectors</b> to <b>attention blocks</b>
@@ -176,7 +176,7 @@ From <b>tokens and vectors</b> to <b>attention blocks</b>
 
 ---
 
-# Before Transformer: How Words Become Numbers?
+# Before Transformer: How Do Words Become Numbers?
 
 <div class="text-center text-2xl mt-8">
 Understanding Embeddings is the <span class="text-blue-500 font-bold">KEY</span> to understanding Transformer
@@ -258,7 +258,7 @@ vocab_size = 500000
 </div>
 
 <div class="mt-4 p-4 bg-green-100 rounded text-center">
-<strong>Key Idea:</strong> a efficient, trainable, and generalizable continuous space to support generalization.
+<strong>Key Idea:</strong> an efficient, trainable, and generalizable continuous space to support generalization.
 </div>
 
 ---
@@ -1431,7 +1431,7 @@ $$
 
 - **Multiply with a weight matric $W^0$**
 
-- **The out put $Z$ captures information from all the attention head**
+- **The output $Z$ captures information from all the attention heads**
 
 
 
@@ -1579,7 +1579,7 @@ $$
 
 ---
 
-# Feed-Forward Networks and Add&Norm
+# Feed-Forward Networks and Add & Norm
 
 <div class="mt-6">
 
@@ -1784,10 +1784,10 @@ $X = \text{append}(X, \text{token}_{t+1})$
 layout: section
 ---
 
-# Part 3: Training &amp; Developing
+# Part 2: 3 Stage training
 
 <div class="text-2xl mt-8 opacity-80">
-From <b>pre-training</b> to <b>post-training</b> and <b>reasoning</b>
+From <b>pre-training</b> to <b>post-training</b>
 </div>
 
 
@@ -2122,7 +2122,7 @@ the human brain. They consist of:
 input = "Explain neural networks to a beginner"
 output = """
 Neural networks are pattern-learning systems. 
-They learn by example and improves by adjusting itself based on errors
+They learn by example and improves by adjusting themselves based on errors
 """
 ```
 ````
@@ -2132,7 +2132,7 @@ They learn by example and improves by adjusting itself based on errors
 layout: section
 ---
 
-# Stage 1: Pre-training &amp; Supervised Fine-Tuning
+# Pre-training &amp; Supervised Fine-Tuning
 
 <div class="text-xl mt-8 opacity-80">
 <b>Pre-training</b> provides the foundation; <b>supervised fine-tuning</b> turns it into an instruction-following model.
@@ -2372,7 +2372,7 @@ Label = -100 means "ignore this token in loss computation" (PyTorch convention)
 layout: section
 ---
 
-# Stage 2: Preference Optimization &amp; RLHF
+# Reinforcement Learning from Human Feedback
 
 <div class="text-xl mt-8 opacity-80">
 <b>Preference optimization and RLHF</b> teach the model to better follow human preferences.
@@ -2386,14 +2386,6 @@ layout: section
 <div class="flex justify-center items-center mt--3">
 <img src="/figs/sdm.png" class="w-4.2/5" />
 </div>
-
----
-
-# Reinforcement Learning (Cont'd)
-<div class="flex justify-center items-center mt--15">
-<img src="/figs/rl.png" class="w-5/5" />
-</div>
-
 
 
 ---
@@ -2563,7 +2555,7 @@ Scores a response $y$ given prompt $x$
 
 #### 3) Value Model $V_\phi(x)$
 
-The baseline we use to calculate the advantage function to stable training
+The baseline we use to calculate the advantage function to stabilize training
 
 #### 4) Reference policy  $\pi_{\text{ref}}$
 
@@ -2600,9 +2592,9 @@ def rlhf_training(policy_model,reward_model,value_model,prompts):
             final_reward = reward - beta * kl_penalty
             experiences.append((prompt, response, 
             final_reward, logp_old))
-            # Advantage（usually estimated by GAE）
+            # Advantage (usually estimated by GAE)
             adv = compute_advantages(experiences, value_model)
-            experience.append(adv)
+            experiences.append(adv)
         # PPO update
         for _ in range(ppo_epochs):
             ppo_step(policy_model, experiences)
@@ -2925,7 +2917,7 @@ $$
 ### DPO purpose:
 
 <div class="text-[18px] leading-snug mt-3">
-Find an objective function directly optimizes for the policy best satisfying the preferences with a simple classification
+Find an objective function that directly optimizes for the policy best satisfying the preferences with a simple classification
 objective, without fitting a reward model first, and then use RL to find a policy that maximizes the learned reward.
 </div>
 
@@ -2937,7 +2929,7 @@ objective, without fitting a reward model first, and then use RL to find a polic
 
 <div class="text-[15px] leading-snug mt-1">
 
-Under any reward function $r(x,y)$, reference model $\pi_{\mathrm{ref}}$ and a general non-parametric policy class，we have:
+Under any reward function $r(x,y)$, reference model $\pi_{\mathrm{ref}}$ and a general non-parametric policy class, we have
 
 </div>
 
@@ -3240,8 +3232,8 @@ Requires thousands of comparisons
 #### DRPO (Doubly Robust Preference Optimization)
 **Paper:** *Doubly Robust Alignment for Large Language Models*
 
-- Dubly robust and efficient estimator for preference evaluation
-- Dubly robust preference optimization for LLM fine-tuning
+- Doubly robust and efficient estimator for preference evaluation
+- Doubly robust preference optimization for LLM fine-tuning
 
 
 </div>
@@ -3254,7 +3246,7 @@ Requires thousands of comparisons
 layout: section
 ---
 
-# Stage 3: Reasoning &amp; RLVR
+# Part 3: The Development of Reasoning in LLMs
 
 <div class="text-xl mt-8 opacity-80">
 <b>Reasoning and RLVR</b> further improve the model’s ability to solve complex or verifiable tasks.
@@ -4227,7 +4219,7 @@ print(fibonacci(10))  # Output: 55
 layout: section
 ---
 
-# Challenges and Future of LLM
+# Challenges and Future of LLMs
 
 ---
 
@@ -4402,7 +4394,7 @@ class: text-center
 </div>
 
 <div class="pt-8 text-xl">
-  Explore the Infinite Possibilities of LLM
+  Explore the Infinite Possibilities of LLMs
 </div>
 
 <div class="abs-br m-6 flex gap-2">
