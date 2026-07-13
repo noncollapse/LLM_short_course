@@ -3246,7 +3246,7 @@ Requires thousands of comparisons
 layout: section
 ---
 
-# Part 3: The Development of Reasoning in LLMs
+# Stage 3: Reasoning &amp; RLVR
 
 <div class="text-xl mt-8 opacity-80">
 <b>Reasoning and RLVR</b> further improve the model’s ability to solve complex or verifiable tasks.
@@ -3300,75 +3300,237 @@ Reasoning is not only "longer output"; it is a different way of allocating compu
 
 # Inference-Time Reasoning: Make the Model Think More
 
-<div class="grid grid-cols-4 gap-4 mt-8 text-sm">
-
-<div class="p-4 border-2 border-blue-300 rounded bg-blue-50">
-<div class="font-bold text-blue-700 mb-2">CoT</div>
-Generate intermediate steps before the answer.
+<div class="mt-2 flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-slate-900 text-white text-[10px] font-bold uppercase tracking-[0.14em]">Representative methods</span>
+<span class="text-[11px] text-slate-500">Generate, compare, search, or ground reasoning paths</span>
+<div class="h-px flex-1 bg-slate-200"></div>
 </div>
 
-<div class="p-4 border-2 border-cyan-300 rounded bg-cyan-50">
-<div class="font-bold text-cyan-700 mb-2">Self-Consistency</div>
-Sample multiple chains and vote by final answer.
+<div class="grid grid-cols-2 gap-3 mt-3">
+
+<div class="relative overflow-hidden p-3 rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
+<div class="absolute right-0 top-0 w-16 h-16 rounded-bl-full bg-blue-100/70"></div>
+<div class="relative flex items-start justify-between">
+<div><div class="text-[9px] font-bold uppercase tracking-[0.14em] text-blue-600">Single path</div><div class="text-lg font-black text-blue-900">Chain-of-Thought</div></div>
+<span class="px-2 py-0.5 rounded-full border border-blue-200 bg-white text-[9px] text-blue-700">Wei et al., 2022</span>
+</div>
+<div class="relative mt-0.5 text-[11px] leading-4 text-slate-600">Generate one explicit reasoning path before the answer.</div>
+<div class="relative mt-2 flex items-center justify-center gap-1.5 text-[10px] font-semibold">
+<span class="px-2.5 py-1 rounded-lg bg-white border border-blue-200">Prompt</span><span class="text-blue-400">&#8594;</span><span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800">Reasoning path</span><span class="text-blue-400">&#8594;</span><span class="px-2.5 py-1 rounded-lg bg-white border border-blue-200">Answer</span>
+</div>
 </div>
 
-<div class="p-4 border-2 border-purple-300 rounded bg-purple-50">
-<div class="font-bold text-purple-700 mb-2">ToT</div>
-Branch, evaluate, backtrack, and search over thoughts.
+<div class="relative overflow-hidden p-3 rounded-2xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50 to-white">
+<div class="absolute right-0 top-0 w-16 h-16 rounded-bl-full bg-cyan-100/70"></div>
+<div class="relative flex items-start justify-between">
+<div><div class="text-[9px] font-bold uppercase tracking-[0.14em] text-cyan-600">Multiple paths</div><div class="text-lg font-black text-cyan-900">Self-Consistency</div></div>
+<span class="px-2 py-0.5 rounded-full border border-cyan-200 bg-white text-[9px] text-cyan-700">Wang et al., 2022</span>
+</div>
+<div class="relative mt-0.5 text-[11px] leading-4 text-slate-600">Sample several reasoning paths and vote over their answers.</div>
+<div class="relative mt-2 flex items-center justify-center gap-1 text-[9px] font-semibold">
+<span class="px-2 py-1 rounded-lg bg-white border border-cyan-200">Reasoning path 1</span><span class="px-2 py-1 rounded-lg bg-white border border-cyan-200">Reasoning path 2</span><span class="px-2 py-1 rounded-lg bg-white border border-cyan-200">Reasoning path 3</span><span class="text-cyan-500">&#8594;</span><span class="px-2 py-1 rounded-lg bg-cyan-100 text-cyan-800">Vote</span>
+</div>
 </div>
 
-<div class="p-4 border-2 border-green-300 rounded bg-green-50">
-<div class="font-bold text-green-700 mb-2">ReAct</div>
-Interleave reasoning with actions, tools, and observations.
+<div class="relative overflow-hidden p-3 rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white">
+<div class="absolute right-0 top-0 w-16 h-16 rounded-bl-full bg-amber-100/70"></div>
+<div class="relative flex items-start justify-between">
+<div><div class="text-[9px] font-bold uppercase tracking-[0.14em] text-amber-600">Deliberate search</div><div class="text-lg font-black text-amber-900">Tree of Thoughts</div></div>
+<span class="px-2 py-0.5 rounded-full border border-amber-200 bg-white text-[9px] text-amber-700">Yao et al., 2023</span>
+</div>
+<div class="relative mt-0.5 text-[11px] leading-4 text-slate-600">Search a tree of partial reasoning paths and recover from poor branches.</div>
+<div class="relative mt-2 flex items-center justify-center gap-1.5 text-[10px] font-semibold">
+<span class="px-2 py-1 rounded-lg bg-white border border-amber-200">Reasoning prefix</span><span class="text-amber-400">&#8594;</span><span class="px-2 py-1 rounded-lg bg-amber-100 text-amber-800">Branch paths</span><span class="text-amber-400">&#8594;</span><span class="px-2 py-1 rounded-lg bg-white border border-amber-200">Evaluate / backtrack</span>
+</div>
+</div>
+
+<div class="relative overflow-hidden p-3 rounded-2xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-white">
+<div class="absolute right-0 top-0 w-16 h-16 rounded-bl-full bg-emerald-100/70"></div>
+<div class="relative flex items-start justify-between">
+<div><div class="text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-600">Reason and act</div><div class="text-lg font-black text-emerald-900">ReAct</div></div>
+<span class="px-2 py-0.5 rounded-full border border-emerald-200 bg-white text-[9px] text-emerald-700">Yao et al., 2022</span>
+</div>
+<div class="relative mt-0.5 text-[11px] leading-4 text-slate-600">Ground each new reasoning segment in actions and observations.</div>
+<div class="relative mt-2 flex items-center justify-center gap-1 text-[9px] font-semibold">
+<span class="px-2 py-1 rounded-lg bg-white border border-emerald-200">Reasoning</span><span class="text-emerald-400">&#8594;</span><span class="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-800">Action</span><span class="text-emerald-400">&#8594;</span><span class="px-2 py-1 rounded-lg bg-white border border-emerald-200">Observation</span><span class="text-emerald-400">&#8594;</span><span class="px-2 py-1 rounded-lg bg-white border border-emerald-200">Reasoning</span>
+</div>
 </div>
 
 </div>
 
-<div class="mt-10 text-base">
-
-These methods improve reasoning at test time. They change the **trajectory we ask the model to follow**, but they do not by themselves change the model's parameters.
-
-</div>
-
-<div class="text-xs mt-6 opacity-70">
-Representative papers: CoT (Wei et al., 2022), Self-Consistency (Wang et al., 2022), ToT (Yao et al., 2023), ReAct (Yao et al., 2022).
+<div class="mt-3 px-4 py-2 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+<div class="text-[12px] text-slate-700">More test-time compute is spent on the <b>reasoning trajectory</b>.</div>
+<div class="px-3 py-0.5 rounded-full bg-white border border-slate-300 text-[10px] font-bold text-slate-600">Parameters stay fixed</div>
 </div>
 
 ---
 
 # Chain-of-Thought: Put Latent Work on the Page
 
-<div class="grid grid-cols-2 gap-8 mt-5">
-
-<div>
-
-## How to do it
-
-Give the model examples where the answer is preceded by intermediate reasoning:
-
-<div class="text-sm mt-4 p-3 bg-blue-50 border-l-4 border-blue-400">
-Question -> reasoning steps -> final answer
+<div class="mt-2 px-4 py-3 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-white flex items-center gap-5">
+<div class="min-w-[120px]"><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-600">Definition</div><div class="text-lg font-black text-blue-900">What is CoT?</div></div>
+<div class="h-12 w-px bg-blue-200"></div>
+<div class="flex-1 text-[13px] leading-5 text-slate-700">The model generates a sequence of <b>intermediate natural-language reasoning steps</b> before committing to the final output.</div>
+<div class="px-3 py-2 rounded-xl bg-slate-900 text-white font-mono text-[11px] whitespace-nowrap">&lt;input, chain of thought, output&gt;</div>
 </div>
 
-At inference time, ask the model to generate the same kind of reasoning trace before producing the answer.
+<div class="mt-3 flex items-center gap-3">
+<div class="text-[10px] uppercase tracking-[0.14em] font-bold text-slate-500">How few-shot CoT prompting works</div><div class="h-px flex-1 bg-slate-200"></div>
+</div>
+
+<div class="grid grid-cols-11 gap-2 mt-2 items-stretch text-center">
+<div class="col-span-4 p-3 rounded-xl border border-slate-200 bg-slate-50">
+<div class="text-[10px] uppercase tracking-wide font-bold text-slate-500 mb-2">Demonstrations in the prompt</div>
+<div class="space-y-1.5 text-[10px] font-semibold">
+<div class="px-2 py-1.5 rounded-lg bg-white border border-blue-100">Question 1 <span class="text-blue-400">&#8594;</span> reasoning steps <span class="text-blue-400">&#8594;</span> answer 1</div>
+<div class="px-2 py-1.5 rounded-lg bg-white border border-blue-100">Question 2 <span class="text-blue-400">&#8594;</span> reasoning steps <span class="text-blue-400">&#8594;</span> answer 2</div>
+</div>
+</div>
+<div class="col-span-1 flex items-center justify-center text-2xl text-blue-400">&#8594;</div>
+<div class="col-span-2 p-3 rounded-xl border-2 border-amber-200 bg-amber-50 flex flex-col justify-center">
+<div class="text-[10px] uppercase tracking-wide font-bold text-amber-700">Test input</div>
+<div class="mt-2 text-base font-black text-amber-900">New question</div>
+</div>
+<div class="col-span-1 flex items-center justify-center text-2xl text-emerald-400">&#8594;</div>
+<div class="col-span-3 p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 flex flex-col justify-center">
+<div class="text-[10px] uppercase tracking-wide font-bold text-emerald-700">Model continuation</div>
+<div class="mt-2 text-[11px] font-bold"><span class="px-2 py-1 rounded bg-white border border-emerald-200">Reasoning steps</span> <span class="text-emerald-500">&#8594;</span> <span class="px-2 py-1 rounded bg-emerald-100">Answer</span></div>
+</div>
+</div>
+
+<div class="mt-3 flex items-center gap-3">
+<div class="text-[10px] uppercase tracking-[0.14em] font-bold text-slate-500">Why the paper argues this helps</div><div class="h-px flex-1 bg-slate-200"></div>
+</div>
+
+<div class="grid grid-cols-3 gap-3 mt-2">
+<div class="p-3 rounded-xl border border-sky-200 bg-sky-50"><div class="text-[10px] font-bold text-sky-600">01 &nbsp; DECOMPOSE</div><div class="mt-1 text-[12px] leading-4">Break a multi-step problem into intermediate subproblems and solve them in order.</div></div>
+<div class="p-3 rounded-xl border border-amber-200 bg-amber-50"><div class="text-[10px] font-bold text-amber-600">02 &nbsp; ALLOCATE COMPUTE</div><div class="mt-1 text-[12px] leading-4">Harder problems can use more intermediate tokens before producing an answer.</div></div>
+<div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50"><div class="text-[10px] font-bold text-emerald-600">03 &nbsp; INSPECT</div><div class="mt-1 text-[12px] leading-4">The generated path provides a visible place to locate reasoning errors.</div></div>
+</div>
+
+<div class="mt-3 px-4 py-2 rounded-xl bg-slate-900 text-white flex items-center justify-between text-[11px]">
+<span><b>Empirical pattern:</b> larger gains appeared on harder problems and at larger model scales.</span>
+<span class="text-blue-200">Wei et al. (2022)</span>
+</div>
+
+---
+
+# Chain-of-Thought: An Example
+
+<div class="flex items-center gap-2 text-xs">
+<span class="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">GSM8K</span>
+<span class="text-slate-500">Grade-school mathematics with natural-language solution traces</span>
+</div>
+
+<div class="mt-3 px-5 py-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-700 text-white shadow-sm">
+<div class="text-[11px] uppercase tracking-[0.16em] text-emerald-300 font-bold mb-2">Question</div>
+<div class="text-[15px] leading-6">
+A carnival snack booth made <b>$50</b> selling popcorn each day.
+It made <b>three times as much</b> selling cotton candy.
+For a <b>5-day</b> activity, the booth has to pay <b>$30</b> rent and <b>$75</b> for ingredients.
+How much did the booth earn after paying those costs?
+</div>
+</div>
+
+<div class="mt-4 flex items-center gap-3">
+<div class="text-[11px] uppercase tracking-[0.14em] font-bold text-slate-500">Reasoning trajectory</div>
+<div class="h-px flex-1 bg-slate-200"></div>
+</div>
+
+<div class="grid grid-cols-3 gap-3 mt-2">
+<div class="relative p-3 rounded-xl border border-sky-200 bg-sky-50">
+<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center">1</div>
+<div class="text-[11px] font-bold text-sky-800 mt-1">Cotton candy / day</div>
+<div class="text-lg font-bold mt-1">$50 &times; 3 = $150</div>
+</div>
+<div class="relative p-3 rounded-xl border border-sky-200 bg-sky-50">
+<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center">2</div>
+<div class="text-[11px] font-bold text-sky-800 mt-1">Total revenue / day</div>
+<div class="text-lg font-bold mt-1">$150 + $50 = $200</div>
+</div>
+<div class="relative p-3 rounded-xl border border-sky-200 bg-sky-50">
+<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center">3</div>
+<div class="text-[11px] font-bold text-sky-800 mt-1">Revenue for 5 days</div>
+<div class="text-lg font-bold mt-1">$200 &times; 5 = $1000</div>
+</div>
+</div>
+
+<div class="grid grid-cols-5 gap-3 mt-3">
+<div class="col-span-2 relative p-3 rounded-xl border border-amber-200 bg-amber-50">
+<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">4</div>
+<div class="text-[11px] font-bold text-amber-800 mt-1">Total cost</div>
+<div class="text-lg font-bold mt-1">$30 + $75 = $105</div>
+</div>
+<div class="col-span-3 relative p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50">
+<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center">5</div>
+<div class="flex items-end justify-between mt-1">
+<div><div class="text-[11px] font-bold text-emerald-800">Net earnings</div><div class="text-lg font-bold mt-1">$1000 - $105</div></div>
+<div class="text-3xl font-black text-emerald-700">$895</div>
+</div>
+</div>
+</div>
+
+<div class="mt-3 flex items-center justify-between text-[10px] text-slate-500">
+<span>The target includes the intermediate arithmetic, not only the final answer.</span>
+<span>Source: GSM8K, Cobbe et al. (2021).</span>
+</div>
+
+---
+
+# Chain-of-Thought: An Example
+
+<div class="flex items-center gap-2 text-xs">
+<span class="px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 font-bold">Zero-shot CoT</span>
+<span class="text-slate-500">Same question, same model; only the answer cue changes.</span>
+</div>
+
+<div class="mt-3 p-3 rounded-xl border border-slate-200 bg-slate-50">
+<div class="text-[10px] uppercase tracking-[0.14em] text-slate-500 font-bold mb-1">Shared question</div>
+<div class="text-[13px] leading-5">
+A booth earns <b>$50/day</b> from popcorn and <b>3&times; as much</b> from cotton candy for <b>5 days</b>, then pays <b>$30 + $75</b>. What are its net earnings?
+</div>
+</div>
+
+<div class="grid grid-cols-2 gap-4 mt-3">
+
+<div class="rounded-2xl border-2 border-slate-200 bg-white overflow-hidden">
+<div class="px-4 py-2 bg-slate-100 flex items-center justify-between">
+<div class="font-bold text-slate-700">Direct prompt</div>
+<div class="text-[10px] uppercase tracking-wide text-slate-500">baseline</div>
+</div>
+<div class="mx-4 mt-3 px-3 py-2 rounded-lg bg-slate-900 text-white font-mono text-[13px]">
+Answer: <span class="text-slate-400">_____</span>
+</div>
+<div class="m-4 p-3 rounded-xl border border-rose-200 bg-rose-50 text-[13px] leading-5">
+<div class="text-[10px] uppercase tracking-wide font-bold text-rose-700 mb-1">Illustrative completion</div>
+Daily revenue is $50 + $150 = $200. After paying $105, the booth earns <b>$95</b>.
+<div class="mt-2 pt-2 border-t border-rose-200 text-rose-800"><b>Failure:</b> the 5-day multiplier is omitted.</div>
+</div>
+</div>
+
+<div class="rounded-2xl border-2 border-emerald-300 bg-white overflow-hidden shadow-sm">
+<div class="px-4 py-2 bg-emerald-100 flex items-center justify-between">
+<div class="font-bold text-emerald-800">Chain-of-thought prompt</div>
+<div class="text-[10px] uppercase tracking-wide text-emerald-700">one added cue</div>
+</div>
+<div class="mx-4 mt-3 px-3 py-2 rounded-lg bg-slate-900 text-white font-mono text-[13px]">
+Answer: <span class="px-1.5 py-0.5 rounded bg-emerald-500 text-white font-bold">Let's think step by step.</span> <span class="text-slate-400">_____</span>
+</div>
+<div class="m-4 p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-[13px] leading-5">
+<div class="text-[10px] uppercase tracking-wide font-bold text-emerald-700 mb-1">Illustrative completion</div>
+Cotton candy earns $50 &times; 3 = $150 per day, so the booth earns $50 + $150 = $200 per day. Over 5 days, its revenue is $200 &times; 5 = $1000. Its total cost is $30 + $75 = $105.
+<div class="mt-2 pt-2 border-t border-emerald-200 text-emerald-800"><b>Therefore, the net earnings are $1000 - $105 = $895.</b></div>
+</div>
+</div>
 
 </div>
 
-<div>
-
-## Why it helps
-
-- The model can decompose a problem into smaller steps.
-- Intermediate tokens act as scratch space.
-- Later tokens condition on earlier reasoning, not only on the original prompt.
-- Best gains appear on multi-step arithmetic, symbolic, and commonsense tasks.
-
+<div class="mt-3 px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-center text-[13px] font-semibold">
+The added cue supplies no arithmetic facts; it changes the generated trajectory by making intermediate state explicit.
 </div>
 
-</div>
-
-<div class="mt-7 text-lg text-center font-semibold">
-CoT turns reasoning from an implicit hidden computation into an explicit generated trajectory.
+<div class="text-[10px] mt-2 text-slate-500">
+Zero-shot CoT cue: Kojima et al. (2022). Illustrative completions shown for exposition.
 </div>
 
 ---
@@ -3582,455 +3744,680 @@ The bridge is simple: if a final answer can be verified, the reasoning path beco
 
 ---
 
-# RLVR: Verifiable Rewards for Reasoning
+# RLVR: From Preference to Verification
 
-<div class="grid grid-cols-2 gap-8 mt-5">
-
-<div>
-
-## What changes?
-
-Instead of asking a reward model "is this response preferred?", RLVR asks a verifier:
-
-<div class="text-xl mt-4">
-
-$$\text{Did the solution pass?}$$
-
+<div class="flex justify-center mt-3">
+<img src="/figs/demystify-rlvr-approaches.png" class="w-full max-h-[405px] object-contain" />
 </div>
 
-Examples:
-- Math: final answer matches ground truth.
-- Code: unit tests pass.
-- Logic: constraints are satisfied.
-
-</div>
-
-<div>
-
-## Reward signal
-
-<div class="text-sm">
-
-$$
-R(x,y)=
-\begin{cases}
-1, & \text{verified correct}\\
-0, & \text{not verified}
-\end{cases}
-$$
-
-</div>
-
-The reward is sparse, but it is cheap, scalable, and less subjective than human preference labels.
-
-</div>
-
-</div>
-
-<div class="text-xs mt-6 opacity-70">
-DeepSeek-R1-Zero is a prominent example: large-scale RL from rule-based rewards produced strong reasoning behaviors, but also readability and language-mixing issues that required later training stages.
+<div class="mt-3 p-3 rounded-xl border-l-4 border-red-500 bg-red-50 text-[15px] leading-6 text-center">
+RLVR turns a reasoning task into an RL problem whenever the final answer can be checked automatically.
 </div>
 
 ---
 
-# Reasoning Models Made RL Visible
+# RLVR: Verifiable Rewards
 
-<div class="flex justify-center items-center mt-8">
-<img src="/figs/DeepSeek_nature.png" class="w-5/5" />
+<div class="grid grid-cols-2 gap-5 mt-4">
+
+<div class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50">
+<div class="text-sm uppercase tracking-wide text-slate-500 font-bold mb-3">Preference-Based Feedback</div>
+<div class="text-xl font-semibold mb-4">“Which response is better?”</div>
+<div class="space-y-2 text-[15px] leading-6">
+<div>Human preferences may be subjective.</div>
+<div>A learned reward model may be inaccurate.</div>
+<div>Correctness is only indirectly represented.</div>
+</div>
+</div>
+
+<div class="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
+<div class="text-sm uppercase tracking-wide text-emerald-700 font-bold mb-3">Verifiable Feedback</div>
+<div class="text-xl font-semibold mb-3">“Is this answer correct?”</div>
+<MathTex display tex="r(q,o)=\begin{cases}1,&\text{verified correct},\\0,&\text{otherwise.}\end{cases}" class="text-[0.82em]" />
+</div>
+
+</div>
+
+<div class="grid grid-cols-3 gap-4 mt-5 text-[14px] leading-5.5">
+<div class="p-3 rounded-xl border border-blue-200 bg-blue-50"><b>Code</b><br>Run unit tests.</div>
+<div class="p-3 rounded-xl border border-orange-200 bg-orange-50"><b>Mathematics</b><br>Check the final answer.</div>
+<div class="p-3 rounded-xl border border-violet-200 bg-violet-50"><b>Logic</b><br>Verify constraints or a proof.</div>
+</div>
+
+<div class="mt-4 text-[14px] text-center font-semibold">
+The reward is sparse, but objective, automatic, and scalable.
 </div>
 
 ---
 
-# Look Deeper into RL: The Sequence Is the Action
+# RLVR: From REINFORCE to Reasoning
 
-For a prompt $x$, a completion $y=(y_1,\ldots,y_T)$ is one sampled action:
+<div class="grid grid-cols-3 gap-4 mt-5 text-center">
+
+<div class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50">
+<div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">1. Prompt</div>
+<MathTex display tex="q\sim\mathcal D" class="text-[0.95em]" />
+<div class="text-[13px] leading-5 mt-2">sample a problem from the training distribution</div>
+</div>
+
+<div class="p-4 rounded-2xl border-2 border-rose-200 bg-rose-50">
+<div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">2. Completion</div>
+<MathTex display tex="o\sim\pi_\theta(\cdot\mid q)" class="text-[0.95em]" />
+<div class="text-[13px] leading-5 mt-2">generate a reasoning trace and final response</div>
+</div>
+
+<div class="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
+<div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-2">3. Verification</div>
+<MathTex display tex="r=R(q,o)" class="text-[0.95em]" />
+<div class="text-[13px] leading-5 mt-2">score the sampled completion with a verifier</div>
+</div>
+
+</div>
+
+<div class="mt-6 p-5 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">REINFORCE Update</div>
+<MathTex display tex="\theta\leftarrow\theta+\eta\,\underbrace{\nabla_\theta\log\pi_\theta(o\mid q)}_{\text{policy score}}\,\underbrace{r}_{\text{verifiable reward}}" class="text-[0.94em]" />
+</div>
+
+<div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5">
+A correct completion receives a positive update; an incorrect completion provides little or no positive signal.
+</div>
+
+---
+
+# RLVR: Variance Reduction with a Baseline
+
+<div class="mt-3 p-4 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">One Gradient Form, Different Baselines</div>
+<MathTex display tex="\widehat g_b(\theta)=\nabla_\theta\log\pi_\theta(o\mid q)\,[r-b(q)],\qquad \mathbb E_{o\sim\pi_\theta}\!\left[b(q)\nabla_\theta\log\pi_\theta(o\mid q)\right]=0" class="text-[0.78em]" />
+<div class="mt-2 text-[13px] leading-5">
+A prompt-dependent baseline changes the variance of the gradient estimator, but not its expectation.
+</div>
+</div>
+
+<div class="mt-4 grid grid-cols-3 gap-4 text-[12px] leading-5 items-stretch">
+
+<div class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 text-center">
+<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">No Baseline</div>
+<div class="text-lg font-bold mb-2">Vanilla RLVR</div>
+<MathTex display tex="b^{\mathrm{vanilla}}(q)=0" class="text-[0.88em]" />
+<div class="mt-3 text-left">
+Uses the raw verifier reward. It is simple and critic-free, but the policy-gradient estimate can have high variance.
+</div>
+</div>
+
+<div class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50 text-center">
+<div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">Learned Baseline</div>
+<div class="text-lg font-bold text-blue-900 mb-2">PPO <span class="text-[10px] font-normal text-blue-600">(Schulman et al., 2017)</span></div>
+<MathTex display tex="b^{\mathrm{PPO}}_\phi(q)=\widehat V_\phi(q)\approx V^{\pi_\theta}(q)" class="text-[0.76em]" />
+<div class="mt-3 text-left">
+Trains a separate critic to approximate the value function, reducing variance at the cost of extra memory and optimization.
+</div>
+</div>
+
+<div class="p-4 rounded-2xl border-2 border-orange-200 bg-orange-50 text-center">
+<div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-2">Ideal Baseline</div>
+<div class="text-lg font-bold text-orange-900 mb-2">Oracle</div>
+<MathTex display tex="b^{\mathrm{oracle}}(q)=V^{\pi_\theta}(q)=\mathbb E[r\mid q]" class="text-[0.76em]" />
+<div class="mt-3 text-left">
+Uses the true expected reward for each prompt. It is the statistical target, but it is unknown during training.
+</div>
+</div>
+
+</div>
+
+<div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[13px] leading-5 text-center font-semibold">
+PPO learns a critic to approach the oracle; GRPO instead approximates it with rewards from multiple completions.
+</div>
+
+---
+
+# RLVR: Minibatch Policy Gradient
+
+<div class="flex justify-center mt-2">
+<img src="/figs/demystify-minibatch.png" class="w-full max-h-[365px] object-contain" />
+</div>
+
+<div class="grid grid-cols-5 gap-4 mt-3 items-center">
+<div class="col-span-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-[12px] leading-5 text-center">
+Image notation: <MathTex tex="X=q,\ Y=o,\ Z=r,\ C(X)=b(q)" />
+</div>
+<div class="col-span-3 p-2.5 rounded-xl border-2 border-violet-200 bg-violet-50 text-center">
+<MathTex display tex="\widehat g_b(\theta)=\frac{1}{B}\sum_{b=1}^{B}\nabla_\theta\log\pi_\theta(o_b\mid q_b)\,[r_b-b(q_b)]" class="text-[0.74em]" />
+</div>
+</div>
+
+---
+
+# RLVR: The Oracle Baseline
+
+<div class="flex justify-center mt-2">
+<img src="/figs/demystify-oracle.png" class="w-full max-h-[350px] object-contain" />
+</div>
+
+<div class="grid grid-cols-2 gap-5 mt-3 text-[13px] leading-5.5">
+<div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 text-center">
+<div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-1">Oracle Advantage</div>
+<MathTex display tex="A^{\mathrm{oracle}}(q,o)=r(q,o)-V^{\pi_\theta}(q)" class="text-[0.80em]" />
+</div>
+<div class="p-3 rounded-xl border-2 border-orange-200 bg-orange-50">
+The value function is unknown and usually requires a separate critic. Estimating that critic adds memory, computation, and estimation error.
+</div>
+</div>
+
+---
+
+# GRPO: Group Statistics Replace the Critic
+
+<div class="flex justify-center mt-2">
+<img src="/figs/demystify-grpo-idea.png" class="w-full max-h-[400px] object-contain" />
+</div>
+
+<div class="mt-3 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5 text-center">
+For each prompt, sample multiple completions and replace the unknown value baseline with the group mean reward.
+</div>
+
+---
+
+# GRPO-type Algorithm
+
+<div class="flex justify-center mt-2">
+<img src="/figs/demystify-grpo-type.png" class="w-full max-h-[390px] object-contain" />
+</div>
+
+<div class="mt-2 text-[12px] text-center opacity-75">
+Image notation: <MathTex tex="Z_i=r_i" /> and <MathTex tex="Z_i-\operatorname{mean}(Z)=r_i-\bar r" />.
+</div>
+
+---
+
+# GRPO: Objective
+
+<div class="text-xs px-3 py-1.5 rounded bg-violet-50 border border-violet-200 inline-block">
+Group-relative surrogate objective.
+</div>
 
 $$
-\log \pi_\theta(y\mid x)=\sum_{t=1}^{T}\log \pi_\theta(y_t\mid x,y_{<t})
-$$
-
-The vanilla policy-gradient direction is:
-
-$$
-\nabla_\theta J(\theta)
+\mathcal{J}_{\mathrm{GRPO}}(\theta)
 =
-\mathbb{E}_{y\sim\pi_\theta(\cdot\mid x)}
+\mathbb{E}_{q\sim P_{\mathrm{sft}}(Q),\,\{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O\mid q)}
 \left[
-R(x,y)\nabla_\theta \log \pi_\theta(y\mid x)
+\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}
+\sum_{t=1}^{|o_i|}
+\rho_{i,t}
+\hat A_{i,t}
 \right]
 $$
 
-<div class="mt-6 grid grid-cols-3 gap-4 text-sm">
-
-<div class="p-3 bg-blue-50 border border-blue-200 rounded">If reward is high, increase the probability of that reasoning trace.</div>
-<div class="p-3 bg-red-50 border border-red-200 rounded">If reward is low, decrease the probability of that trace.</div>
-<div class="p-3 bg-yellow-50 border border-yellow-200 rounded">But raw reward is a noisy training signal.</div>
-
-</div>
-
----
-
-# Why Advantage Is the Real Signal
-
-The model should not ask: "was this answer good in absolute terms?"
-
-It should ask:
-
-<div class="text-2xl text-center font-bold mt-6">
-Was this completion better than what we expected for this prompt?
-</div>
-
-<div class="mt-7 text-lg">
-
 $$
-A(x,y)=R(x,y)-b(x)
-$$
-
-</div>
-
-<div class="grid grid-cols-2 gap-8 mt-5">
-
-<div>
-
-### Why not raw reward?
-- Easy prompts give many correct samples.
-- Hard prompts give mostly wrong samples.
-- Reward scale mixes prompt difficulty with completion quality.
-
-</div>
-
-<div>
-
-### Why advantage?
-- Centers the reward within a local context.
-- Positive means "better than baseline".
-- Negative means "worse than baseline".
-
-</div>
-
-</div>
-
----
-
-# Why a Baseline Can Reduce Variance
-
-For any baseline $b(x)$ that does not depend on the sampled completion $y$:
-
-$$
-\mathbb{E}_{y\sim\pi_\theta}\left[
-b(x)\nabla_\theta\log\pi_\theta(y\mid x)
-\right]
+\rho_{i,t}
 =
-b(x)\nabla_\theta \sum_y \pi_\theta(y\mid x)
-=0
-$$
-
-So we can subtract it without changing the expected gradient:
-
-$$
-\nabla_\theta J(\theta)
-=
-\mathbb{E}
-\left[
-(R(x,y)-b(x))\nabla_\theta\log\pi_\theta(y\mid x)
-\right]
-$$
-
-<div class="mt-6 p-4 bg-green-50 border-l-4 border-green-500">
-The baseline removes shared noise. The update is driven by relative surprise: better or worse than expected.
-</div>
-
----
-
-# Why PPO Is Not the Natural End Point
-
-<div class="grid grid-cols-2 gap-8 mt-6">
-
-<div>
-
-## PPO in RLHF
-
-- Uses a policy model.
-- Uses a reward model.
-- Often uses a value model / critic to estimate $V(x)$.
-- Uses clipping and KL control to avoid destructive updates.
-
-</div>
-
-<div>
-
-## Problem for reasoning RL
-
-- The completion is long and high-dimensional.
-- Reward is often final-answer only.
-- A critic is expensive and may be inaccurate.
-- Many samples for the same prompt are already available.
-
-</div>
-
-</div>
-
-<div class="mt-8 text-lg text-center font-semibold">
-This motivates critic-free, group-based baselines.
-</div>
-
----
-
-# GRPO: The Base Move
-
-Group Relative Policy Optimization replaces the learned value baseline with a group baseline.
-
-<div class="grid grid-cols-2 gap-8 mt-5">
-
-<div>
-
-### Sampling
-
-For one prompt $x$, sample a group:
-
-$$
-y_1,\ldots,y_G \sim \pi_{\text{old}}(\cdot\mid x)
-$$
-
-Score each completion:
-
-$$
-r_i=R(x,y_i)
-$$
-
-</div>
-
-<div>
-
-### Relative advantage
-
-Use the group statistics:
-
-$$
-\hat{A}_i=\frac{r_i-\mathrm{mean}(r_1,\ldots,r_G)}
-{\mathrm{std}(r_1,\ldots,r_G)+\epsilon}
-$$
-
-No separate value network is needed.
-
-</div>
-
-</div>
-
-<div class="mt-6 p-4 bg-purple-50 border-l-4 border-purple-500">
-GRPO is powerful because the baseline is local: it compares answers to other answers for the same prompt.
-</div>
-
----
-
-# GRPO as a Reasoning Training Loop
-
-<div class="flex justify-center items-center mt-4">
-<img src="/figs/grpo.png" class="w-4.8/5" />
-</div>
-
----
-
-# RLOO: Make the Group Baseline Less Self-Coupled
-
-GRPO uses the whole group to center rewards. RLOO asks a sharper question:
-
-<div class="text-xl text-center font-semibold mt-5">
-How good is this completion compared with the other completions, excluding itself?
-</div>
-
-<div class="text-base mt-6">
-
-$$
-b_i=\frac{1}{G-1}\sum_{j\ne i} r_j,
+\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}
+{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})},
 \qquad
-A_i=r_i-b_i
+\hat A_{i,t}
+=
+\hat A_i
+=
+\frac{r_i-\mathrm{mean}(r_1,\ldots,r_G)}
+{\mathrm{std}(r_1,\ldots,r_G)+\epsilon}.
 $$
 
+<div class="grid grid-cols-3 gap-3 mt-5 text-[12px] leading-4.8">
+<div class="p-3 rounded-xl border-2 border-slate-200 bg-white">
+<div class="font-bold mb-1 text-slate-700"><MathTex tex="q,\ o_i" /></div>
+Prompt <MathTex tex="q" /> and sampled completion <MathTex tex="o_i" />.
+</div>
+<div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50">
+<div class="font-bold mb-1 text-emerald-800"><MathTex tex="\hat A_{i,t}" /></div>
+Reward <MathTex tex="r_i" /> normalized inside the group.
+</div>
+<div class="p-3 rounded-xl border-2 border-orange-200 bg-orange-50">
+<div class="font-bold mb-1 text-orange-800"><MathTex tex="\rho_{i,t}" /></div>
+Current-policy probability divided by rollout-policy probability.
+</div>
 </div>
 
-<div class="grid grid-cols-2 gap-8 mt-5">
-
-<div>
-
-### Why it helps
-- The sample is not part of its own baseline.
-- The comparison remains prompt-local.
-- It keeps the critic-free spirit.
-
-</div>
-
-<div>
-
-### Mental picture
-Each answer is judged against its siblings, not against itself and not against a separate value model.
-
-</div>
-
+<div class="mt-3 p-2.5 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5">
+GRPO = <b>group sampling</b> + <b>relative advantage</b> + <b>importance weighting</b>.
 </div>
 
 ---
 
-# GSPO: Move the Ratio to the Sequence Level
+# GRPO: Policy Gradient
 
-GRPO inherits a PPO-style token-level importance ratio:
+<div class="text-xs px-3 py-1.5 rounded bg-violet-50 border border-violet-200 inline-block">
+Corresponding policy-gradient form.
+</div>
 
 $$
-\rho_{i,t}=
-\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}
-{\pi_{\text{old}}(y_{i,t}\mid x,y_{i,<t})}
+\nabla_\theta \mathcal{J}_{\mathrm{GRPO}}(\theta)
+=
+\mathbb{E}_{q\sim P_{\mathrm{sft}}(Q),\,\{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O\mid q)}
+\Bigg[
+\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}
+\sum_{t=1}^{|o_i|}
+\rho_{i,t}\hat A_{i,t}\,\nabla_\theta \log \pi_\theta(o_{i,t}\mid q,o_{i,<t})
+\Bigg]
 $$
 
-GSPO changes the unit of optimization:
+$$
+\rho_{i,t}
+=
+\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}
+{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}
+$$
 
-<div class="grid grid-cols-2 gap-8 mt-5">
+$$
+s_{i,t}
+:=
+\nabla_\theta \log \pi_\theta(o_{i,t}\mid q,o_{i,<t})
+$$
 
-<div>
-
-### Token-level ratio
-- Fine-grained, but noisy for long chains.
-- One odd token can dominate clipping behavior.
-- Can be awkward for MoE routing and long reasoning traces.
-
-</div>
-
-<div>
-
-### Sequence-level ratio
-- Compute the ratio from the whole completion likelihood.
-- Clip and optimize at the sequence level.
-- Better matches the reward, which is usually sequence-level.
-
-</div>
-
-</div>
-
-<div class="text-xs mt-5 opacity-70">
-GSPO was proposed as a stable and efficient alternative to GRPO and reported as contributing to Qwen3-style reasoning improvements.
+<div class="mt-5 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[15px] leading-6">
+Policy gradient = <b>score function</b> × <b>importance ratio</b> × <b>group-relative coefficient</b>.
 </div>
 
 ---
 
-# GPG: What If We Strip the Scaffold?
+# Example: Multiple Rollouts
 
-Once we have a verifier and grouped rollouts, another question appears:
-
-<div class="text-2xl font-bold text-center mt-5">
-Do we need PPO-style surrogate machinery at all?
-</div>
-
-<div class="grid grid-cols-2 gap-8 mt-8">
-
+<div class="mt-3 p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 flex items-center justify-between">
 <div>
+<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">One Prompt <MathTex tex="q" /></div>
+<div class="text-[16px] leading-6">Find the shortest distance from <b>(5,5)</b> to the curve <b>xy = 4</b>.</div>
+</div>
+<div class="text-[12px] px-3 py-1.5 rounded-full bg-white border border-slate-200">four independent rollouts</div>
+</div>
 
-### GRPO keeps stabilizers
-- Old policy ratio
-- Clipping
-- KL/reference control
-- Group-normalized advantage
+<div class="grid grid-cols-4 gap-3 mt-4 text-center">
+
+<div class="p-3 rounded-2xl border-2 border-emerald-300 bg-emerald-50 min-h-[225px]">
+<div class="flex items-center justify-between text-xs"><b class="text-emerald-800"><MathTex tex="o_1" /></b><span class="px-2 py-1 rounded-full bg-emerald-200 text-emerald-800">reward +1</span></div>
+<div class="mt-5 text-[12px] leading-5 text-left">Lagrange multipliers give the closest point <b>(4,1)</b>.</div>
+<div class="mt-5 text-xs uppercase tracking-wide text-emerald-700 font-bold">Final Answer</div>
+<div class="mt-1 text-3xl font-bold text-emerald-800">√17</div>
+</div>
+
+<div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50 min-h-[225px]">
+<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="o_2" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
+<div class="mt-5 text-[12px] leading-5 text-left">Assumes symmetry and chooses the point <b>(2,2)</b>.</div>
+<div class="mt-5 text-xs uppercase tracking-wide text-rose-700 font-bold">Final Answer</div>
+<div class="mt-1 text-3xl font-bold text-rose-800">√18</div>
+</div>
+
+<div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50 min-h-[225px]">
+<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="o_3" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
+<div class="mt-5 text-[12px] leading-5 text-left">Finds <b>(1,4)</b>, then miscomputes the Euclidean distance.</div>
+<div class="mt-5 text-xs uppercase tracking-wide text-rose-700 font-bold">Final Answer</div>
+<div class="mt-1 text-3xl font-bold text-rose-800">5</div>
+</div>
+
+<div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50 min-h-[225px]">
+<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="o_4" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
+<div class="mt-5 text-[12px] leading-5 text-left">Projects toward the diagonal without solving the constraint.</div>
+<div class="mt-5 text-xs uppercase tracking-wide text-rose-700 font-bold">Final Answer</div>
+<div class="mt-1 text-3xl font-bold text-rose-800">3</div>
+</div>
 
 </div>
 
-<div>
+<div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5 text-center">
+The verifier converts the rollout group into <MathTex tex="[r_1,r_2,r_3,r_4]=[1,-1,-1,-1]" />.
+</div>
 
-### GPG simplifies
-- Directly optimizes the original RL objective.
-- Removes critic and reference models.
-- Avoids surrogate loss design.
-- Treats group policy gradient as the basic estimator.
+---
+clicks: 3
+---
 
+# Example: Reward Normalization
+
+<div class="mt-3 grid grid-cols-3 gap-4 items-stretch">
+
+<div class="p-4 rounded-2xl border-2 border-slate-200 bg-white text-center">
+<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-3">Verifier Rewards</div>
+<div class="flex justify-center gap-2 text-sm font-bold">
+<div class="px-3 py-2 rounded-lg bg-emerald-100 text-emerald-800">+1</div>
+<div class="px-3 py-2 rounded-lg bg-rose-100 text-rose-800">-1</div>
+<div class="px-3 py-2 rounded-lg bg-rose-100 text-rose-800">-1</div>
+<div class="px-3 py-2 rounded-lg bg-rose-100 text-rose-800">-1</div>
+</div>
+<MathTex display tex="\mathbf r=[1,-1,-1,-1]" class="text-[0.78em] mt-4" />
+</div>
+
+<div v-click="1" class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50 text-center">
+<div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">Group Statistics</div>
+<MathTex display tex="\bar r=\frac14\sum_{j=1}^4r_j=-0.5" class="text-[0.74em]" />
+<MathTex display tex="\sigma_r=\sqrt{\frac14\sum_{j=1}^4(r_j-\bar r)^2}\approx0.866" class="text-[0.67em] mt-2" />
+</div>
+
+<div v-click="2" class="p-4 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Normalized Advantages</div>
+<MathTex display tex="\hat A_i=\frac{r_i-\bar r}{\sigma_r}" class="text-[0.82em]" />
+<MathTex display tex="\widehat{\mathbf A}=[1.73,-0.58,-0.58,-0.58]" class="text-[0.70em] mt-2" />
 </div>
 
 </div>
 
-<div class="mt-6 p-4 bg-gray-50 border-l-4 border-gray-500">
-GPG is useful conceptually because it shows how much of reasoning RL is really policy gradient plus a good baseline.
+<div v-click="3" class="mt-5 p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
+<div class="flex items-center justify-between mb-3">
+<div class="text-xs uppercase tracking-wide text-emerald-700 font-bold">Sequence Advantage Is Broadcast to Every Token</div>
+<div class="text-[11px] text-emerald-800/70">outcome supervision</div>
+</div>
+<div class="grid grid-cols-4 gap-3 text-center text-[11px]">
+<div><div class="font-bold text-emerald-800 mb-2"><MathTex tex="o_1" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span>…</span></div></div>
+<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="o_2" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="o_3" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="o_4" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+</div>
+</div>
+
+<div class="mt-4 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[12px] text-center">
+Centering identifies which rollout is better than its siblings; scaling keeps the coefficient magnitude comparable across prompts.
+</div>
+
+---
+clicks: 2
+---
+
+# Example: Importance Ratio
+
+<div class="grid grid-cols-5 gap-3 mt-3 text-[12px] leading-5">
+<div class="col-span-2 p-3 rounded-xl border-2 border-slate-200 bg-slate-50">
+<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Question <MathTex tex="q" /></div>
+<div class="font-mono bg-white px-2 py-1 rounded">Find the shortest distance.</div>
+</div>
+<div class="col-span-2 p-3 rounded-xl border-2 border-slate-200 bg-slate-50">
+<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Prefix <MathTex tex="o_{1,<t}" /></div>
+<div class="font-mono bg-white px-2 py-1 rounded">The shortest distance is _____</div>
+</div>
+<div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 text-center">
+<div class="text-[10px] uppercase tracking-wide text-emerald-700 font-bold mb-1">Token <MathTex tex="o_{1,t}" /></div>
+<div class="font-mono text-xl font-bold text-emerald-800">√17</div>
+</div>
+</div>
+
+<div v-click="1" class="grid grid-cols-2 gap-4 mt-4">
+
+<div class="p-3 rounded-2xl border-2 border-sky-200 bg-sky-50">
+<div class="font-bold text-sky-800 mb-2 text-[13px]">Rollout policy <MathTex tex="\pi_{\theta_{\mathrm{old}}}" /></div>
+<div class="space-y-2 text-[12px]">
+<div class="flex items-center gap-2"><div class="w-13 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold text-center">√17</div><div class="flex-1 h-3 rounded-full bg-sky-100 overflow-hidden"><div class="h-full bg-sky-500" style="width:20%"></div></div><div class="w-10 text-right">0.20</div></div>
+<div class="flex items-center gap-2"><div class="w-13 px-2 py-0.5 rounded bg-white border border-slate-200 font-mono text-center">√18</div><div class="flex-1 h-3 rounded-full bg-sky-100 overflow-hidden"><div class="h-full bg-sky-400" style="width:45%"></div></div><div class="w-10 text-right">0.45</div></div>
+<div class="flex items-center gap-2"><div class="w-13 px-2 py-0.5 rounded bg-white border border-slate-200 font-mono text-center">3</div><div class="flex-1 h-3 rounded-full bg-sky-100 overflow-hidden"><div class="h-full bg-sky-400" style="width:35%"></div></div><div class="w-10 text-right">0.35</div></div>
+</div>
+</div>
+
+<div class="p-3 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
+<div class="font-bold text-emerald-800 mb-2 text-[13px]">Current policy <MathTex tex="\pi_\theta" /></div>
+<div class="space-y-2 text-[12px]">
+<div class="flex items-center gap-2"><div class="w-13 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold text-center">√17</div><div class="flex-1 h-3 rounded-full bg-emerald-100 overflow-hidden"><div class="h-full bg-emerald-500" style="width:30%"></div></div><div class="w-10 text-right">0.30</div></div>
+<div class="flex items-center gap-2"><div class="w-13 px-2 py-0.5 rounded bg-white border border-slate-200 font-mono text-center">√18</div><div class="flex-1 h-3 rounded-full bg-emerald-100 overflow-hidden"><div class="h-full bg-emerald-400" style="width:35%"></div></div><div class="w-10 text-right">0.35</div></div>
+<div class="flex items-center gap-2"><div class="w-13 px-2 py-0.5 rounded bg-white border border-slate-200 font-mono text-center">3</div><div class="flex-1 h-3 rounded-full bg-emerald-100 overflow-hidden"><div class="h-full bg-emerald-400" style="width:35%"></div></div><div class="w-10 text-right">0.35</div></div>
+</div>
+</div>
+
+</div>
+
+<div v-click="2" class="grid grid-cols-5 gap-4 mt-4 items-stretch">
+<div class="col-span-3 p-3 rounded-2xl border-2 border-orange-300 bg-orange-50 text-center">
+<div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-1">Sampled-Token Importance Ratio</div>
+<MathTex display tex="\rho_{1,t}=\frac{\pi_\theta(\sqrt{17}\mid q,o_{1,<t})}{\pi_{\theta_{\mathrm{old}}}(\sqrt{17}\mid q,o_{1,<t})}=\frac{0.30}{0.20}=1.5" class="text-[0.78em]" />
+</div>
+<div class="col-span-2 p-3 rounded-2xl border-2 border-amber-200 bg-amber-50 text-[12px] leading-5.5">
+Samples come from <MathTex tex="\pi_{\theta_{\mathrm{old}}}" />, while optimization targets <MathTex tex="\pi_\theta" />. The ratio reweights the sampled token for the current policy: <b><MathTex tex="\rho>1" /> upweights</b>, <b><MathTex tex="\rho<1" /> downweights</b>.
+</div>
+</div>
+
+---
+clicks: 2
+---
+
+# Example: Full Update
+
+<div class="grid grid-cols-3 gap-3 mt-2 text-center text-[12px]">
+<div class="p-3 rounded-xl border-2 border-slate-200 bg-white"><div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Rollout Group</div><MathTex tex="\{o_j\}_{j=1}^4\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid q)" /></div>
+<div class="p-3 rounded-xl border-2 border-blue-200 bg-blue-50"><div class="text-[10px] uppercase tracking-wide text-blue-700 font-bold mb-1">Verifier Rewards</div><MathTex tex="\mathbf r=[1,-1,-1,-1]" /></div>
+<div class="p-3 rounded-xl border-2 border-violet-200 bg-violet-50"><div class="text-[10px] uppercase tracking-wide text-violet-700 font-bold mb-1">Relative Advantages</div><MathTex tex="\widehat{\mathbf A}=[1.73,-0.58,-0.58,-0.58]" /></div>
+</div>
+
+<div class="mt-3 p-2.5 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[12px] text-center">
+For the correct completion <MathTex tex="o_1" />, every token uses the sequence coefficient <MathTex tex="\hat A_1=1.73" />.
+</div>
+
+<div v-click="1" class="grid grid-cols-3 gap-3 mt-3 text-center">
+<div class="p-2.5 rounded-xl border-2 border-orange-200 bg-orange-50"><div class="text-xs font-bold text-orange-800 mb-1">Token 1</div><div class="flex justify-center gap-4 text-[11px]"><span>ratio <MathTex tex="\rho_{1,1}=1.5" /></span><span>score <MathTex tex="s_{1,1}" /></span></div></div>
+<div class="p-2.5 rounded-xl border-2 border-orange-200 bg-orange-50"><div class="text-xs font-bold text-orange-800 mb-1">Token 2</div><div class="flex justify-center gap-4 text-[11px]"><span>ratio <MathTex tex="\rho_{1,2}=0.8" /></span><span>score <MathTex tex="s_{1,2}" /></span></div></div>
+<div class="p-2.5 rounded-xl border-2 border-orange-200 bg-orange-50"><div class="text-xs font-bold text-orange-800 mb-1">Token 3</div><div class="flex justify-center gap-4 text-[11px]"><span>ratio <MathTex tex="\rho_{1,3}=1.2" /></span><span>score <MathTex tex="s_{1,3}" /></span></div></div>
+</div>
+
+<div v-click="2" class="grid grid-cols-5 gap-4 mt-3">
+<div class="col-span-3 p-3 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-1">Policy Gradient Contribution</div>
+<MathTex display tex="g_1(\theta)=\frac{1}{3}\sum_{t=1}^{3}\rho_{1,t}\hat A_1s_{1,t}" class="text-[0.82em]" />
+<MathTex display tex="g_1(\theta)=\frac{1}{3}\left(1.5\times1.73\,s_{1,1}+0.8\times1.73\,s_{1,2}+1.2\times1.73\,s_{1,3}\right)" class="text-[0.76em] mt-1" />
+</div>
+<div class="col-span-2 p-3 rounded-2xl border-2 border-sky-200 bg-sky-50 text-center">
+<div class="text-xs uppercase tracking-wide text-sky-700 font-bold mb-1">Objective and Loss</div>
+<MathTex display tex="J_1(\theta)=\frac13\sum_{t=1}^{3}\rho_{1,t}\hat A_1,\qquad L_1(\theta)=-J_1(\theta)" class="text-[0.74em]" />
+<MathTex display tex="\nabla_\theta J_1(\theta)=g_1(\theta),\qquad \nabla_\theta L_1(\theta)=-g_1(\theta)" class="text-[0.69em] mt-2" />
+</div>
 </div>
 
 ---
 
-# Dr.GRPO: Fix the Length Bias
+# Dr. GRPO: Removing Optimization Bias
 
-GRPO was a strong base move, but later work found an optimization bias:
+<div class="grid grid-cols-5 gap-5 mt-3 h-[420px] items-stretch">
 
-$$
-\text{incorrect long responses can receive distorted optimization pressure}
-$$
-
-Dr.GRPO, from *Understanding R1-Zero-Like Training: A Critical Perspective*, is a "Done Right GRPO" correction.
-
-<div class="grid grid-cols-2 gap-8 mt-6">
-
-<div>
-
-### What goes wrong in GRPO
-- Length normalization can change the effective objective.
-- Long incorrect outputs may be unintentionally favored.
-- Token efficiency becomes worse even when accuracy looks stable.
-
+<div class="col-span-3 p-3 rounded-2xl border-2 border-slate-200 bg-white shadow-sm flex items-center justify-center">
+<img src="/figs/drgrpo.jpg" class="w-full max-h-[410px] object-contain" />
 </div>
 
-<div>
+<div class="col-span-2 flex flex-col gap-3">
 
-### What Dr.GRPO changes
-- Keeps the critic-free group comparison idea.
-- Removes the artificial response-length incentive.
-- Improves token efficiency while preserving reasoning performance.
+<div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50">
+<div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">Two Sources of Bias in GRPO</div>
+<div class="space-y-1.5 text-[12px] leading-5">
+<div><b>Response length:</b> averaging each response loss by <MathTex tex="|o_i|" /> changes its effective weight.</div>
+<div><b>Question difficulty:</b> dividing centered rewards by their group standard deviation reweights prompts.</div>
+</div>
+</div>
 
+<div class="flex-1 p-3 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
+<div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-2">Dr. GRPO</div>
+<MathTex display tex="\widehat b_i^{\mathrm{Dr}}=\frac1G\sum_{j=1}^{G}r_j,\qquad \widehat A_i^{\mathrm{Dr}}=r_i-\widehat b_i^{\mathrm{Dr}}" class="text-[0.76em]" />
+<div class="mt-2 text-[12px] leading-5">
+Keep group centering, but remove response-length and reward-standard-deviation normalization.
+</div>
+<div class="mt-3 px-3 py-2.5 rounded-xl border-l-4 border-emerald-500 bg-white/80 text-[12px] leading-5 font-semibold">
+Together, these two changes recover the standard policy-gradient form without bias.
+</div>
 </div>
 
 </div>
+</div>
 
-<div class="text-xs mt-6 opacity-70">
-Conceptually, Dr.GRPO says: if the reward is sequence-level, the optimizer should not secretly prefer longer sequences unless the verifier really rewards them.
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Zichen Liu, Changyu Chen, Wenjun Li, Penghui Qi, Tianyu Pang, Chao Du, Wee Sun Lee, and Min Lin. "Understanding R1-Zero-Like Training: A Critical Perspective." arXiv preprint arXiv:2503.20783 (2025).
 </div>
 
 ---
 
-# The Algorithmic Story, Not a Method List
+# Demystify GRPO: A Second-Order U-Statistic
 
-<div class="relative mt-8">
-
-<div class="grid grid-cols-6 gap-3 text-xs text-center">
-
-<div class="p-3 border-2 border-gray-300 rounded bg-gray-50">
-<div class="font-bold">PPO</div>
-critic + clipping
+<div class="mt-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] leading-5.5">
+For the on-policy GRPO-type gradient with a group-mean baseline, fix one prompt <MathTex tex="q" /> and draw a group of completions. The completion-level score aggregates the token scores:
+<MathTex display tex="o_1,\ldots,o_G\overset{\mathrm{i.i.d.}}{\sim}\pi_\theta(\cdot\mid q),\qquad s_i(\theta):=\nabla_\theta\log\pi_\theta(o_i\mid q)=\sum_{t=1}^{|o_i|}s_{i,t},\qquad \bar r=\frac{1}{G}\sum_{i=1}^{G}r_i." class="text-[0.70em] mt-1" />
 </div>
 
-<div class="p-3 border-2 border-purple-300 rounded bg-purple-50">
-<div class="font-bold">GRPO</div>
-replace critic with group baseline
+<div class="grid grid-cols-2 gap-4 mt-4 items-stretch">
+
+<div class="p-4 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Centered-Reward Form</div>
+<MathTex display tex="\widehat g_{\mathrm{GRPO}}(q;\theta)=\frac{1}{G-1}\sum_{i=1}^{G}s_i(\theta)(r_i-\bar r)" class="text-[0.80em]" />
+<div class="mt-3 text-[13px] leading-5 text-left">
+Each score is multiplied by its reward relative to the other completions for the same prompt.
+</div>
 </div>
 
-<div class="p-3 border-2 border-pink-300 rounded bg-pink-50">
-<div class="font-bold">Dr.GRPO</div>
-remove length bias
+<div class="p-4 rounded-2xl border-2 border-orange-200 bg-orange-50 text-center">
+<div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-2">Equivalent Pairwise Form</div>
+<MathTex display tex="\widehat g_{\mathrm{GRPO}}(q;\theta)=\binom{G}{2}^{-1}\sum_{1\le i<j\le G}\frac{1}{2}(s_i-s_j)(r_i-r_j)" class="text-[0.72em]" />
+<div class="mt-3 text-[13px] leading-5 text-left">
+The group-centered gradient is an average over every unordered pair of sampled completions.
 </div>
-
-<div class="p-3 border-2 border-blue-300 rounded bg-blue-50">
-<div class="font-bold">RLOO</div>
-leave-one-out group baseline
-</div>
-
-<div class="p-3 border-2 border-green-300 rounded bg-green-50">
-<div class="font-bold">GSPO</div>
-sequence-level ratio and clipping
-</div>
-
-<div class="p-3 border-2 border-orange-300 rounded bg-orange-50">
-<div class="font-bold">GPG</div>
-simpler group policy gradient
 </div>
 
 </div>
 
+<div class="mt-4 p-3 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[14px] leading-5.5 text-center">
+With <MathTex tex="W_i=(o_i,r_i)" /> and <MathTex tex="h(W_i,W_j)=\tfrac12(s_i-s_j)(r_i-r_j)" />, this is exactly a second-order U-statistic.
 </div>
 
-<div class="mt-8 text-lg text-center font-semibold">
-The common thread: better baselines, less length bias, better ratios, cleaner feedback, and less unnecessary machinery.
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Hongyi Zhou, Kai Ye, Erhan Xu, Jin Zhu, Ying Yang, Shijin Gong, and Chengchun Shi. "Demystifying Group Relative Policy Optimization: Its Policy Gradient is a U-Statistic." arXiv preprint arXiv:2603.01162 (2026).
 </div>
 
+---
+
+# Demystify GRPO: Theoretical Results
+
+<div class="flex justify-center items-center mt-7">
+<img src="/figs/demystify-theory-roadmap.png" class="w-full max-h-[430px] object-contain" />
+</div>
+
+<div class="mt-5 p-3 rounded-xl border-l-4 border-slate-500 bg-slate-50 text-[13px] leading-5 text-center">
+The U-statistic representation connects gradient evaluation, policy optimization, and practical GRPO variants in one theoretical framework.
+</div>
+
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Hongyi Zhou, Kai Ye, Erhan Xu, Jin Zhu, Ying Yang, Shijin Gong, and Chengchun Shi. "Demystifying Group Relative Policy Optimization: Its Policy Gradient is a U-Statistic." arXiv preprint arXiv:2603.01162 (2026).
+</div>
+
+---
+
+# KAE: Kernelized Advantage Estimation
+
+<div class="flex justify-center mt-2">
+<img src="/figs/kae-overview.png" class="w-full max-h-[235px] object-contain" />
+</div>
+
+<div class="mt-2 p-3 rounded-2xl border-2 border-orange-300 bg-orange-50/60">
+<div class="grid grid-cols-5 gap-4 items-center">
+
+<div class="col-span-3 text-center">
+<div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-1">Kernel Baseline Across Training Time</div>
+<MathTex display tex="\kappa_{t,s}=K\!\left(\frac{t-s}{th}\right),\qquad \widehat b_{i,t}^{\mathrm{KAE}}=\frac{\sum_{s<t}\kappa_{t,s}r_{i,s}}{\sum_{s<t}\kappa_{t,s}}" class="text-[0.72em]" />
+</div>
+
+<div class="col-span-2 text-center border-l-2 border-orange-200 pl-4">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-1">Advantage</div>
+<MathTex display tex="\widehat A_{i,t}^{\mathrm{KAE}}=r_{i,t}-\widehat b_{i,t}^{\mathrm{KAE}}" class="text-[0.84em]" />
+</div>
+
+</div>
+</div>
+
+<div class="mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-[12px] leading-5 text-center">
+For the same prompt <MathTex tex="i" />, the kernel input is the normalized time-index gap <MathTex tex="(t-s)/(th)" />. Nearby training iterations receive larger weights when estimating the current value baseline.
+</div>
+
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Shijin Gong, Kai Ye, Jin Zhu, Xinyu Zhang, Hongyi Zhou, and Chengchun Shi. "Kernelized Advantage Estimation: From Nonparametric Statistics to LLM Reasoning." arXiv preprint arXiv:2604.28005 (2026).
+</div>
+
+---
+
+# BASIS: Single-Rollout Information Sharing
+
+<div class="mt-3 p-3 rounded-2xl border-2 border-orange-200 bg-white shadow-sm">
+<img src="/figs/basis-pipeline.png" class="w-full max-h-[195px] object-contain" />
+</div>
+
+<div class="grid grid-cols-5 gap-4 mt-3 items-stretch">
+
+<div class="col-span-3 p-3 rounded-2xl border-2 border-orange-300 bg-orange-50/60 text-center">
+<div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-1">Batchwise Leave-One-Out Baseline</div>
+<MathTex display tex="\widehat b_{i,t}^{\mathrm{BASIS}}=\sum_{j\ne i}w_{ij,t}r_{j,t},\qquad \widehat A_{i,t}^{\mathrm{BASIS}}=r_{i,t}-\widehat b_{i,t}^{\mathrm{BASIS}},\qquad w_{ii,t}=0" class="text-[0.70em]" />
+<MathTex display tex="w_{ij,t}=\frac{\widehat V_{i,t}\widehat V_{j,t}/\widehat\sigma_{j,t}^{,2}}{\sum_{k\ne i}\widehat V_{k,t}^{,2}/\widehat\sigma_{k,t}^{,2}}" class="text-[0.76em] mt-1" />
+</div>
+
+<div class="col-span-2 p-3 rounded-2xl border-2 border-violet-200 bg-violet-50">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Core Idea</div>
+<div class="text-[13px] leading-5.5">
+Sample only one completion per prompt, then estimate each prompt's value by borrowing reward information from the other prompts in the batch.
+</div>
+</div>
+
+</div>
+
+<div class="mt-3 flex justify-center gap-3 text-[12px] font-semibold">
+<div class="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200">one rollout: <MathTex tex="G=1" /></div>
+<div class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">prompt-dependent baseline</div>
+<div class="px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200">critic-free</div>
+</div>
+
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun Shi. "BASIS: Batchwise Advantage Estimation from Single-Rollout Information Sharing for LLM Reasoning." arXiv preprint arXiv:2605.27293 (2026).
+</div>
+
+
+---
+
+# A Lot of Work Since GRPO
+
+<div class="grid grid-cols-9 gap-3 mt-3 items-center text-center">
+<div class="col-span-4 px-4 py-2 rounded-xl border-2 border-slate-300 bg-slate-50"><b>PPO</b> <span class="text-[11px] text-slate-500">(Schulman et al., 2017)</span></div>
+<div class="col-span-1 text-2xl text-slate-400">&#8594;</div>
+<div class="col-span-4 px-4 py-2 rounded-xl border-2 border-violet-300 bg-violet-50"><b>GRPO / DeepSeekMath</b> <span class="text-[11px] text-violet-600">(Shao et al., 2024)</span></div>
+</div>
+
+<div class="grid grid-cols-5 gap-4 mt-3 items-stretch">
+
+<div class="col-span-3 rounded-2xl border-2 border-blue-200 bg-blue-50/40 p-3">
+<div class="mb-2 text-center text-[13px] font-bold uppercase tracking-wide text-blue-800">Algorithms & Empirical Work</div>
+<div class="grid grid-cols-3 gap-1 text-center">
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">RLOO</b><span class="text-[8px] text-slate-500">(Ahmadian et al., 2024)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">REINFORCE++</b><span class="text-[8px] text-slate-500">(Hu et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">Dr. GRPO</b><span class="text-[8px] text-slate-500">(Liu et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">DAPO</b><span class="text-[8px] text-slate-500">(Yu et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">GPG</b><span class="text-[8px] text-slate-500">(Chu et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">GSPO</b><span class="text-[8px] text-slate-500">(Zheng et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">CPPO</b><span class="text-[8px] text-slate-500">(Lin et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">BNPO</b><span class="text-[8px] text-slate-500">(Xiao et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">SEED-GRPO</b><span class="text-[8px] text-slate-500">(Chen et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">GMPO</b><span class="text-[8px] text-slate-500">(Zhao et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">KRPO</b><span class="text-[8px] text-slate-500">(Wang et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">RePO</b><span class="text-[8px] text-slate-500">(Li et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">Single-Stream PO</b><span class="text-[8px] text-slate-500">(Xu and Ding, 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">Shrinkage Baselines</b><span class="text-[8px] text-slate-500">(Zeng et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">Optimal Baseline</b><span class="text-[8px] text-slate-500">(Hao et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">Rollout Down-Sampling</b><span class="text-[8px] text-slate-500">(Xu et al., 2025)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">EBPO</b><span class="text-[8px] text-slate-500">(Han et al., 2026)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">RiskPO</b><span class="text-[8px] text-slate-500">(Ren et al., 2026)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">BASIS</b><span class="text-[8px] text-slate-500">(Gong et al., 2026a)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">KAE</b><span class="text-[8px] text-slate-500">(Gong et al., 2026b)</span></div>
+<div class="h-[35px] rounded-lg border border-blue-100 bg-white flex flex-col justify-center"><b class="text-[10px]">BiCC</b><span class="text-[8px] text-slate-500">(Li et al., 2026)</span></div>
+<div class="h-[35px] flex items-center justify-center text-2xl font-bold tracking-[0.25em] text-blue-400">...</div>
+</div>
+</div>
+
+<div class="col-span-2 rounded-2xl border-2 border-violet-200 bg-violet-50/40 p-3">
+<div class="mb-2 text-center text-[13px] font-bold uppercase tracking-wide text-violet-800">Theory & Analysis</div>
+<div class="grid grid-cols-1 gap-1 text-center">
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">What Is the Alignment Objective of GRPO?</b><span class="text-[8px] text-slate-500">(Vojnovic and Yun, 2025)</span></div>
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">What Is the Objective of Reasoning with RL?</b><span class="text-[8px] text-slate-500">(Davis and Recht, 2025)</span></div>
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">Theory and Practice of GRPO</b><span class="text-[8px] text-slate-500">(Pang and Jin, 2025)</span></div>
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">GRPO Is Secretly DPO</b><span class="text-[8px] text-slate-500">(Wu et al., 2025)</span></div>
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">Your Group-Relative Advantage Is Biased</b><span class="text-[8px] text-slate-500">(Yang et al., 2026)</span></div>
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">Group-Relative REINFORCE Is Off-Policy</b><span class="text-[8px] text-slate-500">(Yao et al., 2026)</span></div>
+<div class="h-[35px] px-2 rounded-lg border border-violet-100 bg-white flex flex-col justify-center"><b class="text-[9px] leading-3">Demystifying GRPO</b><span class="text-[8px] text-slate-500">(Zhou et al., 2026)</span></div>
+<div class="h-[35px] flex items-center justify-center text-2xl font-bold tracking-[0.25em] text-violet-400">...</div>
+</div>
+</div>
+
+</div>
 ---
 
 # A Practical Reasoning Post-Training Recipe
