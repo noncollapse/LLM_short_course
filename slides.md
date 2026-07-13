@@ -3254,46 +3254,30 @@ layout: section
 
 ---
 
-# Why Reasoning Became a Separate Chapter
+# Reasoning: Make Intermediate Steps Explicit
 
-<div class="grid grid-cols-2 gap-8 mt-6">
-
-<div>
-
-### Ordinary generation
-
-<div class="text-lg mt-4">
-
-$$x \rightarrow y$$
-
+<div class="mt-2 px-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-700">
+Instead of jumping directly to a final answer, the model generates a sequence of intermediate steps that lead to the solution.
 </div>
 
-- The model learns to produce the next token.
-- The answer can be fluent while the internal path is fragile.
-- Failure is often hidden until the final answer is checked.
-
+<div class="mt-4 px-4 py-3 rounded-2xl border-2 border-orange-200 bg-white shadow-sm">
+<img src="/figs/reasoning-elephant.png" class="w-full max-h-[245px] object-contain" />
 </div>
 
-<div>
-
-### Reasoning generation
-
-<div class="text-lg mt-4">
-
-$$x \rightarrow z_1 \rightarrow z_2 \rightarrow \cdots \rightarrow y$$
-
+<div class="grid grid-cols-2 gap-4 mt-4">
+<div class="px-4 py-3 rounded-xl border-2 border-slate-200 bg-slate-50">
+<div class="flex items-center justify-between"><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-slate-500">Direct generation</div><span class="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-[9px] text-slate-500">final answer only</span></div>
+<MathTex display tex="x\longrightarrow y" class="text-[0.90em] mt-1" />
+</div>
+<div class="px-4 py-3 rounded-xl border-2 border-emerald-200 bg-emerald-50">
+<div class="flex items-center justify-between"><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-emerald-700">Reasoning trajectory</div><span class="px-2 py-0.5 rounded-full bg-white border border-emerald-200 text-[9px] text-emerald-700">steps become context</span></div>
+<MathTex display tex="x\longrightarrow z_1\longrightarrow z_2\longrightarrow z_3\longrightarrow y" class="text-[0.82em] mt-1" />
+</div>
 </div>
 
-- The model spends tokens on intermediate state.
-- Search, verification, and revision become possible.
-- Training can reward not just style, but correctness.
-
-</div>
-
-</div>
-
-<div class="mt-8 text-xl font-semibold text-center">
-Reasoning is not only "longer output"; it is a different way of allocating computation.
+<div class="mt-3 flex items-center justify-between text-[10px] text-slate-500">
+<span>Intermediate tokens let later tokens condition on the evolving solution path.</span>
+<span>Illustration: Zhou et al. (2026), <i>Demystifying GRPO</i>.</span>
 </div>
 
 ---
@@ -3365,114 +3349,43 @@ Reasoning is not only "longer output"; it is a different way of allocating compu
 
 ---
 
-# Chain-of-Thought: Put Latent Work on the Page
+# Chain-of-Thought Prompting
 
-<div class="mt-2 px-4 py-3 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-white flex items-center gap-5">
-<div class="min-w-[120px]"><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-600">Definition</div><div class="text-lg font-black text-blue-900">What is CoT?</div></div>
-<div class="h-12 w-px bg-blue-200"></div>
-<div class="flex-1 text-[13px] leading-5 text-slate-700">The model generates a sequence of <b>intermediate natural-language reasoning steps</b> before committing to the final output.</div>
-<div class="px-3 py-2 rounded-xl bg-slate-900 text-white font-mono text-[11px] whitespace-nowrap">&lt;input, chain of thought, output&gt;</div>
+<div class="mt-2 flex items-center justify-between px-4 py-3 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-white">
+<div><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-600">Method definition</div><div class="mt-1 text-[13px] text-slate-700">Augment the model output with intermediate natural-language reasoning before the final answer.</div></div>
+<span class="px-3 py-1 rounded-full bg-white border border-blue-200 text-[10px] font-semibold text-blue-700">Wei et al. (2022)</span>
+</div>
+
+<div class="grid grid-cols-2 gap-4 mt-3">
+<div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
+<div class="text-[10px] uppercase tracking-wide font-bold text-slate-500">Standard few-shot exemplar</div>
+<div class="mt-2 px-3 py-2 rounded-lg bg-white border border-slate-200 font-mono text-[12px] text-center">&lt;input, output&gt;</div>
+</div>
+<div class="p-3 rounded-xl border-2 border-blue-200 bg-blue-50">
+<div class="text-[10px] uppercase tracking-wide font-bold text-blue-700">Chain-of-thought exemplar</div>
+<div class="mt-2 px-3 py-2 rounded-lg bg-white border border-blue-200 font-mono text-[12px] text-center">&lt;input, reasoning steps, output&gt;</div>
+</div>
 </div>
 
 <div class="mt-3 flex items-center gap-3">
-<div class="text-[10px] uppercase tracking-[0.14em] font-bold text-slate-500">How few-shot CoT prompting works</div><div class="h-px flex-1 bg-slate-200"></div>
+<div class="text-[10px] uppercase tracking-[0.14em] font-bold text-slate-500">Method workflow</div><div class="h-px flex-1 bg-slate-200"></div>
 </div>
 
 <div class="grid grid-cols-11 gap-2 mt-2 items-stretch text-center">
-<div class="col-span-4 p-3 rounded-xl border border-slate-200 bg-slate-50">
-<div class="text-[10px] uppercase tracking-wide font-bold text-slate-500 mb-2">Demonstrations in the prompt</div>
-<div class="space-y-1.5 text-[10px] font-semibold">
-<div class="px-2 py-1.5 rounded-lg bg-white border border-blue-100">Question 1 <span class="text-blue-400">&#8594;</span> reasoning steps <span class="text-blue-400">&#8594;</span> answer 1</div>
-<div class="px-2 py-1.5 rounded-lg bg-white border border-blue-100">Question 2 <span class="text-blue-400">&#8594;</span> reasoning steps <span class="text-blue-400">&#8594;</span> answer 2</div>
-</div>
+<div class="col-span-4 p-3 rounded-xl border-2 border-blue-200 bg-blue-50">
+<div class="text-[10px] uppercase tracking-wide font-bold text-blue-700">1 &nbsp; Construct the prompt</div>
+<div class="mt-2 space-y-1 text-[10px] font-semibold"><div class="px-2 py-1 rounded bg-white">Question 1 &#8594; reasoning &#8594; answer 1</div><div class="px-2 py-1 rounded bg-white">Question 2 &#8594; reasoning &#8594; answer 2</div></div>
 </div>
 <div class="col-span-1 flex items-center justify-center text-2xl text-blue-400">&#8594;</div>
 <div class="col-span-2 p-3 rounded-xl border-2 border-amber-200 bg-amber-50 flex flex-col justify-center">
-<div class="text-[10px] uppercase tracking-wide font-bold text-amber-700">Test input</div>
-<div class="mt-2 text-base font-black text-amber-900">New question</div>
+<div class="text-[10px] uppercase tracking-wide font-bold text-amber-700">2 &nbsp; Append</div>
+<div class="mt-2 text-sm font-black text-amber-900">New question</div>
 </div>
 <div class="col-span-1 flex items-center justify-center text-2xl text-emerald-400">&#8594;</div>
 <div class="col-span-3 p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 flex flex-col justify-center">
-<div class="text-[10px] uppercase tracking-wide font-bold text-emerald-700">Model continuation</div>
-<div class="mt-2 text-[11px] font-bold"><span class="px-2 py-1 rounded bg-white border border-emerald-200">Reasoning steps</span> <span class="text-emerald-500">&#8594;</span> <span class="px-2 py-1 rounded bg-emerald-100">Answer</span></div>
+<div class="text-[10px] uppercase tracking-wide font-bold text-emerald-700">3 &nbsp; Generate</div>
+<div class="mt-2 text-[11px] font-bold"><span class="px-2 py-1 rounded bg-white">Reasoning</span> <span class="text-emerald-500">&#8594;</span> <span class="px-2 py-1 rounded bg-emerald-100">Final answer</span></div>
 </div>
-</div>
-
-<div class="mt-3 flex items-center gap-3">
-<div class="text-[10px] uppercase tracking-[0.14em] font-bold text-slate-500">Why the paper argues this helps</div><div class="h-px flex-1 bg-slate-200"></div>
-</div>
-
-<div class="grid grid-cols-3 gap-3 mt-2">
-<div class="p-3 rounded-xl border border-sky-200 bg-sky-50"><div class="text-[10px] font-bold text-sky-600">01 &nbsp; DECOMPOSE</div><div class="mt-1 text-[12px] leading-4">Break a multi-step problem into intermediate subproblems and solve them in order.</div></div>
-<div class="p-3 rounded-xl border border-amber-200 bg-amber-50"><div class="text-[10px] font-bold text-amber-600">02 &nbsp; ALLOCATE COMPUTE</div><div class="mt-1 text-[12px] leading-4">Harder problems can use more intermediate tokens before producing an answer.</div></div>
-<div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50"><div class="text-[10px] font-bold text-emerald-600">03 &nbsp; INSPECT</div><div class="mt-1 text-[12px] leading-4">The generated path provides a visible place to locate reasoning errors.</div></div>
-</div>
-
-<div class="mt-3 px-4 py-2 rounded-xl bg-slate-900 text-white flex items-center justify-between text-[11px]">
-<span><b>Empirical pattern:</b> larger gains appeared on harder problems and at larger model scales.</span>
-<span class="text-blue-200">Wei et al. (2022)</span>
-</div>
-
----
-
-# Chain-of-Thought: An Example
-
-<div class="flex items-center gap-2 text-xs">
-<span class="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">GSM8K</span>
-<span class="text-slate-500">Grade-school mathematics with natural-language solution traces</span>
-</div>
-
-<div class="mt-3 px-5 py-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-700 text-white shadow-sm">
-<div class="text-[11px] uppercase tracking-[0.16em] text-emerald-300 font-bold mb-2">Question</div>
-<div class="text-[15px] leading-6">
-A carnival snack booth made <b>$50</b> selling popcorn each day.
-It made <b>three times as much</b> selling cotton candy.
-For a <b>5-day</b> activity, the booth has to pay <b>$30</b> rent and <b>$75</b> for ingredients.
-How much did the booth earn after paying those costs?
-</div>
-</div>
-
-<div class="mt-4 flex items-center gap-3">
-<div class="text-[11px] uppercase tracking-[0.14em] font-bold text-slate-500">Reasoning trajectory</div>
-<div class="h-px flex-1 bg-slate-200"></div>
-</div>
-
-<div class="grid grid-cols-3 gap-3 mt-2">
-<div class="relative p-3 rounded-xl border border-sky-200 bg-sky-50">
-<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center">1</div>
-<div class="text-[11px] font-bold text-sky-800 mt-1">Cotton candy / day</div>
-<div class="text-lg font-bold mt-1">$50 &times; 3 = $150</div>
-</div>
-<div class="relative p-3 rounded-xl border border-sky-200 bg-sky-50">
-<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center">2</div>
-<div class="text-[11px] font-bold text-sky-800 mt-1">Total revenue / day</div>
-<div class="text-lg font-bold mt-1">$150 + $50 = $200</div>
-</div>
-<div class="relative p-3 rounded-xl border border-sky-200 bg-sky-50">
-<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center">3</div>
-<div class="text-[11px] font-bold text-sky-800 mt-1">Revenue for 5 days</div>
-<div class="text-lg font-bold mt-1">$200 &times; 5 = $1000</div>
-</div>
-</div>
-
-<div class="grid grid-cols-5 gap-3 mt-3">
-<div class="col-span-2 relative p-3 rounded-xl border border-amber-200 bg-amber-50">
-<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">4</div>
-<div class="text-[11px] font-bold text-amber-800 mt-1">Total cost</div>
-<div class="text-lg font-bold mt-1">$30 + $75 = $105</div>
-</div>
-<div class="col-span-3 relative p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50">
-<div class="absolute -top-2.5 left-3 w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center">5</div>
-<div class="flex items-end justify-between mt-1">
-<div><div class="text-[11px] font-bold text-emerald-800">Net earnings</div><div class="text-lg font-bold mt-1">$1000 - $105</div></div>
-<div class="text-3xl font-black text-emerald-700">$895</div>
-</div>
-</div>
-</div>
-
-<div class="mt-3 flex items-center justify-between text-[10px] text-slate-500">
-<span>The target includes the intermediate arithmetic, not only the final answer.</span>
-<span>Source: GSM8K, Cobbe et al. (2021).</span>
 </div>
 
 ---
@@ -3667,45 +3580,72 @@ $$
 
 ---
 
-# Choosing an Inference-Time Reasoning Strategy
+# Inference-Time Reasoning: Summary
 
-<div class="grid grid-cols-4 gap-3 mt-5 text-xs">
-
-<div class="p-3 border-2 border-blue-300 rounded bg-blue-50">
-<div class="font-bold text-blue-700 mb-2">CoT</div>
-Use when a single explicit reasoning trace is enough.
+<div class="mt-3 grid grid-cols-4 gap-3 text-center">
+<div class="px-3 py-2.5 rounded-xl border-2 border-blue-200 bg-gradient-to-b from-blue-50 to-white">
+<div class="text-base font-black text-blue-900">CoT</div>
+<div class="mt-1 text-[10px] font-semibold text-blue-700">prompt &#8594; reasoning path &#8594; answer</div>
+</div>
+<div class="px-3 py-2.5 rounded-xl border-2 border-cyan-200 bg-gradient-to-b from-cyan-50 to-white">
+<div class="text-base font-black text-cyan-900">Self-Consistency</div>
+<div class="mt-1 text-[10px] font-semibold text-cyan-700">many reasoning paths &#8594; vote</div>
+</div>
+<div class="px-3 py-2.5 rounded-xl border-2 border-amber-200 bg-gradient-to-b from-amber-50 to-white">
+<div class="text-base font-black text-amber-900">Tree of Thoughts</div>
+<div class="mt-1 text-[10px] font-semibold text-amber-700">branch &#8594; evaluate &#8594; backtrack</div>
+</div>
+<div class="px-3 py-2.5 rounded-xl border-2 border-emerald-200 bg-gradient-to-b from-emerald-50 to-white">
+<div class="text-base font-black text-emerald-900">ReAct</div>
+<div class="mt-1 text-[10px] font-semibold text-emerald-700">reason &#8594; act &#8594; observe</div>
+</div>
 </div>
 
-<div class="p-3 border-2 border-cyan-300 rounded bg-cyan-50">
-<div class="font-bold text-cyan-700 mb-2">Self-Consistency</div>
-Use when answers are easy to compare but paths may vary.
+<div class="mt-4 rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+<div class="grid grid-cols-12 bg-slate-900 text-white text-[10px] font-bold uppercase tracking-[0.11em]">
+<div class="col-span-2 px-3 py-2.5">Method</div>
+<div class="col-span-3 px-3 py-2.5">Reasoning structure</div>
+<div class="col-span-1 px-2 py-2.5 text-center">Compute</div>
+<div class="col-span-3 px-3 py-2.5">Best suited for</div>
+<div class="col-span-3 px-3 py-2.5">Main trade-off</div>
 </div>
 
-<div class="p-3 border-2 border-purple-300 rounded bg-purple-50">
-<div class="font-bold text-purple-700 mb-2">ToT</div>
-Use when search and backtracking can recover from bad partial choices.
+<div class="grid grid-cols-12 items-center bg-white border-b border-slate-100 text-[11px] leading-4">
+<div class="col-span-2 px-3 py-3"><span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-bold">CoT</span></div>
+<div class="col-span-3 px-3 py-3 font-semibold text-slate-700">One explicit reasoning path</div>
+<div class="col-span-1 px-2 py-3 text-center"><span class="text-emerald-600 font-bold">Low</span></div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Multi-step decomposition</div>
+<div class="col-span-3 px-3 py-3 text-slate-600">A plausible path can still be wrong</div>
 </div>
 
-<div class="p-3 border-2 border-green-300 rounded bg-green-50">
-<div class="font-bold text-green-700 mb-2">ReAct</div>
-Use when the model must gather external facts or interact with tools.
+<div class="grid grid-cols-12 items-center bg-cyan-50/40 border-b border-slate-100 text-[11px] leading-4">
+<div class="col-span-2 px-3 py-3"><span class="px-2.5 py-1 rounded-full bg-cyan-100 text-cyan-800 font-bold">Self-Consistency</span></div>
+<div class="col-span-3 px-3 py-3 font-semibold text-slate-700">Sample paths, aggregate answers</div>
+<div class="col-span-1 px-2 py-3 text-center"><span class="text-amber-600 font-bold">Medium</span></div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Stable answer selection</div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Requires multiple rollouts</div>
 </div>
 
+<div class="grid grid-cols-12 items-center bg-white border-b border-slate-100 text-[11px] leading-4">
+<div class="col-span-2 px-3 py-3"><span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold">ToT</span></div>
+<div class="col-span-3 px-3 py-3 font-semibold text-slate-700">Search a branching reasoning tree</div>
+<div class="col-span-1 px-2 py-3 text-center"><span class="text-rose-600 font-bold">High</span></div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Planning and backtracking</div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Search-controller overhead</div>
 </div>
 
-<div class="mt-5">
-
-| Method | Extra compute | Main benefit | Main cost |
-|---|---:|---|---|
-| CoT | low | exposes reasoning path | can be confidently wrong |
-| Self-Consistency | medium | reduces single-path errors | multiple samples |
-| ToT | high | explicit search and backtracking | controller complexity |
-| ReAct | variable | grounds reasoning in observations | tool reliability |
-
+<div class="grid grid-cols-12 items-center bg-emerald-50/40 text-[11px] leading-4">
+<div class="col-span-2 px-3 py-3"><span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold">ReAct</span></div>
+<div class="col-span-3 px-3 py-3 font-semibold text-slate-700">Reasoning grounded by observations</div>
+<div class="col-span-1 px-2 py-3 text-center"><span class="text-sky-600 font-bold">Variable</span></div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Tool use and information gathering</div>
+<div class="col-span-3 px-3 py-3 text-slate-600">Depends on tool reliability</div>
+</div>
 </div>
 
-<div class="mt-3 text-sm text-center font-semibold">
-Inference-time methods change how the model spends compute; the parameters stay fixed.
+<div class="mt-3 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-[11px]">
+<span>These methods allocate inference compute differently.</span>
+<span class="font-bold text-slate-700">Model parameters remain fixed.</span>
 </div>
 
 ---
@@ -3729,9 +3669,9 @@ Inference-time methods change how the model spends compute; the parameters stay 
 
 ## RL-style reasoning
 
-- Sample reasoning paths during training.
-- Score them with a verifier or reward.
-- Move probability mass toward successful paths.
+- Sample complete outputs during training.
+- Score each output with a verifier to obtain a reward.
+- Move probability mass toward successful outputs.
 - Cost is paid during post-training, not every query.
 
 </div>
@@ -3739,7 +3679,7 @@ Inference-time methods change how the model spends compute; the parameters stay 
 </div>
 
 <div class="mt-8 p-4 bg-gray-50 border-l-4 border-gray-500 text-lg">
-The bridge is simple: if a final answer can be verified, the reasoning path becomes trainable.
+The bridge is simple: if a final answer can be verified, the complete output becomes trainable.
 </div>
 
 ---
@@ -3762,7 +3702,7 @@ RLVR turns a reasoning task into an RL problem whenever the final answer can be 
 
 <div class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50">
 <div class="text-sm uppercase tracking-wide text-slate-500 font-bold mb-3">Preference-Based Feedback</div>
-<div class="text-xl font-semibold mb-4">“Which response is better?”</div>
+<div class="text-xl font-semibold mb-4">“Which output is better?”</div>
 <div class="space-y-2 text-[15px] leading-6">
 <div>Human preferences may be subjective.</div>
 <div>A learned reward model may be inaccurate.</div>
@@ -3801,15 +3741,15 @@ The reward is sparse, but objective, automatic, and scalable.
 </div>
 
 <div class="p-4 rounded-2xl border-2 border-rose-200 bg-rose-50">
-<div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">2. Completion</div>
+<div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">2. Output</div>
 <MathTex display tex="o\sim\pi_\theta(\cdot\mid q)" class="text-[0.95em]" />
-<div class="text-[13px] leading-5 mt-2">generate a reasoning trace and final response</div>
+<div class="text-[13px] leading-5 mt-2">generate the complete output: reasoning trace + final answer</div>
 </div>
 
 <div class="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
 <div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-2">3. Verification</div>
 <MathTex display tex="r=R(q,o)" class="text-[0.95em]" />
-<div class="text-[13px] leading-5 mt-2">score the sampled completion with a verifier</div>
+<div class="text-[13px] leading-5 mt-2">score the sampled output with a verifier</div>
 </div>
 
 </div>
@@ -3820,7 +3760,7 @@ The reward is sparse, but objective, automatic, and scalable.
 </div>
 
 <div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5">
-A correct completion receives a positive update; an incorrect completion provides little or no positive signal.
+A correct output receives a positive update; an incorrect output provides little or no positive signal.
 </div>
 
 ---
@@ -3867,7 +3807,7 @@ Uses the true expected reward for each prompt. It is the statistical target, but
 </div>
 
 <div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[13px] leading-5 text-center font-semibold">
-PPO learns a critic to approach the oracle; GRPO instead approximates it with rewards from multiple completions.
+PPO learns a critic to approach the oracle; GRPO instead approximates it with rewards from multiple outputs.
 </div>
 
 ---
@@ -3878,13 +3818,9 @@ PPO learns a critic to approach the oracle; GRPO instead approximates it with re
 <img src="/figs/demystify-minibatch.png" class="w-full max-h-[365px] object-contain" />
 </div>
 
-<div class="grid grid-cols-5 gap-4 mt-3 items-center">
-<div class="col-span-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-[12px] leading-5 text-center">
-Image notation: <MathTex tex="X=q,\ Y=o,\ Z=r,\ C(X)=b(q)" />
-</div>
-<div class="col-span-3 p-2.5 rounded-xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="mt-3 p-3 rounded-xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-[10px] uppercase tracking-wide text-violet-700 font-bold mb-1">Minibatch Gradient Estimator</div>
 <MathTex display tex="\widehat g_b(\theta)=\frac{1}{B}\sum_{b=1}^{B}\nabla_\theta\log\pi_\theta(o_b\mid q_b)\,[r_b-b(q_b)]" class="text-[0.74em]" />
-</div>
 </div>
 
 ---
@@ -3914,7 +3850,7 @@ The value function is unknown and usually requires a separate critic. Estimating
 </div>
 
 <div class="mt-3 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5 text-center">
-For each prompt, sample multiple completions and replace the unknown value baseline with the group mean reward.
+For each prompt, sample multiple outputs and replace the unknown value baseline with the group mean reward.
 </div>
 
 ---
@@ -3923,10 +3859,6 @@ For each prompt, sample multiple completions and replace the unknown value basel
 
 <div class="flex justify-center mt-2">
 <img src="/figs/demystify-grpo-type.png" class="w-full max-h-[390px] object-contain" />
-</div>
-
-<div class="mt-2 text-[12px] text-center opacity-75">
-Image notation: <MathTex tex="Z_i=r_i" /> and <MathTex tex="Z_i-\operatorname{mean}(Z)=r_i-\bar r" />.
 </div>
 
 ---
@@ -3940,7 +3872,7 @@ Group-relative surrogate objective.
 $$
 \mathcal{J}_{\mathrm{GRPO}}(\theta)
 =
-\mathbb{E}_{q\sim P_{\mathrm{sft}}(Q),\,\{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O\mid q)}
+\mathbb{E}_{q\sim\mathcal D,\,\{o_i\}_{i=1}^{G}\overset{\mathrm{i.i.d.}}{\sim}\pi_{\theta_{\mathrm{old}}}(\cdot\mid q)}
 \left[
 \frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}
 \sum_{t=1}^{|o_i|}
@@ -3965,8 +3897,8 @@ $$
 
 <div class="grid grid-cols-3 gap-3 mt-5 text-[12px] leading-4.8">
 <div class="p-3 rounded-xl border-2 border-slate-200 bg-white">
-<div class="font-bold mb-1 text-slate-700"><MathTex tex="q,\ o_i" /></div>
-Prompt <MathTex tex="q" /> and sampled completion <MathTex tex="o_i" />.
+<div class="font-bold mb-1 text-slate-700"><MathTex tex="q,\ o_i,\ r_i" /></div>
+Prompt <MathTex tex="q" />, sampled output <MathTex tex="o_i" />, and reward <MathTex tex="r_i=R(q,o_i)" />.
 </div>
 <div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50">
 <div class="font-bold mb-1 text-emerald-800"><MathTex tex="\hat A_{i,t}" /></div>
@@ -3993,7 +3925,7 @@ Corresponding policy-gradient form.
 $$
 \nabla_\theta \mathcal{J}_{\mathrm{GRPO}}(\theta)
 =
-\mathbb{E}_{q\sim P_{\mathrm{sft}}(Q),\,\{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O\mid q)}
+\mathbb{E}_{q\sim\mathcal D,\,\{o_i\}_{i=1}^{G}\overset{\mathrm{i.i.d.}}{\sim}\pi_{\theta_{\mathrm{old}}}(\cdot\mid q)}
 \Bigg[
 \frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}
 \sum_{t=1}^{|o_i|}
@@ -4124,7 +4056,7 @@ clicks: 2
 
 <div class="grid grid-cols-5 gap-3 mt-3 text-[12px] leading-5">
 <div class="col-span-2 p-3 rounded-xl border-2 border-slate-200 bg-slate-50">
-<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Question <MathTex tex="q" /></div>
+<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Prompt <MathTex tex="q" /></div>
 <div class="font-mono bg-white px-2 py-1 rounded">Find the shortest distance.</div>
 </div>
 <div class="col-span-2 p-3 rounded-xl border-2 border-slate-200 bg-slate-50">
@@ -4182,7 +4114,7 @@ clicks: 2
 </div>
 
 <div class="mt-3 p-2.5 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[12px] text-center">
-For the correct completion <MathTex tex="o_1" />, every token uses the sequence coefficient <MathTex tex="\hat A_1=1.73" />.
+For the correct output <MathTex tex="o_1" />, every token uses the sequence coefficient <MathTex tex="\hat A_1=1.73" />.
 </div>
 
 <div v-click="1" class="grid grid-cols-3 gap-3 mt-3 text-center">
@@ -4219,8 +4151,8 @@ For the correct completion <MathTex tex="o_1" />, every token uses the sequence 
 <div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50">
 <div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">Two Sources of Bias in GRPO</div>
 <div class="space-y-1.5 text-[12px] leading-5">
-<div><b>Response length:</b> averaging each response loss by <MathTex tex="|o_i|" /> changes its effective weight.</div>
-<div><b>Question difficulty:</b> dividing centered rewards by their group standard deviation reweights prompts.</div>
+<div><b>Output length:</b> averaging each output loss by <MathTex tex="|o_i|" /> changes its effective weight.</div>
+<div><b>Prompt difficulty:</b> dividing centered rewards by their group standard deviation reweights prompts.</div>
 </div>
 </div>
 
@@ -4228,7 +4160,7 @@ For the correct completion <MathTex tex="o_1" />, every token uses the sequence 
 <div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-2">Dr. GRPO</div>
 <MathTex display tex="\widehat b_i^{\mathrm{Dr}}=\frac1G\sum_{j=1}^{G}r_j,\qquad \widehat A_i^{\mathrm{Dr}}=r_i-\widehat b_i^{\mathrm{Dr}}" class="text-[0.76em]" />
 <div class="mt-2 text-[12px] leading-5">
-Keep group centering, but remove response-length and reward-standard-deviation normalization.
+Keep group centering, but remove output-length and reward-standard-deviation normalization.
 </div>
 <div class="mt-3 px-3 py-2.5 rounded-xl border-l-4 border-emerald-500 bg-white/80 text-[12px] leading-5 font-semibold">
 Together, these two changes recover the standard policy-gradient form without bias.
@@ -4247,7 +4179,7 @@ Zichen Liu, Changyu Chen, Wenjun Li, Penghui Qi, Tianyu Pang, Chao Du, Wee Sun L
 # Demystify GRPO: A Second-Order U-Statistic
 
 <div class="mt-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] leading-5.5">
-For the on-policy GRPO-type gradient with a group-mean baseline, fix one prompt <MathTex tex="q" /> and draw a group of completions. The completion-level score aggregates the token scores:
+For the on-policy GRPO-type gradient with a group-mean baseline, fix one prompt <MathTex tex="q" /> and draw a group of outputs. For each output, let <MathTex tex="r_i=R(q,o_i)" />; its output-level score aggregates the token scores:
 <MathTex display tex="o_1,\ldots,o_G\overset{\mathrm{i.i.d.}}{\sim}\pi_\theta(\cdot\mid q),\qquad s_i(\theta):=\nabla_\theta\log\pi_\theta(o_i\mid q)=\sum_{t=1}^{|o_i|}s_{i,t},\qquad \bar r=\frac{1}{G}\sum_{i=1}^{G}r_i." class="text-[0.70em] mt-1" />
 </div>
 
@@ -4257,7 +4189,7 @@ For the on-policy GRPO-type gradient with a group-mean baseline, fix one prompt 
 <div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Centered-Reward Form</div>
 <MathTex display tex="\widehat g_{\mathrm{GRPO}}(q;\theta)=\frac{1}{G-1}\sum_{i=1}^{G}s_i(\theta)(r_i-\bar r)" class="text-[0.80em]" />
 <div class="mt-3 text-[13px] leading-5 text-left">
-Each score is multiplied by its reward relative to the other completions for the same prompt.
+Each score is multiplied by its reward relative to the other outputs for the same prompt.
 </div>
 </div>
 
@@ -4265,14 +4197,14 @@ Each score is multiplied by its reward relative to the other completions for the
 <div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-2">Equivalent Pairwise Form</div>
 <MathTex display tex="\widehat g_{\mathrm{GRPO}}(q;\theta)=\binom{G}{2}^{-1}\sum_{1\le i<j\le G}\frac{1}{2}(s_i-s_j)(r_i-r_j)" class="text-[0.72em]" />
 <div class="mt-3 text-[13px] leading-5 text-left">
-The group-centered gradient is an average over every unordered pair of sampled completions.
+The group-centered gradient is an average over every unordered pair of sampled outputs.
 </div>
 </div>
 
 </div>
 
 <div class="mt-4 p-3 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[14px] leading-5.5 text-center">
-With <MathTex tex="W_i=(o_i,r_i)" /> and <MathTex tex="h(W_i,W_j)=\tfrac12(s_i-s_j)(r_i-r_j)" />, this is exactly a second-order U-statistic.
+With kernel <MathTex tex="h((o_i,r_i),(o_j,r_j)):=\tfrac12(s_i-s_j)(r_i-r_j)" />, this is exactly a second-order U-statistic in the sampled output-reward pairs.
 </div>
 
 <div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
@@ -4320,7 +4252,7 @@ Hongyi Zhou, Kai Ye, Erhan Xu, Jin Zhu, Ying Yang, Shijin Gong, and Chengchun Sh
 </div>
 
 <div class="mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-[12px] leading-5 text-center">
-For the same prompt <MathTex tex="i" />, the kernel input is the normalized time-index gap <MathTex tex="(t-s)/(th)" />. Nearby training iterations receive larger weights when estimating the current value baseline.
+For prompt <MathTex tex="q_i" />, iteration <MathTex tex="t" /> samples <MathTex tex="o_{i,t}\sim\pi_{\theta_t}(\cdot\mid q_i)" /> and observes <MathTex tex="r_{i,t}=R(q_i,o_{i,t})" />. The kernel input <MathTex tex="(t-s)/(th)" /> makes nearby iterations more influential when estimating the current baseline.
 </div>
 
 <div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
@@ -4346,7 +4278,7 @@ Shijin Gong, Kai Ye, Jin Zhu, Xinyu Zhang, Hongyi Zhou, and Chengchun Shi. "Kern
 <div class="col-span-2 p-3 rounded-2xl border-2 border-violet-200 bg-violet-50">
 <div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Core Idea</div>
 <div class="text-[13px] leading-5.5">
-Sample only one completion per prompt, then estimate each prompt's value by borrowing reward information from the other prompts in the batch.
+For each prompt <MathTex tex="q_i" />, sample one output <MathTex tex="o_{i,t}\sim\pi_{\theta_t}(\cdot\mid q_i)" /> and obtain <MathTex tex="r_{i,t}=R(q_i,o_{i,t})" />. Estimate its baseline by sharing reward information across the batch.
 </div>
 </div>
 
@@ -4430,7 +4362,7 @@ Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun 
 
 1. Start with a model that can follow instructions.
 2. Use a small amount of high-quality reasoning data if readability matters.
-3. Sample multiple completions per prompt.
+3. Sample multiple outputs per prompt.
 4. Score with verifiers where possible.
 5. Use preference data where correctness is not directly verifiable.
 
@@ -4442,7 +4374,7 @@ Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun 
 
 1. Convert rewards into advantages.
 2. Use group or leave-one-out baselines.
-3. Stabilize long completions with sequence-level control when needed.
+3. Stabilize long outputs with sequence-level control when needed.
 4. Keep KL/reference control only when it is doing useful work.
 5. Monitor length, diversity, calibration, and reward hacking.
 
@@ -4492,7 +4424,7 @@ Reasoning RL works best when the reward checks the thing we actually care about:
 
 - **CoT / Zero-shot CoT / Self-Consistency / ToT / ReAct:** reasoning as prompting, sampling, search, and tool interaction.
 - **DeepSeek-R1:** large-scale RL with rule-based rewards can induce strong reasoning behavior.
-- **GRPO:** group-relative advantage removes the critic and compares completions within the same prompt.
+- **GRPO:** group-relative advantage removes the critic and compares outputs within the same prompt.
 - **Dr.GRPO:** corrects GRPO's length-related optimization bias and improves token efficiency.
 - **RLOO:** leave-one-out baseline keeps the comparison local while avoiding self-inclusion.
 - **GSPO:** sequence-level importance ratio and clipping better match sequence-level rewards.
