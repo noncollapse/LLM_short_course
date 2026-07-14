@@ -78,18 +78,18 @@ layout: default
 
 # Table of Contents
 
-<div class="mt-6 space-y-7 text-[0.95em] leading-tight">
+<div class="mt-4 space-y-10 text-[0.88em] leading-tight">
 
 <div>
-  <h2 class="!text-3xl !mb-2"><a href="#/part-1-background" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 1: LLM Background</a></h2>
-  <ul class="!mt-0 !space-y-1">
-    <li><a href="#/intro-llms" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Introduction to LLMs</a></li>
-    <li><a href="#/transformer-foundations" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Transformer Foundations and Architecture</a></li>
-  </ul>
+  <h2 class="!text-3xl !mb-1"><a href="#/part-0-introduction" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 0: Introduction to LLMs</a></h2>
 </div>
 
 <div>
-  <h2 class="!text-3xl !mb-2"><a href="#/part-2-training" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 2: 3 Stage training</a></h2>
+  <h2 class="!text-3xl !mb-1"><a href="#/transformer-foundations" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 1: LLM and Transformer Foundations</a></h2>
+</div>
+
+<div>
+  <h2 class="!text-3xl !mb-1.5"><a href="#/part-2-training" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 2: Three-Stage Training</a></h2>
   <ul class="!mt-0 !space-y-1">
     <li><a href="#/stage-1-pretraining" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Stage 1: Pre-training</a></li>
     <li><a href="#/stage-2-sft" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Stage 2: Supervised Fine-Tuning</a></li>
@@ -98,7 +98,7 @@ layout: default
 </div>
 
 <div>
-  <h2 class="!text-3xl !mb-2"><a href="#/part-3-reasoning" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 3: The Development of Reasoning in LLMs</a></h2>
+  <h2 class="!text-3xl !mb-1.5"><a href="#/part-3-reasoning" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 3: The Development of Reasoning in LLMs</a></h2>
   <ul class="!mt-0 !space-y-1">
     <li><a href="#/inference-time-reasoning" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Inference-Time Reasoning</a></li>
     <li><a href="#/rlvr" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Reinforcement Learning with Verifiable Rewards</a></li>
@@ -111,10 +111,10 @@ layout: default
 
 ---
 layout: section
-routeAlias: part-1-background
+routeAlias: part-0-introduction
 ---
 
-# Part 1: LLM Background
+# Part 0: Introduction to LLMs
 
 ---
 layout: full
@@ -161,7 +161,7 @@ layout: section
 routeAlias: transformer-foundations
 ---
 
-# Transformer Foundations
+<h1 class="!text-[42px] !leading-tight whitespace-nowrap">Part 1: LLM and Transformer Foundations</h1>
 
 <div class="text-2xl mt-8 opacity-80">
 From <b>tokens and vectors</b> to <b>attention blocks</b>
@@ -1778,7 +1778,7 @@ layout: section
 routeAlias: part-2-training
 ---
 
-# Part 2: 3 Stage training
+# Part 2: Three-Stage Training
 
 <div class="text-2xl mt-8 opacity-80">
 From <b>pre-training</b> to <b>post-training</b>
@@ -2230,6 +2230,50 @@ $$\mathcal{L}(\theta) = \sum_{i=1}^{N}\sum_{t=1}^{T} -\log p_\theta(x_{i,t} \mid
 </div>
 
 In practice: average over **batch** and over **tokens** to get the training loss
+
+</div>
+
+---
+
+# Implementation: Shift Inputs and Targets
+
+<div class="grid grid-cols-[1.12fr_0.88fr] gap-8 mt-5">
+
+<div>
+
+```python
+ids = tokenizer(
+    text,
+    return_tensors="pt",
+).input_ids                  # (batch, T)
+
+inputs  = ids[:, :-1]        # x_1, ..., x_{T-1}
+targets = ids[:, 1:]         # x_2, ..., x_T
+
+logits = model(inputs).logits  # (batch, T-1, vocab)
+loss = F.cross_entropy(
+    logits.reshape(-1, logits.size(-1)),
+    targets.reshape(-1),
+)
+```
+
+</div>
+
+<div class="border-l border-slate-300 pl-7 text-[15px] leading-7">
+
+### One sequence gives many targets
+
+<div class="mt-5 font-mono text-[13px] leading-8">
+ids&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: The cat sat on the mat<br>
+inputs&nbsp;&nbsp;: The cat sat on the<br>
+targets&nbsp;: &nbsp;&nbsp;&nbsp;cat sat on the mat
+</div>
+
+<div class="mt-6">
+The logits at position <i>t</i> are compared with token <i>x</i><sub><i>t</i>+1</sub>. A causal mask lets all positions be trained in parallel without exposing future tokens.
+</div>
+
+</div>
 
 </div>
 
@@ -2879,10 +2923,71 @@ $$L(\theta) = \mathbb{E}_{(x,y)\sim \mathcal{D}_{\text{old}}}\left[\frac{ \pi_\t
 
 ---
 
-# DPO: From Preferences to Log-Probability Ratios
+# DPO: Training Loop
 
-<div class="flex justify-center items-center mt-3">
-<img src="/figs/dpo-logprob-flow.png" style="width: 98%; max-height: 470px; object-fit: contain;" />
+<div class="grid grid-cols-2 gap-6 mt-4">
+
+<div>
+
+### Key Components
+
+<div class="space-y-4 text-sm mt-3">
+
+#### 1) Policy Model $\pi_\theta$
+
+The LLM we optimize directly
+
+#### 2) Reference Model $\pi_{\text{ref}}$
+
+Frozen copy of initial SFT model
+
+#### 3) Preference Data
+
+Pairs of $(x, y^+, y^-)$ where:
+- $x$: prompt
+- $y^+$: preferred (chosen) response
+- $y^-$: rejected response
+
+**Key Difference:** No separate reward model needed!
+
+</div>
+
+</div>
+
+<div>
+
+### DPO Training Loop
+
+<div class="space-y-3 text-sm">
+
+#### 1. Sample Preference Pair
+
+Get $(x, y^+, y^-)$ from preference dataset
+
+#### 2. Compute Implicit Rewards
+
+<div class="text-xs">
+
+$$r_\theta(x, y) + C(x) = \beta \log \frac{\pi_\theta(y\mid x)}{\pi_{\text{ref}}(y\mid x)} $$
+
+</div>
+
+#### 3. DPO Loss
+
+<div class="text-xs">
+
+$$\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(x,y^+,y^-)} \left[\log \sigma\left(\beta \log \frac{\pi_\theta(y^+\mid x)}{\pi_{\text{ref}}(y^+\mid x)} - \beta \log \frac{\pi_\theta(y^-\mid x)}{\pi_{\text{ref}}(y^-\mid x)}\right)\right]$$
+
+</div>
+
+#### 4. Update Policy
+
+Gradient descent on $\mathcal{L}_{\text{DPO}}$ to update $\pi_\theta$
+
+</div>
+
+</div>
+
 </div>
 
 ---
@@ -2941,8 +3046,7 @@ $$
 &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
 \Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)}-\frac{1}{\beta}r(x,y)\Big] \\
 &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
-\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}
--1\Big]
+\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}\Big]
 \end{aligned}
 $$
 
@@ -2997,8 +3101,7 @@ $$
 This gives
 $$
 \begin{aligned} &\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)}
-\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}
--1\Big] \\ &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)} \Big[\log\frac{\pi(y|x)}{\frac{1}{Z(x)}\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)} -\log Z(x)\Big] \end{aligned}
+\Big[\log\frac{\pi(y|x)}{\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)}\Big] \\ &=\min_{\pi}\;\mathbb{E}_{x\sim\mathcal{D}}\mathbb{E}_{y\sim\pi(\cdot|x)} \Big[\log\frac{\pi(y|x)}{\frac{1}{Z(x)}\pi_{\mathrm{ref}}(y|x)\exp\!\big(\frac{1}{\beta}r(x,y)\big)} -\log Z(x)\Big] \end{aligned}
 $$
 </div>
 
@@ -3107,71 +3210,10 @@ In this way, DPO fits an implicit reward through an alternative parameterization
 </div>
 ---
 
-# DPO: Training Loop Summary
+# DPO training pipeline
 
-<div class="grid grid-cols-2 gap-6 mt-4">
-
-<div>
-
-### Key Components
-
-<div class="space-y-4 text-sm mt-3">
-
-#### 1) Policy Model $\pi_\theta$
-
-The LLM we optimize directly
-
-#### 2) Reference Model $\pi_{\text{ref}}$
-
-Frozen copy of initial SFT model
-
-#### 3) Preference Data
-
-Pairs of $(x, y^+, y^-)$ where:
-- $x$: prompt
-- $y^+$: preferred (chosen) response
-- $y^-$: rejected response
-
-**Key Difference:** No separate reward model needed!
-
-</div>
-
-</div>
-
-<div>
-
-### DPO Training Loop
-
-<div class="space-y-3 text-sm">
-
-#### 1. Sample Preference Pair
-
-Get $(x, y^+, y^-)$ from preference dataset
-
-#### 2. Compute Implicit Rewards
-
-<div class="text-xs">
-
-$$r_\theta(x, y) + C(x) = \beta \log \frac{\pi_\theta(y\mid x)}{\pi_{\text{ref}}(y\mid x)} $$
-
-</div>
-
-#### 3. DPO Loss
-
-<div class="text-xs">
-
-$$\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(x,y^+,y^-)} \left[\log \sigma\left(\beta \log \frac{\pi_\theta(y^+\mid x)}{\pi_{\text{ref}}(y^+\mid x)} - \beta \log \frac{\pi_\theta(y^-\mid x)}{\pi_{\text{ref}}(y^-\mid x)}\right)\right]$$
-
-</div>
-
-#### 4. Update Policy
-
-Gradient descent on $\mathcal{L}_{\text{DPO}}$ to update $\pi_\theta$
-
-</div>
-
-</div>
-
+<div class="flex justify-center items-center mt-3">
+<img src="/figs/dpo-logprob-flow.png" style="width: 98%; max-height: 470px; object-fit: contain;" />
 </div>
 
 ---
@@ -3241,6 +3283,36 @@ Requires thousands of comparisons
 </div>
 
 ---
+
+# Robust RLHF For LLMs Fine-tuning
+
+<div class="flex justify-center mt-2">
+<img src="/figs/vrpo.png" class="w-[72%] h-[245px] object-contain" />
+</div>
+
+<div class="mt-2 pt-2 border-t border-slate-300">
+<MathTex display tex="\begin{aligned} m_{\eta,\theta}(x,y^{(1)},y^{(2)})&=\sum_{u=0}^{1}\ell(x,y^{(1)},y^{(2)},u;\theta)\,p_\eta(u\mid x,y^{(1)},y^{(2)}),\\[2pt] \widetilde{\mathcal L}_{\mathrm{VRPO}}(\theta)&=\mathbb E_{\mathcal D}\!\left[\ell_\theta-m_{\eta,\theta}\right]+\mathbb E_{x,\,\widetilde y^{(1)},\widetilde y^{(2)}\sim\pi_{\mathrm{ref}}}\!\left[m_{\eta,\theta}(x,\widetilde y^{(1)},\widetilde y^{(2)})\right]. \end{aligned}" class="text-[0.55em]" />
+<div class="mt-1 text-[12px] leading-5 text-slate-700"><b>Control-variate idea:</b> subtract the auxiliary model's prediction on labeled pairs, then add back its expectation under the reference policy. With a correctly specified reference policy, the mean is preserved while variance falls when <MathTex tex="p_\eta" /> is informative.</div>
+</div>
+
+<div class="mt-1 text-[9px] text-slate-500">Ye, Zhou, Zhu, Quinzan, and Shi (2025), <i>Robust Reinforcement Learning from Human Feedback for Large Language Models Fine-Tuning</i>, arXiv:2504.03784.</div>
+
+---
+
+# DRPO: Doubly Robust Preference Optimization
+
+<div class="flex justify-center mt-2">
+<img src="/figs/drpo.png" class="w-[92%] h-[250px] object-contain" />
+</div>
+
+<div class="mt-2 pt-2 border-t border-slate-300">
+<MathTex display tex="\begin{aligned} \rho_a(x)&=\frac{\pi_\theta(y^{(a)}\mid x)}{\widehat\pi_{\mathrm{ref}}(y^{(a)}\mid x)},\\[-1pt] \psi_{\mathrm{DR}}&=\frac12\sum_{a=1}^{2}\left\{\mathbb E_{\widetilde y\sim\pi_\theta(\cdot\mid x)}\widehat g(x,\widetilde y,y^{(a)})+(-1)^{a-1}\rho_a(x)\left[z-\widehat g(x,y^{(1)},y^{(2)})\right]\right\},\\[-1pt] \widehat\pi&=\arg\max_{\pi_\theta}\left\{\mathbb E_{\mathcal D}[\psi_{\mathrm{DR}}]-\beta\,\mathbb E_xD_{\mathrm{KL}}(\pi_\theta(\cdot\mid x)\,\|\,\widehat\pi_{\mathrm{ref}}(\cdot\mid x))\right\}. \end{aligned}" class="text-[0.49em]" />
+<div class="mt-1 text-[12px] leading-5 text-slate-700"><MathTex tex="z\in\{0,1\}" /> is the observed preference label. The direct prediction <MathTex tex="\widehat g" /> is augmented by an importance-weighted residual; consistency requires either <MathTex tex="\widehat g" /> or <MathTex tex="\widehat\pi_{\mathrm{ref}}" /> to be correctly specified.</div>
+</div>
+
+<div class="mt-1 text-[9px] text-slate-500">Xu, Ye, Zhou, Zhu, Quinzan, and Shi (2025), <i>Doubly Robust Alignment for Large Language Models</i>, arXiv:2506.01183.</div>
+
+---
 layout: section
 routeAlias: part-3-reasoning
 ---
@@ -3278,7 +3350,6 @@ Instead of jumping directly to a final answer, the model generates a sequence of
 
 <div class="mt-3 flex items-center justify-between text-[10px] text-slate-500">
 <span>Intermediate tokens let later tokens condition on the evolving solution path.</span>
-<span>Illustration: Zhou et al. (2026), <i>Demystifying GRPO</i>.</span>
 </div>
 
 ---
@@ -3851,8 +3922,11 @@ The value function is unknown and usually requires a separate critic. Estimating
 
 # GRPO: Group Statistics Replace the Critic
 
-<div class="flex justify-center mt-2">
+<div class="relative flex justify-center mt-2">
 <img src="/figs/demystify-grpo-idea.png" class="w-full max-h-[400px] object-contain" />
+<div class="absolute left-[53%] top-[76%] w-[43%] h-[16%] bg-white flex items-center justify-center">
+<MathTex display tex="\mathrm{Advantage}_i=r_i-\mathrm{mean}(r)" class="text-[0.78em]" />
+</div>
 </div>
 
 <div class="mt-3 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5 text-center">
@@ -3917,7 +3991,7 @@ Current-policy probability divided by rollout-policy probability.
 </div>
 
 <div class="mt-3 p-2.5 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5">
-GRPO = <b>group sampling</b> + <b>relative advantage</b> + <b>importance weighting</b>.
+GRPO = <b>group sampling</b> + <b>relative advantage</b> + <b>importance weighting</b> + <b>length normalization</b>.
 </div>
 
 ---
@@ -3935,25 +4009,26 @@ $$
 \Bigg[
 \frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}
 \sum_{t=1}^{|y_i|}
-\rho_{i,t}\hat A_{i,t}\,\nabla_\theta \log \pi_\theta(y_{i,t}\mid x,y_{i,<t})
+\rho_{i,t}\hat A_{i,t}\,s_{i,t}
 \Bigg]
 $$
 
 $$
+\begin{aligned}
 \rho_{i,t}
-=
+&=
 \frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}
 {\pi_{\theta_{\mathrm{old}}}(y_{i,t}\mid x,y_{i,<t})}
-$$
-
-$$
+&&\text{importance ratio},\\[4pt]
 s_{i,t}
-:=
+&:=
 \nabla_\theta \log \pi_\theta(y_{i,t}\mid x,y_{i,<t})
+&&\text{token-level score function}.
+\end{aligned}
 $$
 
 <div class="mt-5 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[15px] leading-6">
-Policy gradient = <b>score function</b> × <b>importance ratio</b> × <b>group-relative coefficient</b>.
+Each token contributes <MathTex tex="\rho_{i,t}\hat A_{i,t}s_{i,t}" />: <b>importance ratio</b> × <b>group-relative coefficient</b> × <b>score function</b>.
 </div>
 
 ---
@@ -4005,53 +4080,59 @@ The verifier converts the rollout group into <MathTex tex="[r_1,r_2,r_3,r_4]=[1,
 </div>
 
 ---
-clicks: 3
+clicks: 4
 ---
 
 # Example: Reward Normalization
 
-<div class="mt-3 grid grid-cols-3 gap-4 items-stretch">
+<div class="mt-2 grid grid-cols-3 gap-4 items-stretch">
 
-<div class="p-4 rounded-2xl border-2 border-slate-200 bg-white text-center">
-<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-3">Verifier Rewards</div>
+<div class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-center">
+<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Verifier Rewards</div>
 <div class="flex justify-center gap-2 text-sm font-bold">
-<div class="px-3 py-2 rounded-lg bg-emerald-100 text-emerald-800">+1</div>
-<div class="px-3 py-2 rounded-lg bg-rose-100 text-rose-800">-1</div>
-<div class="px-3 py-2 rounded-lg bg-rose-100 text-rose-800">-1</div>
-<div class="px-3 py-2 rounded-lg bg-rose-100 text-rose-800">-1</div>
+<div class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800">+1</div>
+<div class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-800">-1</div>
+<div class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-800">-1</div>
+<div class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-800">-1</div>
 </div>
-<MathTex display tex="\mathbf r=[1,-1,-1,-1]" class="text-[0.78em] mt-4" />
-</div>
-
-<div v-click="1" class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50 text-center">
-<div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">Group Statistics</div>
-<MathTex display tex="\bar r=\frac14\sum_{j=1}^4r_j=-0.5" class="text-[0.74em]" />
-<MathTex display tex="\sigma_r=\sqrt{\frac14\sum_{j=1}^4(r_j-\bar r)^2}\approx0.866" class="text-[0.67em] mt-2" />
+<MathTex display tex="\mathbf r=[1,-1,-1,-1]" class="text-[0.74em] mt-2" />
 </div>
 
-<div v-click="2" class="p-4 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
-<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Normalized Advantages</div>
-<MathTex display tex="\hat A_i=\frac{r_i-\bar r}{\sigma_r}" class="text-[0.82em]" />
-<MathTex display tex="\widehat{\mathbf A}=[1.73,-0.58,-0.58,-0.58]" class="text-[0.70em] mt-2" />
+<div v-click="1" class="p-3 rounded-2xl border-2 border-blue-200 bg-blue-50 text-center">
+<div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Group Statistics</div>
+<MathTex display tex="\bar r=\frac14\sum_{j=1}^4r_j=-0.5" class="text-[0.69em]" />
+<MathTex display tex="\sigma_r=\sqrt{\frac14\sum_{j=1}^4(r_j-\bar r)^2}\approx0.866" class="text-[0.61em] mt-1" />
+</div>
+
+<div v-click="2" class="p-3 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
+<div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-1">Normalized Advantages</div>
+<MathTex display tex="\hat A_i=\frac{r_i-\bar r}{\sigma_r}" class="text-[0.74em]" />
+<MathTex display tex="\widehat{\mathbf A}=[1.73,-0.58,-0.58,-0.58]" class="text-[0.64em] mt-1" />
 </div>
 
 </div>
 
-<div v-click="3" class="mt-5 p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
-<div class="flex items-center justify-between mb-3">
-<div class="text-xs uppercase tracking-wide text-emerald-700 font-bold">Sequence Advantage Is Broadcast to Every Token</div>
-<div class="text-[11px] text-emerald-800/70">outcome supervision</div>
+<div v-click="3" class="mt-3 px-4 py-2 rounded-xl border border-sky-200 bg-sky-50 grid grid-cols-[190px_1fr] items-center gap-4">
+<div class="text-[10px] uppercase tracking-wide text-sky-700 font-bold">Autoregressive Policy Score</div>
+<MathTex display tex="\pi_\theta(y_i\mid x)=\prod_{t=1}^{|y_i|}\pi_\theta(y_{i,t}\mid x,y_{i,<t}),\qquad s_i=\nabla_\theta\log\pi_\theta(y_i\mid x)=\sum_{t=1}^{|y_i|}s_{i,t}" class="text-[0.60em]" />
 </div>
-<div class="grid grid-cols-4 gap-3 text-center text-[11px]">
-<div><div class="font-bold text-emerald-800 mb-2"><MathTex tex="y_1" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span>…</span></div></div>
-<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="y_2" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
-<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="y_3" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
-<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="y_4" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+
+<div v-click="4" class="mt-3 p-3 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
+<div class="flex items-center justify-between mb-2">
+<div class="text-xs uppercase tracking-wide text-emerald-700 font-bold">One Sequence Advantage Multiplies Every Token Score</div>
+<div class="text-[11px] text-emerald-800/70"><MathTex tex="\hat A_{i,t}=\hat A_i" /></div>
+</div>
+
+<div class="grid grid-cols-4 gap-3 text-center text-[10px]">
+<div><div class="font-bold text-emerald-800 mb-1"><MathTex tex="\hat A_1=1.73" /></div><div class="flex justify-center items-center gap-1"><span class="px-1.5 py-1 rounded bg-emerald-200"><MathTex tex="y_{1,1}" /><br><b>+1.73</b></span><span class="px-1.5 py-1 rounded bg-emerald-200"><MathTex tex="y_{1,2}" /><br><b>+1.73</b></span><span>…</span><span class="px-1.5 py-1 rounded bg-emerald-200"><MathTex tex="y_{1,|y_1|}" /><br><b>+1.73</b></span></div></div>
+<div><div class="font-bold text-rose-800 mb-1"><MathTex tex="\hat A_2=-0.58" /></div><div class="flex justify-center items-center gap-1"><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{2,1}" /><br><b>-0.58</b></span><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{2,2}" /><br><b>-0.58</b></span><span>…</span><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{2,|y_2|}" /><br><b>-0.58</b></span></div></div>
+<div><div class="font-bold text-rose-800 mb-1"><MathTex tex="\hat A_3=-0.58" /></div><div class="flex justify-center items-center gap-1"><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{3,1}" /><br><b>-0.58</b></span><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{3,2}" /><br><b>-0.58</b></span><span>…</span><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{3,|y_3|}" /><br><b>-0.58</b></span></div></div>
+<div><div class="font-bold text-rose-800 mb-1"><MathTex tex="\hat A_4=-0.58" /></div><div class="flex justify-center items-center gap-1"><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{4,1}" /><br><b>-0.58</b></span><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{4,2}" /><br><b>-0.58</b></span><span>…</span><span class="px-1.5 py-1 rounded bg-rose-200"><MathTex tex="y_{4,|y_4|}" /><br><b>-0.58</b></span></div></div>
 </div>
 </div>
 
-<div class="mt-4 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[12px] text-center">
-Centering identifies which rollout is better than its siblings; scaling keeps the coefficient magnitude comparable across prompts.
+<div class="mt-3 p-2 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-center">
+Centering compares rollouts within a prompt; the same sequence-level coefficient is paired with each token-specific score <MathTex tex="s_{i,t}" />.
 </div>
 
 ---
@@ -4182,6 +4263,46 @@ Zichen Liu, Changyu Chen, Wenjun Li, Penghui Qi, Tianyu Pang, Chao Du, Wee Sun L
 
 ---
 
+# GPG: Group Policy Gradient
+
+<div class="mt-2 text-[14px] leading-5.5 text-slate-700">
+GPG returns to a direct group-centered policy-gradient loss, using the group mean reward as a critic-free baseline.
+</div>
+
+<div class="mt-3 py-3 border-y border-slate-300">
+<MathTex display tex="\mathcal L_{\mathrm{GPG}}(\theta)=-\mathbb E_{x,\{y_i\}_{i=1}^{G}}\!\left[\frac{1}{\sum_{i=1}^{G}|y_i|}\sum_{i=1}^{G}\sum_{t=1}^{|y_i|}\log\pi_\theta(y_{i,t}\mid x,y_{i,<t})\,\hat A_i\right]" class="text-[0.67em]" />
+</div>
+
+<div class="grid grid-cols-2 gap-8 mt-4 text-[13px] leading-5.5">
+
+<div>
+<div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">Group Reward</div>
+<MathTex display tex="\bar r=\frac1G\sum_{j=1}^{G}r_j,\qquad \hat A_i=\frac{r_i-\bar r}{F_{\mathrm{norm}}}" class="text-[0.78em]" />
+<div class="mt-3">
+The loss is normalized by the <b>total number of generated tokens</b>, rather than normalizing each response separately. <MathTex tex="F_{\mathrm{norm}}" /> is optional.
+</div>
+</div>
+
+<div class="border-l border-slate-300 pl-8">
+<div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-2">Accurate Gradient Estimation (AGE)</div>
+<MathTex display tex="\widehat g_{\mathrm{AGE}}=\alpha\widehat g,\qquad \alpha=\frac{B}{B-M}" class="text-[0.82em]" />
+<div class="mt-3">
+If <MathTex tex="M" /> of the <MathTex tex="B" /> sampled groups are all correct or all wrong, group centering makes their gradients zero. AGE averages over the remaining <MathTex tex="B-M" /> informative groups.
+</div>
+</div>
+
+</div>
+
+<div class="mt-4 px-4 py-3 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[13px] leading-5.5 text-center font-semibold">
+Minimal design: no critic, no reference model, no KL penalty, and no importance sampling.
+</div>
+
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Xiangxiang Chu, Hailang Huang, Xiao Zhang, Fei Wei, and Yong Wang. "GPG: A Simple and Strong Reinforcement Learning Baseline for Model Reasoning." arXiv preprint arXiv:2504.02546 (2025).
+</div>
+
+---
+
 # Demystify GRPO: A Second-Order U-Statistic
 
 <div class="mt-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] leading-5.5">
@@ -4303,7 +4424,7 @@ Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun 
 
 ---
 
-# A Lot of Work Since GRPO
+# Over One Hundred XPO
 
 <div class="grid grid-cols-9 gap-3 mt-3 items-center text-center">
 <div class="col-span-4 px-4 py-2 rounded-xl border-2 border-slate-300 bg-slate-50"><b>PPO</b> <span class="text-[11px] text-slate-500">(Schulman et al., 2017)</span></div>
@@ -4423,26 +4544,6 @@ Reasoning RL works best when the reward checks the thing we actually care about:
 </div>
 
 ---
-
-# Selected References for Reasoning RL
-
-<div class="text-sm space-y-3 mt-4">
-
-- **CoT / Zero-shot CoT / Self-Consistency / ToT / ReAct:** reasoning as prompting, sampling, search, and tool interaction.
-- **DeepSeek-R1:** large-scale RL with rule-based rewards can induce strong reasoning behavior.
-- **GRPO:** group-relative advantage removes the critic and compares responses within the same prompt.
-- **Dr.GRPO:** corrects GRPO's length-related optimization bias and improves token efficiency.
-- **RLOO:** leave-one-out baseline keeps the comparison local while avoiding self-inclusion.
-- **GSPO:** sequence-level importance ratio and clipping better match sequence-level rewards.
-- **GPG:** a minimalist group policy-gradient view that removes several PPO-style stabilizers.
-
-</div>
-
-<div class="text-xs mt-8 opacity-70">
-The conceptual spine: CoT teaches the model to expose reasoning; verifiers make reasoning trainable; policy gradient decides which reasoning traces become more likely.
-</div>
-
----
 layout: section
 ---
 
@@ -4492,6 +4593,37 @@ layout: section
 
 </div>
 
+</div>
+
+---
+
+# AI Detection: READER
+
+<div class="mt-2 text-[14px] leading-5.5 text-slate-700 text-center">
+Given a text <MathTex tex="x" />, READER generates a structured rationale <MathTex tex="c" /> before predicting the authorship label <MathTex tex="y\in\{\mathrm{Human},\mathrm{AI}\}" />.
+</div>
+
+<div class="flex justify-center mt-3">
+<img src="/figs/reader-compare.png" class="w-full h-[270px] object-contain" />
+</div>
+
+<div class="grid grid-cols-3 gap-4 mt-3 text-[11px] leading-4.5">
+<div class="px-3 py-2.5 rounded-xl border-2 border-blue-200 bg-blue-50">
+<div class="text-[10px] uppercase tracking-wide text-blue-700 font-bold mb-1">READ Supervision</div>
+<b>19,684</b> rationale demonstrations and <b>77,103</b> answer-only instances across diverse domains and generators.
+</div>
+<div class="px-3 py-2.5 rounded-xl border-2 border-emerald-200 bg-emerald-50">
+<div class="text-[10px] uppercase tracking-wide text-emerald-700 font-bold mb-1">Training</div>
+Start from <b>Qwen2.5-1.5B-Instruct</b>: use SFT to learn structured explanations, then GRPO to improve detection accuracy.
+</div>
+<div class="px-3 py-2.5 rounded-xl border-2 border-orange-200 bg-orange-50">
+<div class="text-[10px] uppercase tracking-wide text-orange-700 font-bold mb-1">Key Result</div>
+More than <b>20 percentage points</b> above prompted flagship LLMs while being <b>100--1,000× smaller</b>.
+</div>
+</div>
+
+<div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
+Pingfan Su, Kai Ye, Shijin Gong, Erhan Xu, Jin Zhu, Giulia Livieri, and Chengchun Shi. "READER: Reasoning-Enhanced AI-Generated Text Detection." arXiv preprint arXiv:2605.25281 (2026).
 </div>
 
 ---

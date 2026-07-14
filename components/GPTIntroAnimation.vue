@@ -19,7 +19,30 @@ const genWords = [
   'then',
   'repeats.',
 ]
+
+const genCandidateSets = [
+  [['A', 72], ['The', 18], ['This', 10]],
+  [['language', 69], ['model', 20], ['system', 11]],
+  [['model', 74], ['system', 17], ['assistant', 9]],
+  [['reads', 67], ['predicts', 22], ['uses', 11]],
+  [['context,', 71], ['text,', 19], ['prompts,', 10]],
+  [['scores', 66], ['predicts', 23], ['computes', 11]],
+  [['next-token', 73], ['token-level', 18], ['word', 9]],
+  [['probabilities,', 76], ['logits,', 16], ['scores,', 8]],
+  [['samples', 68], ['selects', 21], ['returns', 11]],
+  [['one,', 70], ['a token,', 19], ['the best,', 11]],
+  [['then', 65], ['and', 24], ['before', 11]],
+  [['repeats.', 72], ['continues.', 18], ['stops.', 10]],
+].map(candidates => candidates.map(([token, probability], index) => ({
+  token,
+  probability,
+  selected: index === 0,
+})))
+
 const genVisibleCount = ref(0)
+const genCandidateIndex = computed(() => Math.min(genVisibleCount.value, genCandidateSets.length - 1))
+const genCandidates = computed(() => genCandidateSets[genCandidateIndex.value])
+const predictedToken = computed(() => genWords[genCandidateIndex.value])
 let genTimer
 
 function clearGenTimer() {
@@ -38,7 +61,7 @@ function runGenLoop(count = 0) {
   genVisibleCount.value = count
 
   if (count < genWords.length) {
-    genTimer = setTimeout(() => runGenLoop(count + 1), count === 0 ? 180 : 220)
+    genTimer = setTimeout(() => runGenLoop(count + 1), 1000)
     return
   }
 
@@ -79,15 +102,20 @@ onBeforeUnmount(clearGenTimer)
           >{{ word }}</span>
         </div>
         <div class="gen-line">
-          <span>The</span>
-          <span>model</span>
-          <span>predicts</span>
-          <span class="typing-token">tokens</span>
+          <span>next</span>
+          <span>token</span>
+          <span class="typing-token">{{ predictedToken }}</span>
         </div>
         <div class="prob-stack">
-          <div><b>tokens</b><i style="--w: 78%"></i></div>
-          <div><b>words</b><i style="--w: 14%"></i></div>
-          <div><b>rules</b><i style="--w: 8%"></i></div>
+          <div
+            v-for="(candidate, index) in genCandidates"
+            :key="`${genCandidateIndex}-${index}-${candidate.token}`"
+            :class="{ selected: candidate.selected }"
+          >
+            <b>{{ candidate.token }}</b>
+            <i :style="{ '--w': `${candidate.probability}%` }"></i>
+            <em>{{ candidate.probability }}%</em>
+          </div>
         </div>
       </section>
 
@@ -323,28 +351,47 @@ onBeforeUnmount(clearGenTimer)
 
 .prob-stack div {
   display: grid;
-  grid-template-columns: 60px 1fr;
-  gap: 10px;
+  grid-template-columns: 86px 1fr 34px;
+  gap: 8px;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 7px;
 }
 
 .prob-stack b {
-  color: #15803d;
-  font-size: 13px;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .prob-stack i {
   height: 8px;
   width: var(--w);
   border-radius: 99px;
-  background: #22c55e;
+  background: #cbd5e1;
   transform-origin: left center;
-  transform: scaleX(.24);
+}
+
+.prob-stack em {
+  color: #64748b;
+  font-size: 10px;
+  font-style: normal;
+  text-align: right;
+}
+
+.prob-stack div.selected b,
+.prob-stack div.selected em {
+  color: #15803d;
+  font-weight: 800;
+}
+
+.prob-stack div.selected i {
+  background: #22c55e;
 }
 
 .step-1 .prob-stack i {
-  animation: probabilityGrow 1.8s ease-in-out infinite;
+  animation: probabilityReveal .24s ease-out both;
 }
 
 .corpus-card {
@@ -597,10 +644,9 @@ onBeforeUnmount(clearGenTimer)
   }
 }
 
-@keyframes probabilityGrow {
-  0%, 5% { transform: scaleX(.1); }
-  18%, 30% { transform: scaleX(1); }
-  40%, 100% { transform: scaleX(.24); }
+@keyframes probabilityReveal {
+  from { transform: scaleX(.08); opacity: .35; }
+  to { transform: scaleX(1); opacity: 1; }
 }
 
 @keyframes corpusFrameGlow {
