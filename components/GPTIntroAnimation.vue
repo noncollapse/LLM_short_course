@@ -102,8 +102,7 @@ onBeforeUnmount(clearGenTimer)
           >{{ word }}</span>
         </div>
         <div class="gen-line">
-          <span>next</span>
-          <span>token</span>
+          <span class="next-token-cue">next token <b aria-hidden="true">&rarr;</b></span>
           <span class="typing-token">{{ predictedToken }}</span>
         </div>
         <div class="prob-stack">
@@ -311,11 +310,12 @@ onBeforeUnmount(clearGenTimer)
   right: 24px;
   bottom: 88px;
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.gen-line span,
+.typing-token,
 .token-rail span {
   display: inline-flex;
   align-items: center;
@@ -329,6 +329,22 @@ onBeforeUnmount(clearGenTimer)
   background: #e9eef5;
   font-size: 12px;
   font-weight: 800;
+}
+
+.next-token-cue {
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.next-token-cue b {
+  display: inline-block;
+  margin-left: 5px;
+  color: #16a34a;
+  font-size: 15px;
+  line-height: 1;
 }
 
 .typing-token {
