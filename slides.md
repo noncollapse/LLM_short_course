@@ -81,27 +81,27 @@ layout: default
 <div class="mt-6 space-y-7 text-[0.95em] leading-tight">
 
 <div>
-  <h2 class="!text-3xl !mb-2">Part 1: LLM Background</h2>
+  <h2 class="!text-3xl !mb-2"><a href="#/part-1-background" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 1: LLM Background</a></h2>
   <ul class="!mt-0 !space-y-1">
-    <li>Introduction to LLMs</li>
-    <li>Transformer Foundations and Architecture</li>
+    <li><a href="#/intro-llms" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Introduction to LLMs</a></li>
+    <li><a href="#/transformer-foundations" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Transformer Foundations and Architecture</a></li>
   </ul>
 </div>
 
 <div>
-  <h2 class="!text-3xl !mb-2">Part 2: 3 Stage training</h2>
+  <h2 class="!text-3xl !mb-2"><a href="#/part-2-training" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 2: 3 Stage training</a></h2>
   <ul class="!mt-0 !space-y-1">
-    <li>Stage 1: Pre-training</li>
-    <li>Stage 2: Supervised Fine-Tuning</li>
-    <li>Stage 3: Preference optimization and RLHF</li>
+    <li><a href="#/stage-1-pretraining" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Stage 1: Pre-training</a></li>
+    <li><a href="#/stage-2-sft" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Stage 2: Supervised Fine-Tuning</a></li>
+    <li><a href="#/stage-3-rlhf" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Stage 3: Preference optimization and RLHF</a></li>
   </ul>
 </div>
 
 <div>
-  <h2 class="!text-3xl !mb-2">Part 3: The Development of Reasoning in LLMs</h2>
+  <h2 class="!text-3xl !mb-2"><a href="#/part-3-reasoning" class="no-underline text-slate-900 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Part 3: The Development of Reasoning in LLMs</a></h2>
   <ul class="!mt-0 !space-y-1">
-    <li>Inference-Time Reasoning</li>
-    <li>Reinforcement Learning with Verifiable Rewards</li>
+    <li><a href="#/inference-time-reasoning" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Inference-Time Reasoning</a></li>
+    <li><a href="#/rlvr" class="no-underline text-slate-700 hover:text-blue-600 hover:underline underline-offset-4 transition-colors">Reinforcement Learning with Verifiable Rewards</a></li>
   </ul>
 </div>
 
@@ -111,6 +111,7 @@ layout: default
 
 ---
 layout: section
+routeAlias: part-1-background
 ---
 
 # Part 1: LLM Background
@@ -119,6 +120,7 @@ layout: section
 layout: full
 title: Evolution of LLM
 clicks: 5
+routeAlias: intro-llms
 ---
 
 <LLMEvolutionTimeline :step="$clicks" />
@@ -144,7 +146,19 @@ clicks: 3
 </div>
 
 ---
+
+# This Year
+
+<div class="mt-3 flex justify-center">
+  <img
+    src="/figs/kae-this-year.png"
+    class="w-[94%] max-h-[520px] object-contain"
+  />
+</div>
+
+---
 layout: section
+routeAlias: transformer-foundations
 ---
 
 # Transformer Foundations
@@ -1761,6 +1775,7 @@ $X = \text{append}(X, \text{token}_{t+1})$
 
 ---
 layout: section
+routeAlias: part-2-training
 ---
 
 # Part 2: 3 Stage training
@@ -1771,6 +1786,8 @@ From <b>pre-training</b> to <b>post-training</b>
 
 
 
+---
+routeAlias: stage-1-pretraining
 ---
 
 # Autoregressive next-token prediction
@@ -2217,7 +2234,8 @@ In practice: average over **batch** and over **tokens** to get the training loss
 </div>
 
 ---
-
+routeAlias: stage-2-sft
+---
 
 # SFT: From Base Model to Assistant
 
@@ -2349,6 +2367,7 @@ Label = -100 means "ignore this token in loss computation" (PyTorch convention)
 
 ---
 layout: section
+routeAlias: stage-3-rlhf
 ---
 
 # Reinforcement Learning from Human Feedback
@@ -3223,6 +3242,7 @@ Requires thousands of comparisons
 
 ---
 layout: section
+routeAlias: part-3-reasoning
 ---
 
 # Stage 3: Reasoning &amp; RLVR
@@ -3231,6 +3251,8 @@ layout: section
 <b>Reasoning and RLVR</b> further improve the model’s ability to solve complex or verifiable tasks.
 </div>
 
+---
+routeAlias: inference-time-reasoning
 ---
 
 # Reasoning: Make Intermediate Steps Explicit
@@ -3664,6 +3686,8 @@ $$
 The bridge is simple: if a final answer can be verified, the complete response becomes trainable.
 </div>
 
+---
+routeAlias: rlvr
 ---
 
 # RLVR: From Preference to Verification
