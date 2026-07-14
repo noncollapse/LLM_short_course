@@ -6,7 +6,7 @@ highlighter: shiki
 lineNumbers: false
 info: |
   ## Large Language Models (LLM) 
-  A Comprehensive Guide to Principles and Training Method
+  A Guide to Principles and Training Method
 drawings:
   persist: false
 transition: slide-left
@@ -44,7 +44,7 @@ code {
 
 # **Large Language Models (LLM)**
 
-A Comprehensive Guide to Principles and Training Methods
+A Guide to Principles and Training Methods
 
 <div class="pt-15">
   <div class="text-lg">
@@ -114,27 +114,6 @@ layout: section
 ---
 
 # Part 1: LLM Background
-
----
-
-# What are Large Language Models?
-
-<div class="grid grid-cols-2 gap-4">
-
-<img src="/figs/whatsllm_gpt.png" class="rounded shadow" />
-<img src="/figs/whatsllm_deepseek.png" class="rounded shadow" />
-
-</div>
-
-<div class="relative h-32">
-<img src="/figs/gpt.png" class="rounded w-20 absolute" style="left: 0px; top: -30px;" />
-<div class="text-center mt-8 text-2xl font-bold">
-We can ask the LLMs themselves!
-</div>
-<img src="/figs/deepseek.png" class="rounded w-20 absolute" style="left: 780px; top: -30px;" />
-</div>
-
-
 
 ---
 layout: full
@@ -2678,9 +2657,9 @@ def ppo_step(policy, value_model, experiences):
 $$
 J(\theta)
 =
-\mathbb{E}_{x\sim q(x),\,y\sim\pi_\theta(\cdot\mid x)}
+\mathbb{E}_{x\sim\mathcal D,\,y\sim\pi_\theta(\cdot\mid x)}
 \left[
-R(x,y)
+r(x,y)
 \right]
 $$
 
@@ -2697,10 +2676,10 @@ If the response space were tiny, we could enumerate all possible $y$:
 $$
 J(\theta)
 =
-\mathbb{E}_{x\sim q(x)}
+\mathbb{E}_{x\sim\mathcal D}
 \left[
 \sum_y
-\pi_\theta(y\mid x)R(x,y)
+\pi_\theta(y\mid x)r(x,y)
 \right]
 $$
 
@@ -2717,7 +2696,7 @@ $$
 For language models, the response space is enormous, so training should use Monte Carlo samples:
 
 $$
-x\sim q(x),
+x\sim\mathcal D,
 \qquad
 y\sim\pi_\theta(\cdot\mid x)
 $$
@@ -2732,17 +2711,17 @@ $$
 \begin{aligned}
 J(\theta)
 &=
-\mathbb{E}_{x\sim q(x)}
+\mathbb{E}_{x\sim\mathcal D}
 \left[
 \sum_y
-\pi_\theta(y\mid x)R(x,y)
+\pi_\theta(y\mid x)r(x,y)
 \right] \\
 \nabla_\theta J(\theta)
 &=
-\mathbb{E}_{x\sim q(x)}
+\mathbb{E}_{x\sim\mathcal D}
 \left[
 \sum_y
-\nabla_\theta \pi_\theta(y\mid x)R(x,y)
+\nabla_\theta \pi_\theta(y\mid x)r(x,y)
 \right]
 \end{aligned}
 $$
@@ -2772,17 +2751,17 @@ $$
 \begin{aligned}
 \nabla_\theta J(\theta)
 &=
-\mathbb{E}_{x\sim q(x)}
+\mathbb{E}_{x\sim\mathcal D}
 \left[
 \sum_y
 \pi_\theta(y\mid x)
 \nabla_\theta\log\pi_\theta(y\mid x)
-R(x,y)
+r(x,y)
 \right] \\
 &=
-\mathbb{E}_{x\sim q(x),\,y\sim\pi_\theta(\cdot\mid x)}
+\mathbb{E}_{x\sim\mathcal D,\,y\sim\pi_\theta(\cdot\mid x)}
 \left[
-\nabla_\theta\log\pi_\theta(y\mid x)R(x,y)
+\nabla_\theta\log\pi_\theta(y\mid x)r(x,y)
 \right]
 \end{aligned}
 $$
@@ -2792,13 +2771,13 @@ So the on-policy surrogate has the same gradient:
 $$
 J_{\mathrm{PG}}(\theta)
 =
-\mathbb{E}_{x,y\sim\mathcal{D}}
+\mathbb{E}_{(x,y)\sim\mathcal{D}}
 \left[
-\log \pi_\theta(y\mid x)\,R(x,y)
+\log \pi_\theta(y\mid x)\,r(x,y)
 \right]
 $$
 
-PPO uses an advantage estimate instead of the raw reward $R(x,y)$ to reduce estimation variance.
+PPO uses an advantage estimate instead of the raw reward $r(x,y)$ to reduce estimation variance.
 </div>
 
 ---
@@ -2809,7 +2788,7 @@ PPO uses an advantage estimate instead of the raw reward $R(x,y)$ to reduce esti
 
 In PPO step (> 1), we collect trajectories with a **frozen snapshot** policy $\pi_{\text{old}}$:
 
-$$\mathcal{D}_{\text{old}} = \{x,y\}, \text{where } x \sim q(x), y \sim \pi_{\text{old}}(\cdot \mid x)$$
+$$\mathcal{D}_{\text{old}} = \{x,y\}, \text{where } x \sim \mathcal D, y \sim \pi_{\text{old}}(\cdot \mid x)$$
 
 
 If we *naively* plug off-policy data into the policy gradient estimator:
@@ -3271,7 +3250,7 @@ Instead of jumping directly to a final answer, the model generates a sequence of
 </div>
 <div class="px-4 py-3 rounded-xl border-2 border-emerald-200 bg-emerald-50">
 <div class="flex items-center justify-between"><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-emerald-700">Reasoning trajectory</div><span class="px-2 py-0.5 rounded-full bg-white border border-emerald-200 text-[9px] text-emerald-700">steps become context</span></div>
-<MathTex display tex="x\longrightarrow z_1\longrightarrow z_2\longrightarrow z_3\longrightarrow y" class="text-[0.82em] mt-1" />
+<MathTex display tex="x\longrightarrow\underbrace{y_1\longrightarrow y_2\longrightarrow\cdots\longrightarrow y_T}_{\text{response }y}" class="text-[0.78em] mt-1" />
 </div>
 </div>
 
@@ -3352,18 +3331,18 @@ Instead of jumping directly to a final answer, the model generates a sequence of
 # Chain-of-Thought Prompting
 
 <div class="mt-2 flex items-center justify-between px-4 py-3 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-white">
-<div><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-600">Method definition</div><div class="mt-1 text-[13px] text-slate-700">Augment the model output with intermediate natural-language reasoning before the final answer.</div></div>
+<div><div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-600">Method definition</div><div class="mt-1 text-[13px] text-slate-700">Generate a response <MathTex tex="y" /> that contains intermediate natural-language reasoning before the final answer.</div></div>
 <span class="px-3 py-1 rounded-full bg-white border border-blue-200 text-[10px] font-semibold text-blue-700">Wei et al. (2022)</span>
 </div>
 
 <div class="grid grid-cols-2 gap-4 mt-3">
 <div class="p-3 rounded-xl border border-slate-200 bg-slate-50">
 <div class="text-[10px] uppercase tracking-wide font-bold text-slate-500">Standard few-shot exemplar</div>
-<div class="mt-2 px-3 py-2 rounded-lg bg-white border border-slate-200 font-mono text-[12px] text-center">&lt;input, output&gt;</div>
+<div class="mt-2 px-3 py-2 rounded-lg bg-white border border-slate-200 font-mono text-[12px] text-center">&lt;prompt x, response y&gt;</div>
 </div>
 <div class="p-3 rounded-xl border-2 border-blue-200 bg-blue-50">
 <div class="text-[10px] uppercase tracking-wide font-bold text-blue-700">Chain-of-thought exemplar</div>
-<div class="mt-2 px-3 py-2 rounded-lg bg-white border border-blue-200 font-mono text-[12px] text-center">&lt;input, reasoning steps, output&gt;</div>
+<div class="mt-2 px-3 py-2 rounded-lg bg-white border border-blue-200 font-mono text-[12px] text-center">&lt;prompt x, response y = reasoning + answer&gt;</div>
 </div>
 </div>
 
@@ -3374,17 +3353,17 @@ Instead of jumping directly to a final answer, the model generates a sequence of
 <div class="grid grid-cols-11 gap-2 mt-2 items-stretch text-center">
 <div class="col-span-4 p-3 rounded-xl border-2 border-blue-200 bg-blue-50">
 <div class="text-[10px] uppercase tracking-wide font-bold text-blue-700">1 &nbsp; Construct the prompt</div>
-<div class="mt-2 space-y-1 text-[10px] font-semibold"><div class="px-2 py-1 rounded bg-white">Question 1 &#8594; reasoning &#8594; answer 1</div><div class="px-2 py-1 rounded bg-white">Question 2 &#8594; reasoning &#8594; answer 2</div></div>
+<div class="mt-2 space-y-1 text-[10px] font-semibold"><div class="px-2 py-1 rounded bg-white">Prompt <MathTex tex="x_1" /> &#8594; response <MathTex tex="y_1" /></div><div class="px-2 py-1 rounded bg-white">Prompt <MathTex tex="x_2" /> &#8594; response <MathTex tex="y_2" /></div></div>
 </div>
 <div class="col-span-1 flex items-center justify-center text-2xl text-blue-400">&#8594;</div>
 <div class="col-span-2 p-3 rounded-xl border-2 border-amber-200 bg-amber-50 flex flex-col justify-center">
 <div class="text-[10px] uppercase tracking-wide font-bold text-amber-700">2 &nbsp; Append</div>
-<div class="mt-2 text-sm font-black text-amber-900">New question</div>
+<div class="mt-2 text-sm font-black text-amber-900">New prompt <MathTex tex="x" /></div>
 </div>
 <div class="col-span-1 flex items-center justify-center text-2xl text-emerald-400">&#8594;</div>
 <div class="col-span-3 p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 flex flex-col justify-center">
 <div class="text-[10px] uppercase tracking-wide font-bold text-emerald-700">3 &nbsp; Generate</div>
-<div class="mt-2 text-[11px] font-bold"><span class="px-2 py-1 rounded bg-white">Reasoning</span> <span class="text-emerald-500">&#8594;</span> <span class="px-2 py-1 rounded bg-emerald-100">Final answer</span></div>
+<div class="mt-2 text-[11px] font-bold"><span class="px-2 py-1 rounded bg-white">Reasoning</span> <span class="text-emerald-500">&#8594;</span> <span class="px-2 py-1 rounded bg-emerald-100">Final answer</span> <span class="text-slate-500">= response <MathTex tex="y" /></span></div>
 </div>
 </div>
 
@@ -3478,7 +3457,10 @@ The key idea is not "longer reasoning", but **diverse reasoning**. If several di
 <div class="text-lg mt-6 text-center">
 
 $$
-\hat y = \arg\max_y \sum_{k=1}^{K} \mathbf{1}\{\mathrm{answer}(z_k)=y\}
+\hat a
+=
+\arg\max_a \sum_{k=1}^{K}\mathbf{1}\{\mathrm{answer}(y^{(k)})=a\},
+\qquad y^{(k)}\sim\pi_\theta(\cdot\mid x)
 $$
 
 </div>
@@ -3496,15 +3478,15 @@ $$
 CoT commits to one path:
 
 $$
-z_1 \rightarrow z_2 \rightarrow z_3 \rightarrow y
+y_1 \rightarrow y_2 \rightarrow \cdots \rightarrow y_T
 $$
 
 ToT keeps multiple partial thoughts alive:
 
 $$
-\{z_1^{(1)}, z_1^{(2)}, \ldots\}
+\{y_1^{(1)}, y_1^{(2)}, \ldots\}
 \rightarrow
-\{z_2^{(1)}, z_2^{(2)}, \ldots\}
+\{y_2^{(1)}, y_2^{(2)}, \ldots\}
 $$
 
 </div>
@@ -3669,9 +3651,9 @@ $$
 
 ## RL-style reasoning
 
-- Sample complete outputs during training.
-- Score each output with a verifier to obtain a reward.
-- Move probability mass toward successful outputs.
+- Sample complete responses during training.
+- Score each response with a verifier to obtain a reward.
+- Move probability mass toward successful responses.
 - Cost is paid during post-training, not every query.
 
 </div>
@@ -3679,7 +3661,7 @@ $$
 </div>
 
 <div class="mt-8 p-4 bg-gray-50 border-l-4 border-gray-500 text-lg">
-The bridge is simple: if a final answer can be verified, the complete output becomes trainable.
+The bridge is simple: if a final answer can be verified, the complete response becomes trainable.
 </div>
 
 ---
@@ -3702,7 +3684,7 @@ RLVR turns a reasoning task into an RL problem whenever the final answer can be 
 
 <div class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50">
 <div class="text-sm uppercase tracking-wide text-slate-500 font-bold mb-3">Preference-Based Feedback</div>
-<div class="text-xl font-semibold mb-4">“Which output is better?”</div>
+<div class="text-xl font-semibold mb-4">“Which response is better?”</div>
 <div class="space-y-2 text-[15px] leading-6">
 <div>Human preferences may be subjective.</div>
 <div>A learned reward model may be inaccurate.</div>
@@ -3713,7 +3695,7 @@ RLVR turns a reasoning task into an RL problem whenever the final answer can be 
 <div class="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
 <div class="text-sm uppercase tracking-wide text-emerald-700 font-bold mb-3">Verifiable Feedback</div>
 <div class="text-xl font-semibold mb-3">“Is this answer correct?”</div>
-<MathTex display tex="r(q,o)=\begin{cases}1,&\text{verified correct},\\0,&\text{otherwise.}\end{cases}" class="text-[0.82em]" />
+<MathTex display tex="r(x,y)=\begin{cases}1,&\text{verified correct},\\0,&\text{otherwise.}\end{cases}" class="text-[0.82em]" />
 </div>
 
 </div>
@@ -3736,31 +3718,31 @@ The reward is sparse, but objective, automatic, and scalable.
 
 <div class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50">
 <div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">1. Prompt</div>
-<MathTex display tex="q\sim\mathcal D" class="text-[0.95em]" />
+<MathTex display tex="x\sim\mathcal D" class="text-[0.95em]" />
 <div class="text-[13px] leading-5 mt-2">sample a problem from the training distribution</div>
 </div>
 
 <div class="p-4 rounded-2xl border-2 border-rose-200 bg-rose-50">
-<div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">2. Output</div>
-<MathTex display tex="o\sim\pi_\theta(\cdot\mid q)" class="text-[0.95em]" />
-<div class="text-[13px] leading-5 mt-2">generate the complete output: reasoning trace + final answer</div>
+<div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">2. Response</div>
+<MathTex display tex="y\sim\pi_\theta(\cdot\mid x)" class="text-[0.95em]" />
+<div class="text-[13px] leading-5 mt-2">generate the complete response: reasoning trace + final answer</div>
 </div>
 
 <div class="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
 <div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-2">3. Verification</div>
-<MathTex display tex="r=R(q,o)" class="text-[0.95em]" />
-<div class="text-[13px] leading-5 mt-2">score the sampled output with a verifier</div>
+<MathTex display tex="r=r(x,y)" class="text-[0.95em]" />
+<div class="text-[13px] leading-5 mt-2">score the sampled response with a verifier</div>
 </div>
 
 </div>
 
 <div class="mt-6 p-5 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
 <div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">REINFORCE Update</div>
-<MathTex display tex="\theta\leftarrow\theta+\eta\,\underbrace{\nabla_\theta\log\pi_\theta(o\mid q)}_{\text{policy score}}\,\underbrace{r}_{\text{verifiable reward}}" class="text-[0.94em]" />
+<MathTex display tex="\theta\leftarrow\theta+\eta\,\underbrace{\nabla_\theta\log\pi_\theta(y\mid x)}_{\text{policy score}}\,\underbrace{r}_{\text{verifiable reward}}" class="text-[0.94em]" />
 </div>
 
 <div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5">
-A correct output receives a positive update; an incorrect output provides little or no positive signal.
+A correct response receives a positive update; an incorrect response provides little or no positive signal.
 </div>
 
 ---
@@ -3769,7 +3751,7 @@ A correct output receives a positive update; an incorrect output provides little
 
 <div class="mt-3 p-4 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
 <div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">One Gradient Form, Different Baselines</div>
-<MathTex display tex="\widehat g_b(\theta)=\nabla_\theta\log\pi_\theta(o\mid q)\,[r-b(q)],\qquad \mathbb E_{o\sim\pi_\theta}\!\left[b(q)\nabla_\theta\log\pi_\theta(o\mid q)\right]=0" class="text-[0.78em]" />
+<MathTex display tex="\widehat g_b(\theta)=\nabla_\theta\log\pi_\theta(y\mid x)\,[r-b(x)],\qquad \mathbb E_{y\sim\pi_\theta(\cdot\mid x)}\!\left[b(x)\nabla_\theta\log\pi_\theta(y\mid x)\right]=0" class="text-[0.74em]" />
 <div class="mt-2 text-[13px] leading-5">
 A prompt-dependent baseline changes the variance of the gradient estimator, but not its expectation.
 </div>
@@ -3780,7 +3762,7 @@ A prompt-dependent baseline changes the variance of the gradient estimator, but 
 <div class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 text-center">
 <div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">No Baseline</div>
 <div class="text-lg font-bold mb-2">Vanilla RLVR</div>
-<MathTex display tex="b^{\mathrm{vanilla}}(q)=0" class="text-[0.88em]" />
+<MathTex display tex="b^{\mathrm{vanilla}}(x)=0" class="text-[0.88em]" />
 <div class="mt-3 text-left">
 Uses the raw verifier reward. It is simple and critic-free, but the policy-gradient estimate can have high variance.
 </div>
@@ -3789,7 +3771,7 @@ Uses the raw verifier reward. It is simple and critic-free, but the policy-gradi
 <div class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50 text-center">
 <div class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-2">Learned Baseline</div>
 <div class="text-lg font-bold text-blue-900 mb-2">PPO <span class="text-[10px] font-normal text-blue-600">(Schulman et al., 2017)</span></div>
-<MathTex display tex="b^{\mathrm{PPO}}_\phi(q)=\widehat V_\phi(q)\approx V^{\pi_\theta}(q)" class="text-[0.76em]" />
+<MathTex display tex="b^{\mathrm{PPO}}_\phi(x)=\widehat V_\phi(x)\approx V^{\pi_\theta}(x)" class="text-[0.76em]" />
 <div class="mt-3 text-left">
 Trains a separate critic to approximate the value function, reducing variance at the cost of extra memory and optimization.
 </div>
@@ -3798,7 +3780,7 @@ Trains a separate critic to approximate the value function, reducing variance at
 <div class="p-4 rounded-2xl border-2 border-orange-200 bg-orange-50 text-center">
 <div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-2">Ideal Baseline</div>
 <div class="text-lg font-bold text-orange-900 mb-2">Oracle</div>
-<MathTex display tex="b^{\mathrm{oracle}}(q)=V^{\pi_\theta}(q)=\mathbb E[r\mid q]" class="text-[0.76em]" />
+<MathTex display tex="b^{\mathrm{oracle}}(x)=V^{\pi_\theta}(x)=\mathbb E[r\mid x]" class="text-[0.76em]" />
 <div class="mt-3 text-left">
 Uses the true expected reward for each prompt. It is the statistical target, but it is unknown during training.
 </div>
@@ -3807,7 +3789,7 @@ Uses the true expected reward for each prompt. It is the statistical target, but
 </div>
 
 <div class="mt-4 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[13px] leading-5 text-center font-semibold">
-PPO learns a critic to approach the oracle; GRPO instead approximates it with rewards from multiple outputs.
+PPO learns a critic to approach the oracle; GRPO instead approximates it with rewards from multiple responses.
 </div>
 
 ---
@@ -3815,12 +3797,12 @@ PPO learns a critic to approach the oracle; GRPO instead approximates it with re
 # RLVR: Minibatch Policy Gradient
 
 <div class="flex justify-center mt-2">
-<img src="/figs/demystify-minibatch.png" class="w-full max-h-[365px] object-contain" />
+<img src="/figs/demystify-minibatch-xyr.png" class="w-full max-h-[365px] object-contain" />
 </div>
 
 <div class="mt-3 p-3 rounded-xl border-2 border-violet-200 bg-violet-50 text-center">
 <div class="text-[10px] uppercase tracking-wide text-violet-700 font-bold mb-1">Minibatch Gradient Estimator</div>
-<MathTex display tex="\widehat g_b(\theta)=\frac{1}{B}\sum_{b=1}^{B}\nabla_\theta\log\pi_\theta(o_b\mid q_b)\,[r_b-b(q_b)]" class="text-[0.74em]" />
+<MathTex display tex="\widehat g_b(\theta)=\frac{1}{B}\sum_{b=1}^{B}\nabla_\theta\log\pi_\theta(y_b\mid x_b)\,[r_b-b(x_b)]" class="text-[0.74em]" />
 </div>
 
 ---
@@ -3828,13 +3810,13 @@ PPO learns a critic to approach the oracle; GRPO instead approximates it with re
 # RLVR: The Oracle Baseline
 
 <div class="flex justify-center mt-2">
-<img src="/figs/demystify-oracle.png" class="w-full max-h-[350px] object-contain" />
+<img src="/figs/demystify-oracle-xyr.png" class="w-full max-h-[350px] object-contain" />
 </div>
 
 <div class="grid grid-cols-2 gap-5 mt-3 text-[13px] leading-5.5">
 <div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 text-center">
 <div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-1">Oracle Advantage</div>
-<MathTex display tex="A^{\mathrm{oracle}}(q,o)=r(q,o)-V^{\pi_\theta}(q)" class="text-[0.80em]" />
+<MathTex display tex="A^{\mathrm{oracle}}(x,y)=r(x,y)-V^{\pi_\theta}(x)" class="text-[0.80em]" />
 </div>
 <div class="p-3 rounded-xl border-2 border-orange-200 bg-orange-50">
 The value function is unknown and usually requires a separate critic. Estimating that critic adds memory, computation, and estimation error.
@@ -3850,7 +3832,7 @@ The value function is unknown and usually requires a separate critic. Estimating
 </div>
 
 <div class="mt-3 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[14px] leading-5.5 text-center">
-For each prompt, sample multiple outputs and replace the unknown value baseline with the group mean reward.
+For each prompt, sample multiple responses and replace the unknown value baseline with the group mean reward.
 </div>
 
 ---
@@ -3858,7 +3840,7 @@ For each prompt, sample multiple outputs and replace the unknown value baseline 
 # GRPO-type Algorithm
 
 <div class="flex justify-center mt-2">
-<img src="/figs/demystify-grpo-type.png" class="w-full max-h-[390px] object-contain" />
+<img src="/figs/demystify-grpo-type-xyr.png" class="w-full max-h-[390px] object-contain" />
 </div>
 
 ---
@@ -3872,10 +3854,10 @@ Group-relative surrogate objective.
 $$
 \mathcal{J}_{\mathrm{GRPO}}(\theta)
 =
-\mathbb{E}_{q\sim\mathcal D,\,\{o_i\}_{i=1}^{G}\overset{\mathrm{i.i.d.}}{\sim}\pi_{\theta_{\mathrm{old}}}(\cdot\mid q)}
+\mathbb{E}_{x\sim\mathcal D,\,\{y_i\}_{i=1}^{G}\overset{\mathrm{i.i.d.}}{\sim}\pi_{\theta_{\mathrm{old}}}(\cdot\mid x)}
 \left[
-\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}
-\sum_{t=1}^{|o_i|}
+\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}
+\sum_{t=1}^{|y_i|}
 \rho_{i,t}
 \hat A_{i,t}
 \right]
@@ -3884,8 +3866,8 @@ $$
 $$
 \rho_{i,t}
 =
-\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}
-{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})},
+\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}
+{\pi_{\theta_{\mathrm{old}}}(y_{i,t}\mid x,y_{i,<t})},
 \qquad
 \hat A_{i,t}
 =
@@ -3897,8 +3879,8 @@ $$
 
 <div class="grid grid-cols-3 gap-3 mt-5 text-[12px] leading-4.8">
 <div class="p-3 rounded-xl border-2 border-slate-200 bg-white">
-<div class="font-bold mb-1 text-slate-700"><MathTex tex="q,\ o_i,\ r_i" /></div>
-Prompt <MathTex tex="q" />, sampled output <MathTex tex="o_i" />, and reward <MathTex tex="r_i=R(q,o_i)" />.
+<div class="font-bold mb-1 text-slate-700"><MathTex tex="x,\ y_i,\ r_i" /></div>
+Prompt <MathTex tex="x" />, sampled response <MathTex tex="y_i" />, and reward <MathTex tex="r_i=r(x,y_i)" />.
 </div>
 <div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50">
 <div class="font-bold mb-1 text-emerald-800"><MathTex tex="\hat A_{i,t}" /></div>
@@ -3925,25 +3907,25 @@ Corresponding policy-gradient form.
 $$
 \nabla_\theta \mathcal{J}_{\mathrm{GRPO}}(\theta)
 =
-\mathbb{E}_{q\sim\mathcal D,\,\{o_i\}_{i=1}^{G}\overset{\mathrm{i.i.d.}}{\sim}\pi_{\theta_{\mathrm{old}}}(\cdot\mid q)}
+\mathbb{E}_{x\sim\mathcal D,\,\{y_i\}_{i=1}^{G}\overset{\mathrm{i.i.d.}}{\sim}\pi_{\theta_{\mathrm{old}}}(\cdot\mid x)}
 \Bigg[
-\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}
-\sum_{t=1}^{|o_i|}
-\rho_{i,t}\hat A_{i,t}\,\nabla_\theta \log \pi_\theta(o_{i,t}\mid q,o_{i,<t})
+\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|y_i|}
+\sum_{t=1}^{|y_i|}
+\rho_{i,t}\hat A_{i,t}\,\nabla_\theta \log \pi_\theta(y_{i,t}\mid x,y_{i,<t})
 \Bigg]
 $$
 
 $$
 \rho_{i,t}
 =
-\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}
-{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}
+\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}
+{\pi_{\theta_{\mathrm{old}}}(y_{i,t}\mid x,y_{i,<t})}
 $$
 
 $$
 s_{i,t}
 :=
-\nabla_\theta \log \pi_\theta(o_{i,t}\mid q,o_{i,<t})
+\nabla_\theta \log \pi_\theta(y_{i,t}\mid x,y_{i,<t})
 $$
 
 <div class="mt-5 p-3 rounded-xl border-l-4 border-violet-500 bg-violet-50 text-[15px] leading-6">
@@ -3956,8 +3938,8 @@ Policy gradient = <b>score function</b> × <b>importance ratio</b> × <b>group-r
 
 <div class="mt-3 p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 flex items-center justify-between">
 <div>
-<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">One Prompt <MathTex tex="q" /></div>
-<div class="text-[16px] leading-6">Find the shortest distance from <b>(5,5)</b> to the curve <b>xy = 4</b>.</div>
+<div class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">One Prompt <MathTex tex="x" /></div>
+<div class="text-[16px] leading-6">Find the shortest distance from <b>(5,5)</b> to the curve <b>uv = 4</b>.</div>
 </div>
 <div class="text-[12px] px-3 py-1.5 rounded-full bg-white border border-slate-200">four independent rollouts</div>
 </div>
@@ -3965,28 +3947,28 @@ Policy gradient = <b>score function</b> × <b>importance ratio</b> × <b>group-r
 <div class="grid grid-cols-4 gap-3 mt-4 text-center">
 
 <div class="p-3 rounded-2xl border-2 border-emerald-300 bg-emerald-50 min-h-[225px]">
-<div class="flex items-center justify-between text-xs"><b class="text-emerald-800"><MathTex tex="o_1" /></b><span class="px-2 py-1 rounded-full bg-emerald-200 text-emerald-800">reward +1</span></div>
+<div class="flex items-center justify-between text-xs"><b class="text-emerald-800"><MathTex tex="y_1" /></b><span class="px-2 py-1 rounded-full bg-emerald-200 text-emerald-800">reward +1</span></div>
 <div class="mt-5 text-[12px] leading-5 text-left">Lagrange multipliers give the closest point <b>(4,1)</b>.</div>
 <div class="mt-5 text-xs uppercase tracking-wide text-emerald-700 font-bold">Final Answer</div>
 <div class="mt-1 text-3xl font-bold text-emerald-800">√17</div>
 </div>
 
 <div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50 min-h-[225px]">
-<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="o_2" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
+<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="y_2" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
 <div class="mt-5 text-[12px] leading-5 text-left">Assumes symmetry and chooses the point <b>(2,2)</b>.</div>
 <div class="mt-5 text-xs uppercase tracking-wide text-rose-700 font-bold">Final Answer</div>
 <div class="mt-1 text-3xl font-bold text-rose-800">√18</div>
 </div>
 
 <div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50 min-h-[225px]">
-<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="o_3" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
+<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="y_3" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
 <div class="mt-5 text-[12px] leading-5 text-left">Finds <b>(1,4)</b>, then miscomputes the Euclidean distance.</div>
 <div class="mt-5 text-xs uppercase tracking-wide text-rose-700 font-bold">Final Answer</div>
 <div class="mt-1 text-3xl font-bold text-rose-800">5</div>
 </div>
 
 <div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50 min-h-[225px]">
-<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="o_4" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
+<div class="flex items-center justify-between text-xs"><b class="text-rose-800"><MathTex tex="y_4" /></b><span class="px-2 py-1 rounded-full bg-rose-200 text-rose-800">reward -1</span></div>
 <div class="mt-5 text-[12px] leading-5 text-left">Projects toward the diagonal without solving the constraint.</div>
 <div class="mt-5 text-xs uppercase tracking-wide text-rose-700 font-bold">Final Answer</div>
 <div class="mt-1 text-3xl font-bold text-rose-800">3</div>
@@ -4037,10 +4019,10 @@ clicks: 3
 <div class="text-[11px] text-emerald-800/70">outcome supervision</div>
 </div>
 <div class="grid grid-cols-4 gap-3 text-center text-[11px]">
-<div><div class="font-bold text-emerald-800 mb-2"><MathTex tex="o_1" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span>…</span></div></div>
-<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="o_2" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
-<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="o_3" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
-<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="o_4" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+<div><div class="font-bold text-emerald-800 mb-2"><MathTex tex="y_1" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span class="px-2 py-1 rounded bg-emerald-200">+1.73</span><span>…</span></div></div>
+<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="y_2" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="y_3" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
+<div><div class="font-bold text-rose-800 mb-2"><MathTex tex="y_4" /></div><div class="flex justify-center gap-1"><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span class="px-2 py-1 rounded bg-rose-200">-0.58</span><span>…</span></div></div>
 </div>
 </div>
 
@@ -4056,15 +4038,15 @@ clicks: 2
 
 <div class="grid grid-cols-5 gap-3 mt-3 text-[12px] leading-5">
 <div class="col-span-2 p-3 rounded-xl border-2 border-slate-200 bg-slate-50">
-<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Prompt <MathTex tex="q" /></div>
+<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Prompt <MathTex tex="x" /></div>
 <div class="font-mono bg-white px-2 py-1 rounded">Find the shortest distance.</div>
 </div>
 <div class="col-span-2 p-3 rounded-xl border-2 border-slate-200 bg-slate-50">
-<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Prefix <MathTex tex="o_{1,<t}" /></div>
+<div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Prefix <MathTex tex="y_{1,<t}" /></div>
 <div class="font-mono bg-white px-2 py-1 rounded">The shortest distance is _____</div>
 </div>
 <div class="p-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 text-center">
-<div class="text-[10px] uppercase tracking-wide text-emerald-700 font-bold mb-1">Token <MathTex tex="o_{1,t}" /></div>
+<div class="text-[10px] uppercase tracking-wide text-emerald-700 font-bold mb-1">Token <MathTex tex="y_{1,t}" /></div>
 <div class="font-mono text-xl font-bold text-emerald-800">√17</div>
 </div>
 </div>
@@ -4094,7 +4076,7 @@ clicks: 2
 <div v-click="2" class="grid grid-cols-5 gap-4 mt-4 items-stretch">
 <div class="col-span-3 p-3 rounded-2xl border-2 border-orange-300 bg-orange-50 text-center">
 <div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-1">Sampled-Token Importance Ratio</div>
-<MathTex display tex="\rho_{1,t}=\frac{\pi_\theta(\sqrt{17}\mid q,o_{1,<t})}{\pi_{\theta_{\mathrm{old}}}(\sqrt{17}\mid q,o_{1,<t})}=\frac{0.30}{0.20}=1.5" class="text-[0.78em]" />
+<MathTex display tex="\rho_{1,t}=\frac{\pi_\theta(\sqrt{17}\mid x,y_{1,<t})}{\pi_{\theta_{\mathrm{old}}}(\sqrt{17}\mid x,y_{1,<t})}=\frac{0.30}{0.20}=1.5" class="text-[0.78em]" />
 </div>
 <div class="col-span-2 p-3 rounded-2xl border-2 border-amber-200 bg-amber-50 text-[12px] leading-5.5">
 Samples come from <MathTex tex="\pi_{\theta_{\mathrm{old}}}" />, while optimization targets <MathTex tex="\pi_\theta" />. The ratio reweights the sampled token for the current policy: <b><MathTex tex="\rho>1" /> upweights</b>, <b><MathTex tex="\rho<1" /> downweights</b>.
@@ -4108,13 +4090,13 @@ clicks: 2
 # Example: Full Update
 
 <div class="grid grid-cols-3 gap-3 mt-2 text-center text-[12px]">
-<div class="p-3 rounded-xl border-2 border-slate-200 bg-white"><div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Rollout Group</div><MathTex tex="\{o_j\}_{j=1}^4\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid q)" /></div>
+<div class="p-3 rounded-xl border-2 border-slate-200 bg-white"><div class="text-[10px] uppercase tracking-wide text-slate-500 font-bold mb-1">Rollout Group</div><MathTex tex="\{y_j\}_{j=1}^4\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid x)" /></div>
 <div class="p-3 rounded-xl border-2 border-blue-200 bg-blue-50"><div class="text-[10px] uppercase tracking-wide text-blue-700 font-bold mb-1">Verifier Rewards</div><MathTex tex="\mathbf r=[1,-1,-1,-1]" /></div>
 <div class="p-3 rounded-xl border-2 border-violet-200 bg-violet-50"><div class="text-[10px] uppercase tracking-wide text-violet-700 font-bold mb-1">Relative Advantages</div><MathTex tex="\widehat{\mathbf A}=[1.73,-0.58,-0.58,-0.58]" /></div>
 </div>
 
 <div class="mt-3 p-2.5 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[12px] text-center">
-For the correct output <MathTex tex="o_1" />, every token uses the sequence coefficient <MathTex tex="\hat A_1=1.73" />.
+For the correct response <MathTex tex="y_1" />, every token uses the sequence coefficient <MathTex tex="\hat A_1=1.73" />.
 </div>
 
 <div v-click="1" class="grid grid-cols-3 gap-3 mt-3 text-center">
@@ -4143,7 +4125,7 @@ For the correct output <MathTex tex="o_1" />, every token uses the sequence coef
 <div class="grid grid-cols-5 gap-5 mt-3 h-[420px] items-stretch">
 
 <div class="col-span-3 p-3 rounded-2xl border-2 border-slate-200 bg-white shadow-sm flex items-center justify-center">
-<img src="/figs/drgrpo.jpg" class="w-full max-h-[410px] object-contain" />
+<img src="/figs/drgrpo-xyr.png" class="w-full max-h-[410px] object-contain" />
 </div>
 
 <div class="col-span-2 flex flex-col gap-3">
@@ -4151,7 +4133,7 @@ For the correct output <MathTex tex="o_1" />, every token uses the sequence coef
 <div class="p-3 rounded-2xl border-2 border-rose-200 bg-rose-50">
 <div class="text-xs uppercase tracking-wide text-rose-700 font-bold mb-2">Two Sources of Bias in GRPO</div>
 <div class="space-y-1.5 text-[12px] leading-5">
-<div><b>Output length:</b> averaging each output loss by <MathTex tex="|o_i|" /> changes its effective weight.</div>
+<div><b>Response length:</b> averaging each response loss by <MathTex tex="|y_i|" /> changes its effective weight.</div>
 <div><b>Prompt difficulty:</b> dividing centered rewards by their group standard deviation reweights prompts.</div>
 </div>
 </div>
@@ -4160,7 +4142,7 @@ For the correct output <MathTex tex="o_1" />, every token uses the sequence coef
 <div class="text-xs uppercase tracking-wide text-emerald-700 font-bold mb-2">Dr. GRPO</div>
 <MathTex display tex="\widehat b_i^{\mathrm{Dr}}=\frac1G\sum_{j=1}^{G}r_j,\qquad \widehat A_i^{\mathrm{Dr}}=r_i-\widehat b_i^{\mathrm{Dr}}" class="text-[0.76em]" />
 <div class="mt-2 text-[12px] leading-5">
-Keep group centering, but remove output-length and reward-standard-deviation normalization.
+Keep group centering, but remove response-length and reward-standard-deviation normalization.
 </div>
 <div class="mt-3 px-3 py-2.5 rounded-xl border-l-4 border-emerald-500 bg-white/80 text-[12px] leading-5 font-semibold">
 Together, these two changes recover the standard policy-gradient form without bias.
@@ -4179,32 +4161,32 @@ Zichen Liu, Changyu Chen, Wenjun Li, Penghui Qi, Tianyu Pang, Chao Du, Wee Sun L
 # Demystify GRPO: A Second-Order U-Statistic
 
 <div class="mt-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] leading-5.5">
-For the on-policy GRPO-type gradient with a group-mean baseline, fix one prompt <MathTex tex="q" /> and draw a group of outputs. For each output, let <MathTex tex="r_i=R(q,o_i)" />; its output-level score aggregates the token scores:
-<MathTex display tex="o_1,\ldots,o_G\overset{\mathrm{i.i.d.}}{\sim}\pi_\theta(\cdot\mid q),\qquad s_i(\theta):=\nabla_\theta\log\pi_\theta(o_i\mid q)=\sum_{t=1}^{|o_i|}s_{i,t},\qquad \bar r=\frac{1}{G}\sum_{i=1}^{G}r_i." class="text-[0.70em] mt-1" />
+For the on-policy GRPO-type gradient with a group-mean baseline, fix one prompt <MathTex tex="x" /> and draw a group of responses. For each response, let <MathTex tex="r_i=r(x,y_i)" />; its response-level score aggregates the token scores:
+<MathTex display tex="y_1,\ldots,y_G\overset{\mathrm{i.i.d.}}{\sim}\pi_\theta(\cdot\mid x),\qquad s_i(\theta):=\nabla_\theta\log\pi_\theta(y_i\mid x)=\sum_{t=1}^{|y_i|}s_{i,t},\qquad \bar r=\frac{1}{G}\sum_{i=1}^{G}r_i." class="text-[0.70em] mt-1" />
 </div>
 
 <div class="grid grid-cols-2 gap-4 mt-4 items-stretch">
 
 <div class="p-4 rounded-2xl border-2 border-violet-200 bg-violet-50 text-center">
 <div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Centered-Reward Form</div>
-<MathTex display tex="\widehat g_{\mathrm{GRPO}}(q;\theta)=\frac{1}{G-1}\sum_{i=1}^{G}s_i(\theta)(r_i-\bar r)" class="text-[0.80em]" />
+<MathTex display tex="\widehat g_{\mathrm{GRPO}}(x;\theta)=\frac{1}{G-1}\sum_{i=1}^{G}s_i(\theta)(r_i-\bar r)" class="text-[0.80em]" />
 <div class="mt-3 text-[13px] leading-5 text-left">
-Each score is multiplied by its reward relative to the other outputs for the same prompt.
+Each score is multiplied by its reward relative to the other responses for the same prompt.
 </div>
 </div>
 
 <div class="p-4 rounded-2xl border-2 border-orange-200 bg-orange-50 text-center">
 <div class="text-xs uppercase tracking-wide text-orange-700 font-bold mb-2">Equivalent Pairwise Form</div>
-<MathTex display tex="\widehat g_{\mathrm{GRPO}}(q;\theta)=\binom{G}{2}^{-1}\sum_{1\le i<j\le G}\frac{1}{2}(s_i-s_j)(r_i-r_j)" class="text-[0.72em]" />
+<MathTex display tex="\widehat g_{\mathrm{GRPO}}(x;\theta)=\binom{G}{2}^{-1}\sum_{1\le i<j\le G}\frac{1}{2}(s_i-s_j)(r_i-r_j)" class="text-[0.72em]" />
 <div class="mt-3 text-[13px] leading-5 text-left">
-The group-centered gradient is an average over every unordered pair of sampled outputs.
+The group-centered gradient is an average over every unordered pair of sampled responses.
 </div>
 </div>
 
 </div>
 
 <div class="mt-4 p-3 rounded-xl border-l-4 border-emerald-500 bg-emerald-50 text-[14px] leading-5.5 text-center">
-With kernel <MathTex tex="h((o_i,r_i),(o_j,r_j)):=\tfrac12(s_i-s_j)(r_i-r_j)" />, this is exactly a second-order U-statistic in the sampled output-reward pairs.
+With kernel <MathTex tex="h((y_i,r_i),(y_j,r_j)):=\tfrac12(s_i-s_j)(r_i-r_j)" />, this is exactly a second-order U-statistic in the sampled response-reward pairs.
 </div>
 
 <div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
@@ -4252,7 +4234,7 @@ Hongyi Zhou, Kai Ye, Erhan Xu, Jin Zhu, Ying Yang, Shijin Gong, and Chengchun Sh
 </div>
 
 <div class="mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-[12px] leading-5 text-center">
-For prompt <MathTex tex="q_i" />, iteration <MathTex tex="t" /> samples <MathTex tex="o_{i,t}\sim\pi_{\theta_t}(\cdot\mid q_i)" /> and observes <MathTex tex="r_{i,t}=R(q_i,o_{i,t})" />. The kernel input <MathTex tex="(t-s)/(th)" /> makes nearby iterations more influential when estimating the current baseline.
+For prompt <MathTex tex="x_i" />, iteration <MathTex tex="t" /> samples <MathTex tex="y_{i,t}\sim\pi_{\theta_t}(\cdot\mid x_i)" /> and observes <MathTex tex="r_{i,t}=r(x_i,y_{i,t})" />. The kernel input <MathTex tex="(t-s)/(th)" /> makes nearby iterations more influential when estimating the current baseline.
 </div>
 
 <div class="absolute bottom-2 left-12 right-12 text-[8px] leading-3 text-slate-400 text-center">
@@ -4278,7 +4260,7 @@ Shijin Gong, Kai Ye, Jin Zhu, Xinyu Zhang, Hongyi Zhou, and Chengchun Shi. "Kern
 <div class="col-span-2 p-3 rounded-2xl border-2 border-violet-200 bg-violet-50">
 <div class="text-xs uppercase tracking-wide text-violet-700 font-bold mb-2">Core Idea</div>
 <div class="text-[13px] leading-5.5">
-For each prompt <MathTex tex="q_i" />, sample one output <MathTex tex="o_{i,t}\sim\pi_{\theta_t}(\cdot\mid q_i)" /> and obtain <MathTex tex="r_{i,t}=R(q_i,o_{i,t})" />. Estimate its baseline by sharing reward information across the batch.
+For each prompt <MathTex tex="x_i" />, sample one response <MathTex tex="y_{i,t}\sim\pi_{\theta_t}(\cdot\mid x_i)" /> and obtain <MathTex tex="r_{i,t}=r(x_i,y_{i,t})" />. Estimate its baseline by sharing reward information across the batch.
 </div>
 </div>
 
@@ -4362,7 +4344,7 @@ Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun 
 
 1. Start with a model that can follow instructions.
 2. Use a small amount of high-quality reasoning data if readability matters.
-3. Sample multiple outputs per prompt.
+3. Sample multiple responses per prompt.
 4. Score with verifiers where possible.
 5. Use preference data where correctness is not directly verifiable.
 
@@ -4374,7 +4356,7 @@ Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun 
 
 1. Convert rewards into advantages.
 2. Use group or leave-one-out baselines.
-3. Stabilize long outputs with sequence-level control when needed.
+3. Stabilize long responses with sequence-level control when needed.
 4. Keep KL/reference control only when it is doing useful work.
 5. Monitor length, diversity, calibration, and reward hacking.
 
@@ -4424,7 +4406,7 @@ Reasoning RL works best when the reward checks the thing we actually care about:
 
 - **CoT / Zero-shot CoT / Self-Consistency / ToT / ReAct:** reasoning as prompting, sampling, search, and tool interaction.
 - **DeepSeek-R1:** large-scale RL with rule-based rewards can induce strong reasoning behavior.
-- **GRPO:** group-relative advantage removes the critic and compares outputs within the same prompt.
+- **GRPO:** group-relative advantage removes the critic and compares responses within the same prompt.
 - **Dr.GRPO:** corrects GRPO's length-related optimization bias and improves token efficiency.
 - **RLOO:** leave-one-out baseline keeps the comparison local while avoiding self-inclusion.
 - **GSPO:** sequence-level importance ratio and clipping better match sequence-level rewards.
