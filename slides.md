@@ -46,27 +46,41 @@ code {
 
 A Guide to Principles and Training Methods
 
-<div class="pt-15">
-  <div class="text-lg">
-    <strong>Kai Ye</strong>
+<div class="pt-12 w-[680px] mx-auto">
+  <div class="flex items-center justify-center gap-5">
+    <span class="h-px w-24 bg-slate-400"></span>
+    <strong class="text-2xl tracking-wide">Chengchun Shi</strong>
+    <span class="h-px w-24 bg-slate-400"></span>
   </div>
-  <div class="flex items-center justify-center gap-4 pt-2">
-    <a href="https://noncollapse.github.io/" target="_blank" class="text-blue-400 hover:text-blue-300 text-2xl" title="Homepage">
+
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center mt-7">
+    <div class="text-right pr-16">
+      <strong class="text-xl tracking-wide">Kai Ye</strong>
+    </div>
+    <div class="w-px h-8 bg-slate-300"></div>
+    <div class="text-left pl-10">
+      <strong class="text-xl tracking-wide">Shijin Gong</strong>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-center gap-5 mt-5">
+    <a href="https://noncollapse.github.io/" target="_blank" class="text-xl opacity-80 hover:opacity-100 transition-opacity" title="Homepage">
       🏠
     </a>
-    <a href="https://scholar.google.com/citations?user=a7G8Yo8AAAAJ" target="_blank" class="text-blue-400 hover:text-blue-300 text-2xl" title="Google Scholar">
+    <a href="https://scholar.google.com/citations?user=a7G8Yo8AAAAJ" target="_blank" class="text-xl opacity-80 hover:opacity-100 transition-opacity" title="Google Scholar">
       🎓
     </a>
-    <a href="https://huggingface.co/Kyleyee" target="_blank" class="text-blue-400 hover:text-blue-300 text-2xl" title="Hugging Face">
+    <a href="https://huggingface.co/Kyleyee" target="_blank" class="text-xl opacity-80 hover:opacity-100 transition-opacity" title="Hugging Face">
       🤗
     </a>
   </div>
-  <div class="text-base opacity-80 pt-2">
-    LSE | Stats-Powered AI
+
+  <div class="mt-3 text-sm tracking-[0.08em] opacity-70">
+    LSE · Stats-Powered AI
   </div>
 </div>
 
-<div class="pt-20">
+<div class="pt-12">
   <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
     Start <carbon:arrow-right class="inline"/>
   </span>
@@ -434,55 +448,126 @@ In LLMs, the representation after Transformer layers creates <span class="font-b
 
 ---
 
-# Tokenization: The Real Input to LLMs
+# Tokenizer: From Text to Vocabulary IDs
 
-<div class="grid grid-cols-2 gap-8">
+<div class="text-[16px] mt-1">
+We introduced the embedding lookup <b>E[i]</b>. <b>Where does the discrete index <i>i</i> come from?</b>
+<div class="mt-1 text-[14px] leading-5 text-slate-600">
+Subword tokenization shifts the basic unit from human-defined words to a learned vocabulary of reusable pieces.
+</div>
+</div>
+
+<div class="grid grid-cols-[1.15fr_0.85fr] gap-8 mt-4">
 
 <div>
 
-## Not Words, but Tokens! 🔤
+## The tokenizer is the interface
 
-**Why subword tokenization?**
+<div class="mt-5 flex items-center justify-between text-center text-[13px]">
+  <div class="w-[22%] py-3 border-y border-slate-300"><b>Raw text</b><br><span class="font-mono text-xs">"The cat sat."</span></div>
+  <div class="text-slate-400 text-2xl">&rarr;</div>
+  <div class="w-[22%] py-3 border-y border-amber-400"><b>Tokens</b><br><span class="font-mono text-xs">[The][ cat][ sat][.]</span></div>
+  <div class="text-slate-400 text-2xl">&rarr;</div>
+  <div class="w-[22%] py-3 border-y border-sky-400"><b>Token IDs</b><br><span class="font-mono text-xs">[31, 742, 581, 13]</span></div>
+  <div class="text-slate-400 text-2xl">&rarr;</div>
+  <div class="w-[18%] py-3 border-y border-emerald-400"><b>Vectors</b><br><span class="font-mono text-xs">E[31], ...</span></div>
+</div>
 
-<v-clicks>
+<div class="mt-4 py-2 border-y border-slate-300 text-center font-mono text-[13px]">
+token v<sub>i</sub> &harr; ID i &rarr; embedding row E[i]
+</div>
 
-1. **Rare words**
-   - "unhappiness" → "un" + "happiness"
-
-2. **Spelling variations**
-   - "running", "runs", "ran" → share "run"
-
-3. **Abbreviations & symbols**
-   - "don't" → "don" + "'t"
-   - "😊" → special token
-
-</v-clicks>
+<div class="mt-5 text-[15px] leading-6 space-y-2">
+<div>The tokenizer owns a <b>fixed vocabulary</b> of allowed token strings.</div>
+<div>Each vocabulary entry has one integer ID and one row in the embedding matrix.</div>
+<div>The same tokenizer must be used during training and inference.</div>
+</div>
 
 </div>
 
+<div class="border-l border-slate-300 pl-8">
+
+## A toy vocabulary
+
+<div class="mt-4 text-[13px]">
+  <div class="grid grid-cols-[60px_1fr] py-2 border-b border-slate-300 font-bold text-slate-500"><span>ID</span><span>Token string</span></div>
+  <div class="grid grid-cols-[60px_1fr] py-2 border-b border-slate-200"><span>13</span><span class="font-mono">"."</span></div>
+  <div class="grid grid-cols-[60px_1fr] py-2 border-b border-slate-200"><span>31</span><span class="font-mono">"The"</span></div>
+  <div class="grid grid-cols-[60px_1fr] py-2 border-b border-slate-200"><span>581</span><span class="font-mono">" sat"</span></div>
+  <div class="grid grid-cols-[60px_1fr] py-2 border-b border-slate-200"><span>742</span><span class="font-mono">" cat"</span></div>
+  <div class="grid grid-cols-[60px_1fr] py-2"><span>...</span><span>...</span></div>
+</div>
+
+<div class="mt-5 text-[13px] leading-5 text-slate-600">
+The leading blank is often part of a token. Token boundaries therefore need not match word boundaries.
+</div>
+
+</div>
+
+</div>
+
+---
+
+# Example: BPE Tokenization
+
+<div class="text-[17px] mt-1">
+Byte Pair Encoding (BPE) learns a compact subword vocabulary from frequent patterns in a training corpus.
+</div>
+
+<div class="grid grid-cols-[1.08fr_0.92fr] gap-9 mt-6">
+
 <div>
 
-## Example: BPE Tokenization
+## Building reusable pieces
 
-```python
-text = "tokenization is important"
+<v-clicks>
 
-# Tokenizer output (example; varies by tokenizer)
-tokens = ["token", "ization", " is", " import", "ant"]
+<div class="mt-4">
+  <div class="text-xs font-bold text-slate-500 mb-1">1. START FROM SMALL UNITS</div>
+  <div class="font-mono text-[16px] tracking-[0.18em]">t o k e n i z a t i o n</div>
+</div>
 
-# Lookup in embedding matrix E: R^{|V| x d_model}
-# Output shape: (seq_len, d_model)
-embeddings = [
-    [0.1, 0.2, ...],     # embedding("token")
-    [0.3, -0.1, ...],    # embedding("ization")
-    [0.5, 0.8, ...],     # embedding(" is")
-    ...
-]
+<div class="mt-5">
+  <div class="text-xs font-bold text-slate-500 mb-1">2. MERGE FREQUENT ADJACENT PAIRS</div>
+  <div class="font-mono text-[15px]">t + o &rarr; to&nbsp;&nbsp;&nbsp; e + n &rarr; en&nbsp;&nbsp;&nbsp; i + zation &rarr; ization</div>
+</div>
 
-```
+<div class="mt-5">
+  <div class="text-xs font-bold text-slate-500 mb-2">3. APPLY THE LEARNED MERGE RULES</div>
+  <div class="flex items-center gap-3">
+    <span class="px-4 py-2 bg-amber-100 border border-amber-400 rounded font-mono font-bold">token</span>
+    <span class="text-slate-400">+</span>
+    <span class="px-4 py-2 bg-sky-100 border border-sky-400 rounded font-mono font-bold">ization</span>
+  </div>
+</div>
 
-<div class="mt-8 p-4 bg-orange-100 rounded">
-<strong>Remember:</strong> LLMs process <span class="text-red-500">token sequences</span>, not "words" as you think!
+</v-clicks>
+
+<div class="mt-7 pt-4 border-t border-slate-300 text-[14px] leading-6">
+Frequent strings become single vocabulary entries; rare or unseen strings can still be represented by smaller pieces.
+</div>
+
+</div>
+
+<div class="border-l border-slate-300 pl-8">
+
+## Not words, but tokens!
+
+<div class="mt-4 text-[14px] leading-6">
+A token may be a whole word, a subword, punctuation, whitespace, or a byte-level piece.
+</div>
+
+<div class="mt-2 text-[11px] text-slate-500">Illustrative output; exact pieces and IDs depend on the learned vocabulary.</div>
+
+<div class="mt-4 font-mono text-[13px] leading-8">
+  <div><span class="text-slate-500">text&nbsp;&nbsp;&nbsp;</span> "tokenization is important"</div>
+  <div><span class="text-slate-500">tokens&nbsp;</span> ["token", "ization", " is", " import", "ant"]</div>
+  <div><span class="text-slate-500">IDs&nbsp;&nbsp;&nbsp;&nbsp;</span> [5963, 2065, 374, 2928, 519]</div>
+</div>
+
+<div class="mt-4 space-y-2 text-[13px]">
+  <div><b>Common text:</b> fewer, larger tokens</div>
+  <div><b>Rare or unseen text:</b> more, smaller units instead of an unknown word</div>
 </div>
 
 </div>
@@ -528,12 +613,11 @@ $$ \mathrm{Attn}(PX) = P\,\mathrm{Attn}(X) $$
 
 <v-clicks>
 
-1. **Original Transformer**: Sinusoidal PE
-   - Add position vectors to embeddings
+1. Construct a position vector for each sequence index
 
-2. **Modern LLMs (Llama, GPT)**: RoPE
-   - Rotate Q/K in attention
-   - Better long-context performance
+2. Add it to the corresponding token embedding
+
+3. The same token now has a different representation at each position
 
 </v-clicks>
 
@@ -543,7 +627,7 @@ $$ \mathrm{Attn}(PX) = P\,\mathrm{Attn}(X) $$
 
 ---
 
-# Method 1: Sinusoidal Positional Encoding
+# Example: Sinusoidal Positional Encoding
 
 <div class="grid grid-cols-2 gap-6">
 
@@ -741,142 +825,6 @@ Token "cat" at Position 1
 </div>
 
 ---
-
-# Method 2: RoPE (Rotary Positional Embedding)
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-## Why RoPE? 🔄
-
-**Problem with additive PE:**
-- Position info can "fade" through layers
-- Not ideal for very long contexts
-
-**RoPE Solution:**
-- Don't add to embeddings
-- Instead, <span class="text-blue-500">rotate Q and K</span> in attention
-- Position encoded in the rotation angle
-
-</div>
-
-<div>
-
-## Core Formula
-
-$$
-\begin{aligned}
-q' &= R(pos) \cdot q \\
-k' &= R(pos) \cdot k
-\end{aligned}
-$$
-
-Where $R(pos)$ is a rotation matrix built from sin/cos:
-
-$$
-R(pos) = \begin{bmatrix}
-\cos(pos\theta) & -\sin(pos\theta) \\
-\sin(pos\theta) & \cos(pos\theta)
-\end{bmatrix}
-$$
-
-Applied to every 2 dimensions (2D rotation for each pair)
-
-</div>
-
-</div>
-
----
-
-# RoPE: Rotary Position Embedding 🌀
-
-<div class="text-center text-xl opacity-80 mb-8">
-Encode position through <b>rotation</b> - a mathematically elegant approach
-</div>
-
-<div class="grid grid-cols-2 gap-8">
-
-<!-- LEFT: How it Works -->
-<div>
-
-<div class="space-y-4">
-
-<div class="p-4 rounded-lg bg-amber-50 border-2 border-amber-300">
-<div class="font-bold text-amber-900 mb-3 text-lg">1️⃣ Pair Dimensions</div>
-<div class="font-mono text-center text-base bg-white/70 rounded p-2">
-[q₀, q₁], [q₂, q₃], [q₄, q₅], ...
-</div>
-<div class="text-sm mt-2 opacity-80">
-Group adjacent dimensions into 2D pairs
-</div>
-</div>
-
-<div class="p-4 rounded-lg bg-green-50 border-2 border-green-300">
-<div class="font-bold text-green-900 mb-3 text-lg">2️⃣ Apply Rotation</div>
-<div class="text-sm mb-2">
-For position <span class="font-mono bg-white px-2 py-1 rounded">m</span>, rotate each pair by angle <span class="font-mono bg-white px-2 py-1 rounded">θ·m</span>:
-</div>
-
-$$
-\begin{bmatrix} q_{2i}' \\ q_{2i+1}' \end{bmatrix} = \begin{bmatrix} \cos m\theta_{2i} & -\sin m\theta_{2i} \\ \sin m\theta_{2i} & \cos m\theta_{2i} \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
-$$
-
-</div>
-
-
-
-
-</div>
-
-</div>
-
-<div>
-
-
-
-<!-- RIGHT: Visual & Benefits -->
-
-<div class="p-4 rounded-lg bg-purple-50 border-2 border-purple-300 mb-4 mt-0">
-<div class="font-bold text-purple-900 mb-3 text-lg"> Attention Magic ✨</div>
-<div class="text-sm leading-relaxed mb-3">
-After rotating both Q and K, the attention score <span class="font-mono bg-white px-2 py-1 rounded">Q·Kᵀ</span> depends on <b>relative distance (m-n)</b>
-</div>
-
-$$
-(q_{m}')^{\top} k_{n}' = q_{m}^{\top} R((n-m)\theta) k_{n}
-$$
-
-</div>
-<div class="p-4 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-300">
-
-<div class="font-bold text-indigo-900 mb-3 text-center">🎯 Key Advantages</div>
-<div class="space-y-2 text-sm">
-<div class="flex items-start">
-<div class="mr-2">✅</div>
-<div><b>No extra parameters</b> - just rotation</div>
-</div>
-<div class="flex items-start">
-<div class="mr-2">✅</div>
-<div><b>Relative position</b> - natural encoding</div>
-</div>
-<div class="flex items-start">
-<div class="mr-2">✅</div>
-<div><b>Efficient</b> - simple matrix multiplication</div>
-</div>
-<div class="flex items-start">
-<div class="mr-2">✅</div>
-<div><b>Extrapolation</b> - handles unseen lengths</div>
-</div>
-</div>
-</div>
-
-</div>
-
-</div>
-
-
----
 layout: section
 ---
 
@@ -884,387 +832,57 @@ layout: section
 
 ---
 
-# Transformer: The Architecture
+# From Vectors to Transformer Blocks
 
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-[0.92fr_1.08fr] gap-8 mt-0 items-center">
 
-<div>
+<div class="text-[15px] leading-6">
 
-## Core Components
-
-- **Positional Encoding**
-  <div class="ml-4  mt--4">• Preserves sequence order information</div>
-
-- **Self-Attention Mechanism**
-  <div class="ml-4  mt--4">• Captures long-range dependencies</div>
-  <div class="ml-4  mt--1">• High parallel computation efficiency</div>
-
-- **Multi-Head Attention**
-  <div class="ml-4  mt--4">•  Learns representations from multiple subspaces</div>
-
-- **Feed-Forward Neural Network**
-  <div class="ml-4  mt--4">• Non-linear transformations</div>
-
-</div>
-
-<div>
-
-```python
-# Core Attention Formula
-def attention(Q, K, V):
-    """
-    Q: Query
-    K: Key
-    V: Value
-    """
-    d_k = K.size(-1)
-    scores = Q @ K.transpose(-2, -1)
-    scores = scores / sqrt(d_k)
-    attention_weights = softmax(scores)
-    output = attention_weights @ V
-    return output
-```
-
-<style>
-  .qkv-btn {
-    display: inline-block;
-    padding: 6px 16px;
-    margin: 0 4px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    font-size: 16px;
-  }
-  .q-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-  }
-  .k-btn {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-  }
-  .v-btn {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
-  }
-  .qkv-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  }
-  .qkv-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    padding: 20px;
-  }
-  .qkv-modal-content {
-    background: white;
-    padding: 32px;
-    border-radius: 16px;
-    max-width: 650px;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    position: relative;
-  }
-  .qkv-close-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    font-weight: bold;
-  }
-  .qkv-close-btn:hover {
-    background: rgba(0,0,0,0.9);
-    transform: scale(1.15);
-  }
-  .matrix-diagram {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin: 24px 0;
-  }
-  .matrix-box {
-    display: grid;
-    gap: 2px;
-    border: 3px solid #333;
-    padding: 4px;
-    border-radius: 8px;
-  }
-  .matrix-input {
-    grid-template-columns: repeat(5, 30px);
-    grid-template-rows: repeat(4, 30px);
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
-  .matrix-weight-q {
-    grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(5, 30px);
-    background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 100%);
-  }
-  .matrix-weight-k {
-    grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(5, 30px);
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  }
-  .matrix-weight-v {
-    grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(5, 30px);
-    background: linear-gradient(135deg, #e1d5e7 0%, #d4c5d9 100%);
-  }
-  .matrix-result-q {
-    grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(4, 30px);
-    background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
-  }
-  .matrix-result-k {
-    grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(4, 30px);
-    background: linear-gradient(135deg, #aed581 0%, #7cb342 100%);
-  }
-  .matrix-result-v {
-    grid-template-columns: repeat(3, 30px);
-    grid-template-rows: repeat(4, 30px);
-    background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%);
-  }
-  .matrix-cell {
-    background: rgba(255,255,255,0.3);
-    border: 1px solid rgba(0,0,0,0.1);
-  }
-  .matrix-label {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-  }
-  .operator {
-    font-size: 30px;
-    font-weight: bold;
-  }
-</style>
-
-<script setup>
-import { ref } from 'vue'
-const showModal = ref('')
-</script>
-
+After tokenization and positional encoding, every token is represented by a vector:
 
 $$
-\text{Attention}(\textcolor{#667eea}{\boxed{Q}},\textcolor{#f093fb}{\boxed{K}},\textcolor{#4facfe}{\boxed{V}}) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+h_i^{(0)} = e_i + p_i, \qquad
+H^{(0)} = [h_1^{(0)},\ldots,h_T^{(0)}]^{\top}\in\mathbb{R}^{T\times d}.
 $$
 
-<div class="grid grid-cols-3 gap-4 mt-6">
-  <div class="qkv-btn q-btn text-center" @click="showModal = 'Q'">
-    Q - Query
-  </div>
-  <div class="qkv-btn k-btn text-center" @click="showModal = 'K'">
-    K - Key
-  </div>
-  <div class="qkv-btn v-btn text-center" @click="showModal = 'V'">
-    V - Value
-  </div>
-</div>
+The sequence is now a matrix of numbers, so it can be processed by the neural-network layers inside a Transformer.
 
-<!-- Modal for Q (Query) -->
-<div v-if="showModal === 'Q'" class="qkv-modal-overlay" @click.self="showModal = ''">
-  <div class="qkv-modal-content">
-    <button class="qkv-close-btn" @click="showModal = ''">×</button>
-    
-<div style="background: #f0f4ff; padding: 20px; border-radius: 12px; margin-top: 24px;">
-<h4 style="color: #667eea; font-size: 20px; margin-bottom: 12px;">💡 Role of Query</h4>
+<div class="mt-4 space-y-2.5">
 
-- **Purpose**: Represents "what information am I looking for?"
-- **Computation**: `Q = X @ W_Q` (Input × Query Weights)
-- **Meaning**: Each token generates its own "question" to match with other tokens' Keys
+<div><b class="text-amber-700">Attention</b> mixes information across token positions.</div>
+
+<div><b class="text-sky-700">Feed-forward layers</b> transform each token representation.</div>
+
+<div><b class="text-lime-700">Residual connections and normalization</b> make many blocks trainable as a deep network.</div>
 
 </div>
 
-<div class="matrix-diagram">
-  <div>
-    <div class="matrix-label" style="color: #4facfe;">Input X</div>
-    <div class="matrix-box matrix-input">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">seq_len × d_model</div>
-  </div>
-  
-  <div class="operator">×</div>
-  
-  <div>
-    <div class="matrix-label" style="color: #d4a574;">W<sub>Q</sub></div>
-    <div class="matrix-box matrix-weight-q">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">d_model × d_k</div>
-  </div>
-  
-  <div class="operator">=</div>
-  
-  <div>
-    <div class="matrix-label" style="color: #ffc107;">Q</div>
-    <div class="matrix-box matrix-result-q">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">seq_len × d_k</div>
-  </div>
+<div class="mt-4 pt-3 border-t border-slate-300 text-[13px] leading-5 text-slate-600">
+The original Transformer uses an <b>encoder</b> and a <b>decoder</b>. Next, we unpack the repeated block shared by this architecture.
 </div>
-
-  </div>
-</div>
-
-<!-- Modal for K (Key) -->
-<div v-if="showModal === 'K'" class="qkv-modal-overlay" @click.self="showModal = ''">
-  <div class="qkv-modal-content">
-    <button class="qkv-close-btn" @click="showModal = ''">×</button>
-    
-<div style="background: #fff0f5; padding: 20px; border-radius: 12px; margin-top: 24px;">
-<h4 style="color: #f093fb; font-size: 20px; margin-bottom: 12px;">💡 Role of Key</h4>
-
-- **Purpose**: Represents "what information can I provide"
-- **Computation**: `K = X @ W_K` (Input × Key Weights)
-- **Meaning**: Each token's "label", used to be retrieved by other tokens' Queries
 
 </div>
 
-<div class="matrix-diagram">
-  <div>
-    <div class="matrix-label" style="color: #4facfe;">Input X</div>
-    <div class="matrix-box matrix-input">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">seq_len × d_model</div>
+<div class="flex flex-col items-center">
+  <img
+    src="/figs/transformer-original-architecture.png"
+    class="h-[430px] w-full object-contain"
+    alt="Original Transformer encoder-decoder architecture"
+  />
+  <div class="mt-1 text-[10px] text-slate-500">
+    Vaswani et al. (2017), <i>Attention Is All You Need</i>, Figure 1.
   </div>
-  
-  <div class="operator">×</div>
-  
-  <div>
-    <div class="matrix-label" style="color: #81c784;">W<sub>K</sub></div>
-    <div class="matrix-box matrix-weight-k">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">d_model × d_k</div>
-  </div>
-  
-  <div class="operator">=</div>
-  
-  <div>
-    <div class="matrix-label" style="color: #66bb6a;">K</div>
-    <div class="matrix-box matrix-result-k">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">seq_len × d_k</div>
-  </div>
-</div>
-
-  </div>
-</div>
-
-<!-- Modal for V (Value) -->
-<div v-if="showModal === 'V'" class="qkv-modal-overlay" @click.self="showModal = ''">
-  <div class="qkv-modal-content">
-    <button class="qkv-close-btn" @click="showModal = ''">×</button>
-    
-<div style="background: #f3e5f5; padding: 20px; border-radius: 12px; margin-top: 24px;">
-<h4 style="color: #9c27b0; font-size: 20px; margin-bottom: 12px;">💡 Role of Value</h4>
-
-- **Purpose**: Represents "my actual content/information"
-- **Computation**: `V = X @ W_V` (Input × Value Weights)
-- **Meaning**: The actual information being passed and aggregated, weighted sum based on attention weights
-
-</div>
-
-<div class="matrix-diagram">
-  <div>
-    <div class="matrix-label" style="color: #4facfe;">Input X</div>
-    <div class="matrix-box matrix-input">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">seq_len × d_model</div>
-  </div>
-  
-  <div class="operator">×</div>
-  
-  <div>
-    <div class="matrix-label" style="color: #ab47bc;">W<sub>V</sub></div>
-    <div class="matrix-box matrix-weight-v">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">d_model × d_v</div>
-  </div>
-  
-  <div class="operator">=</div>
-  
-  <div>
-    <div class="matrix-label" style="color: #9c27b0;">V</div>
-    <div class="matrix-box matrix-result-v">
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-      <div class="matrix-cell"></div><div class="matrix-cell"></div><div class="matrix-cell"></div>
-    </div>
-    <div class="text-sm text-center mt-2">seq_len × d_v</div>
-  </div>
-</div>
-
-  </div>
-</div>
-
 </div>
 
 </div>
 
 ---
 
-# Why we need attention?
+# Attention: Why Context Matters
 
 <div class="text-base leading-relaxed">
 
-Consider the sentence: "*The animal didn't cross the street because it was too tired*"
+Consider the sentence: "*The animal crossed the street because it was tired.*"
 
 <div class="mt-4 p-4 bg-blue-50 rounded">
 
@@ -1290,7 +908,7 @@ In this sentence, **it** is a pronoun. What does it refer to?
 
 **Self Attention's Advantage**
 
-- Current word **directly attends** to all relevant words in the sentence
+- Current token **directly attends** to all available earlier tokens
 - Parallel processing, direct long-range dependencies
 - As illustrated in the "it" example below
 
@@ -1302,12 +920,136 @@ In this sentence, **it** is a pronoun. What does it refer to?
 
 ---
 
+# Attention: Weighted Information Aggregation
+
+<div class="text-[17px] leading-7 mt-1">
+At position <i>t</i>, attention constructs a new representation by deciding <b>how much information to take from each available token</b>.
+</div>
+
+<div class="grid grid-cols-[1.16fr_0.84fr] gap-10 mt-5">
+
+<div class="min-w-0">
+
+<div class="flex items-center gap-1.5 font-mono text-[13px] mb-3">
+  <span class="px-2 py-1 bg-slate-100 rounded">The</span>
+  <span class="px-2 py-1 bg-slate-100 rounded">animal</span>
+  <span class="px-2 py-1 bg-slate-100 rounded">crossed</span>
+  <span class="px-2 py-1 bg-slate-100 rounded">the</span>
+  <span class="px-2 py-1 bg-slate-100 rounded">street</span>
+  <span class="px-2 py-1 bg-slate-100 rounded">because</span>
+  <span class="px-2 py-1 bg-amber-100 border border-amber-400 rounded font-bold">it</span>
+  <span class="px-2 py-1 border border-dashed border-slate-300 rounded text-slate-400">was</span>
+  <span class="px-2 py-1 border border-dashed border-slate-300 rounded text-slate-400">tired</span>
+</div>
+
+<div class="space-y-1.5 text-[12px]">
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>The</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-300" style="width: 5%"></div></div><span>0.05</span></div>
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>animal</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-500" style="width: 45%"></div></div><span>0.45</span></div>
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>crossed</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-300" style="width: 10%"></div></div><span>0.10</span></div>
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>the</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-300" style="width: 5%"></div></div><span>0.05</span></div>
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>street</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-400" style="width: 20%"></div></div><span>0.20</span></div>
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>because</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-300" style="width: 5%"></div></div><span>0.05</span></div>
+  <div class="grid grid-cols-[62px_1fr_42px] gap-3 items-center"><b>it</b><div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-400" style="width: 10%"></div></div><span>0.10</span></div>
+</div>
+
+<div class="mt-5 text-center text-[0.95em]">
+$$
+z_t = \sum_{j=1}^{t}\alpha_{tj}v_j,
+\qquad \alpha_{tj}\ge 0,
+\qquad \sum_{j=1}^{t}\alpha_{tj}=1.
+$$
+</div>
+
+<div class="mt-1 text-[14px] text-slate-600">
+The weights <i>&alpha;</i><sub>tj</sub> depend on the current position and determine which historical value vectors <i>v</i><sub>j</sub> contribute most.
+</div>
+
+</div>
+
+<div class="min-w-0 border-l border-slate-300 pl-8">
+
+<div class="text-lg font-bold mb-1">Repeated context mixing</div>
+<div class="text-[11px] text-slate-500 mb-2">every position &times; every head &times; every Transformer block</div>
+
+<div class="text-center text-[13px] leading-4">
+  <div class="font-semibold">Input vectors <i>H</i><sup>(0)</sup></div>
+  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="py-1.5 border-y border-amber-300"><b>Block 1 attention</b></div>
+  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="font-semibold">Contextual vectors <i>H</i><sup>(1)</sup></div>
+  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="py-1.5 border-y border-sky-300"><b>Block 2 attention</b></div>
+  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="text-slate-400">...</div>
+  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="font-semibold">Final vectors <i>H</i><sup>(L)</sup></div>
+</div>
+
+</div>
+
+</div>
+---
+
+# Queries, Keys, and Values: Match, Then Retrieve
+
+<div class="text-[17px] leading-7 mt-1">
+At the current position <i>t</i>, self-attention first decides <b>where to read</b>, then retrieves the information stored there.
+</div>
+
+<div class="grid grid-cols-[0.95fr_1.05fr] gap-10 mt-7 items-center">
+
+<div class="space-y-5 text-[14px] leading-6">
+  <div class="border-l-4 border-amber-400 pl-4">
+    <div class="text-lg font-bold text-amber-700">Query</div>
+    <div class="font-serif italic text-lg">q<sub>t</sub> = h<sub>t</sub>W<sub>Q</sub></div>
+    <div>What information does the current token need?</div>
+  </div>
+
+  <div class="border-l-4 border-sky-400 pl-4">
+    <div class="text-lg font-bold text-sky-700">Key</div>
+    <div class="font-serif italic text-lg">k<sub>j</sub> = h<sub>j</sub>W<sub>K</sub></div>
+    <div>What could source token <i>j</i> provide?</div>
+  </div>
+
+  <div class="border-l-4 border-emerald-400 pl-4">
+    <div class="text-lg font-bold text-emerald-700">Value</div>
+    <div class="font-serif italic text-lg">v<sub>j</sub> = h<sub>j</sub>W<sub>V</sub></div>
+    <div>What content is passed forward if token <i>j</i> is selected?</div>
+  </div>
+</div>
+
+<div class="text-center">
+  <div class="font-mono text-[13px] whitespace-nowrap mb-5">
+    The animal crossed the street because <span class="px-2 py-1 bg-amber-100 border border-amber-400 rounded font-bold">it</span> was tired
+  </div>
+
+  <div class="text-[14px] leading-6 space-y-2">
+    <div><b>1. Match</b> the query with every available key</div>
+    <div class="font-serif italic text-lg">s<sub>tj</sub> = q<sub>t</sub><sup>T</sup>k<sub>j</sub> / &radic;d<sub>k</sub></div>
+    <div class="text-xl text-slate-400">&darr;</div>
+    <div><b>2. Normalize</b> the scores into attention weights</div>
+    <div class="font-serif italic text-lg">&alpha;<sub>tj</sub> = softmax<sub>j</sub>(s<sub>tj</sub>)</div>
+    <div class="text-xl text-slate-400">&darr;</div>
+    <div><b>3. Retrieve</b> a weighted combination of values</div>
+    <div class="font-serif italic text-lg">z<sub>t</sub> = &Sigma;<sub>j</sub> &alpha;<sub>tj</sub>v<sub>j</sub></div>
+  </div>
+
+</div>
+
+</div>
+
+---
+
 # Self-Attention Computation
 
 <div class="text-center mb-4 text-2xl">
 $$
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
 $$
+</div>
+
+<div class="text-center text-xs text-slate-500 mt--3">
+<i>M</i> is the causal mask: future positions receive zero attention weight.
 </div>
 
 <div class="flex items-center justify-center mt-10">
@@ -1345,20 +1087,20 @@ $$
 
 <!-- Attention Weights -->
 <div class="flex flex-col items-center">
-<div class="text-green-600 font-bold text-sm mb-2">Attention score(n×n)</div>
+<div class="text-green-600 font-bold text-sm mb-2">Attention weights A (n×n)</div>
 <div class="grid grid-cols-4 gap-1">
 <div class="w-8 h-8 bg-green-100 border-2 border-green-400"></div>
-<div class="w-8 h-8 bg-green-200 border-2 border-green-400"></div>
-<div class="w-8 h-8 bg-green-300 border-2 border-green-400"></div>
-<div class="w-8 h-8 bg-green-400 border-2 border-green-400"></div>
+<div class="w-8 h-8 bg-slate-100 border-2 border-slate-300"></div>
+<div class="w-8 h-8 bg-slate-100 border-2 border-slate-300"></div>
+<div class="w-8 h-8 bg-slate-100 border-2 border-slate-300"></div>
 <div class="w-8 h-8 bg-green-500 border-2 border-green-400"></div>
 <div class="w-8 h-8 bg-green-300 border-2 border-green-400"></div>
-<div class="w-8 h-8 bg-green-200 border-2 border-green-400"></div>
-<div class="w-8 h-8 bg-green-100 border-2 border-green-400"></div>
+<div class="w-8 h-8 bg-slate-100 border-2 border-slate-300"></div>
+<div class="w-8 h-8 bg-slate-100 border-2 border-slate-300"></div>
 <div class="w-8 h-8 bg-green-200 border-2 border-green-400"></div>
 <div class="w-8 h-8 bg-green-400 border-2 border-green-400"></div>
 <div class="w-8 h-8 bg-green-500 border-2 border-green-400"></div>
-<div class="w-8 h-8 bg-green-300 border-2 border-green-400"></div>
+<div class="w-8 h-8 bg-slate-100 border-2 border-slate-300"></div>
 <div class="w-8 h-8 bg-green-100 border-2 border-green-400"></div>
 <div class="w-8 h-8 bg-green-300 border-2 border-green-400"></div>
 <div class="w-8 h-8 bg-green-400 border-2 border-green-400"></div>
@@ -1406,6 +1148,59 @@ $$
 <div class="w-8 h-8 bg-pink-200 border-2 border-pink-400"></div>
 <div class="w-8 h-8 bg-pink-200 border-2 border-pink-400"></div>
 </div>
+</div>
+
+</div>
+
+</div>
+
+---
+
+# Self-Attention: From Formula to Code
+
+<div class="grid grid-cols-[1.08fr_0.92fr] gap-8 mt-3">
+
+<div>
+
+```python
+def causal_self_attention(H, W_Q, W_K, W_V):
+    Q = H @ W_Q
+    K = H @ W_K
+    V = H @ W_V
+
+    scores = Q @ K.transpose(-2, -1)
+    scores = scores / sqrt(K.size(-1))
+    scores = scores.masked_fill(future_mask, -inf)
+
+    A = softmax(scores, dim=-1)
+    Z = A @ V
+    return Z
+```
+
+</div>
+
+<div class="text-[15px] leading-6">
+
+<div class="text-[22px] font-bold mb-2">The same computation in four lines</div>
+
+$$
+Q=HW_Q,\qquad K=HW_K,\qquad V=HW_V
+$$
+
+$$
+S=\frac{QK^{\top}}{\sqrt{d_k}},
+\qquad
+A=\operatorname{softmax}(S+M)
+$$
+
+$$
+Z=AV
+$$
+
+<div class="mt-5 border-t border-slate-300 pt-4 space-y-2 text-[13px] text-slate-600">
+<div><b><i>S</i><sub>tj</sub></b>: compatibility between current position <i>t</i> and source position <i>j</i>.</div>
+<div><b><i>A</i><sub>tj</sub></b>: normalized attention weight after the causal mask.</div>
+<div><b><i>Z</i><sub>t</sub></b>: weighted aggregation of the available value vectors.</div>
 </div>
 
 </div>
@@ -1647,7 +1442,7 @@ $$
 
 <div class="mt-4 text-sm">
 
-**The original Transformer has two main components:**
+**The original Transformer has two main components. Most generative LLMs later keep only the causal decoder stack:**
 
 </div>
 
@@ -1693,6 +1488,115 @@ $$
 **Both contain many Transformer Blocks:**
 
 Input → **Multi-Head Attention** → Add & Norm → **Feed-Forward** → Add & Norm → Output
+
+</div>
+
+---
+
+# Encoder: Every Token Reads the Full Input
+
+<div class="text-[17px] leading-7 mt-1">
+An encoder receives the complete input sequence at once. Each position can attend to <b>every other input position</b>.
+</div>
+
+<div class="grid grid-cols-[0.92fr_1.08fr] gap-12 mt-7 items-center">
+
+<div>
+  <div class="font-mono text-[15px] flex justify-center gap-3 mb-5">
+    <span class="px-3 py-2 bg-sky-50 border border-sky-300 rounded">The</span>
+    <span class="px-3 py-2 bg-sky-50 border border-sky-300 rounded">river</span>
+    <span class="px-3 py-2 bg-sky-100 border border-sky-400 rounded font-bold">bank</span>
+    <span class="px-3 py-2 bg-sky-50 border border-sky-300 rounded">flooded</span>
+  </div>
+
+  <div class="text-center text-xs font-bold text-slate-500 mb-2">KEY POSITIONS</div>
+  <div class="grid grid-cols-[58px_repeat(4,48px)] gap-1 items-center justify-center text-center text-[11px]">
+    <div></div><div>The</div><div>river</div><div>bank</div><div>flooded</div>
+    <div class="text-right pr-2">The</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-100">visible</div>
+    <div class="text-right pr-2">river</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-200">visible</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-100">visible</div>
+    <div class="text-right pr-2 font-bold text-sky-700">bank</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-300">visible</div><div class="py-2.5 bg-sky-200">visible</div><div class="py-2.5 bg-sky-100">visible</div>
+    <div class="text-right pr-2">flooded</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-100">visible</div><div class="py-2.5 bg-sky-200">visible</div>
+  </div>
+  <div class="text-center text-[11px] text-slate-500 mt-2">QUERY POSITIONS</div>
+</div>
+
+<div class="text-[15px] leading-7">
+
+<div class="text-center text-[0.95em] mb-4">
+
+$$
+H_{\mathrm{enc}}=\operatorname{Encoder}(H^{(0)})
+=\left[h_1,\ldots,h_T\right]^{\top}.
+$$
+
+</div>
+
+<div class="space-y-4">
+  <div><b>One contextual vector per input token.</b> The output length is still T.</div>
+  <div><b>Context changes meaning.</b> The representation of “bank” incorporates “river” and “flooded”.</div>
+  <div><b>No autoregressive generation is required.</b> All input positions are processed together.</div>
+</div>
+
+<div class="mt-5 pt-3 border-t border-slate-300 text-[12px] whitespace-nowrap text-slate-600">
+Examples: classification, retrieval, token labeling, and encoder-decoder source states.
+</div>
+
+</div>
+
+</div>
+
+---
+
+# Decoder: Causal Attention Supports Generation
+
+<div class="text-[17px] leading-7 mt-1">
+A decoder can only read the prefix already available. This causal constraint makes next-token generation possible.
+</div>
+
+<div class="grid grid-cols-2 gap-12 mt-7">
+
+<div class="py-4 border-y border-emerald-400 text-center">
+  <div class="text-lg font-bold text-emerald-700">Original encoder-decoder Transformer</div>
+  <div class="mt-4 flex items-center justify-center gap-3 text-[13px]">
+    <span class="font-mono">source</span><span>&rarr;</span><b>Encoder</b><span>&rarr;</span><span class="font-mono">H<sub>enc</sub></span>
+  </div>
+  <div class="my-2 text-slate-400">&darr; cross-attention</div>
+  <div class="flex items-center justify-center gap-3 text-[13px]">
+    <span class="font-mono">target prefix</span><span>&rarr;</span><b>Decoder</b><span>&rarr;</span><span>next target token</span>
+  </div>
+  <div class="mt-4 text-[12px] text-slate-500">Used for sequence-to-sequence tasks such as translation.</div>
+</div>
+
+<div class="py-4 border-y-2 border-amber-500 text-center bg-amber-50/40">
+  <div class="text-lg font-bold text-amber-700">Decoder-only LLM</div>
+  <div class="mt-4 font-mono text-[13px] flex items-center justify-center gap-2">
+    <span class="px-2 py-1 bg-white border border-slate-300 rounded">prompt</span>
+    <span class="px-2 py-1 bg-white border border-slate-300 rounded">response prefix</span>
+    <span>&rarr;</span>
+    <b>Decoder blocks</b>
+  </div>
+  <div class="my-3 text-slate-400">&darr;</div>
+  <div class="font-mono text-[13px]">distribution over the next token</div>
+  <div class="mt-4 text-[12px] text-slate-500">No separate encoder and no cross-attention module.</div>
+</div>
+
+</div>
+
+<div class="grid grid-cols-[0.9fr_1.1fr] gap-12 mt-8 items-center">
+
+<div class="text-center text-[0.95em] border-r border-slate-300 pr-8">
+
+$$
+p_\theta(y_{1:T}\mid x)
+=\prod_{t=1}^{T}p_\theta(y_t\mid x,y_{<t}).
+$$
+
+</div>
+
+<div class="text-[14px] leading-7">
+  <div><b>During training:</b> a causal mask allows all next-token losses to be computed in parallel.</div>
+  <div class="mt-2"><b>During inference:</b> sample one token, append it to the prefix, and run the decoder again.</div>
+</div>
 
 </div>
 
@@ -2230,50 +2134,6 @@ $$\mathcal{L}(\theta) = \sum_{i=1}^{N}\sum_{t=1}^{T} -\log p_\theta(x_{i,t} \mid
 </div>
 
 In practice: average over **batch** and over **tokens** to get the training loss
-
-</div>
-
----
-
-# Implementation: Shift Inputs and Targets
-
-<div class="grid grid-cols-[1.12fr_0.88fr] gap-8 mt-5">
-
-<div>
-
-```python
-ids = tokenizer(
-    text,
-    return_tensors="pt",
-).input_ids                  # (batch, T)
-
-inputs  = ids[:, :-1]        # x_1, ..., x_{T-1}
-targets = ids[:, 1:]         # x_2, ..., x_T
-
-logits = model(inputs).logits  # (batch, T-1, vocab)
-loss = F.cross_entropy(
-    logits.reshape(-1, logits.size(-1)),
-    targets.reshape(-1),
-)
-```
-
-</div>
-
-<div class="border-l border-slate-300 pl-7 text-[15px] leading-7">
-
-### One sequence gives many targets
-
-<div class="mt-5 font-mono text-[13px] leading-8">
-ids&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: The cat sat on the mat<br>
-inputs&nbsp;&nbsp;: The cat sat on the<br>
-targets&nbsp;: &nbsp;&nbsp;&nbsp;cat sat on the mat
-</div>
-
-<div class="mt-6">
-The logits at position <i>t</i> are compared with token <i>x</i><sub><i>t</i>+1</sub>. A causal mask lets all positions be trained in parallel without exposing future tokens.
-</div>
-
-</div>
 
 </div>
 
