@@ -1547,132 +1547,112 @@ Examples: classification, retrieval, token labeling, and encoder-decoder source 
 
 ---
 
-# Decoder: Causal Attention Supports Generation
+# Decoder-Only Transformer: The GPT Architecture
 
 <div class="text-[17px] leading-7 mt-1">
-A decoder can only read the prefix already available. This causal constraint makes next-token generation possible.
+The GPT series uses a <b>decoder-only Transformer</b>: causal self-attention converts next-token prediction into both its training objective and its generation mechanism.
 </div>
 
-<div class="grid grid-cols-2 gap-12 mt-7">
-
-<div class="py-4 border-y border-emerald-400 text-center">
-  <div class="text-lg font-bold text-emerald-700">Original encoder-decoder Transformer</div>
-  <div class="mt-4 flex items-center justify-center gap-3 text-[13px]">
-    <span class="font-mono">source</span><span>&rarr;</span><b>Encoder</b><span>&rarr;</span><span class="font-mono">H<sub>enc</sub></span>
+<div class="mt-7 flex items-center justify-center gap-4 text-center text-[13px]">
+  <div class="font-mono flex items-center gap-1.5">
+    <span class="px-2 py-2 bg-slate-100 border border-slate-300 rounded">The</span>
+    <span class="px-2 py-2 bg-slate-100 border border-slate-300 rounded">answer</span>
+    <span class="px-2 py-2 bg-slate-100 border border-slate-300 rounded">is</span>
   </div>
-  <div class="my-2 text-slate-400">&darr; cross-attention</div>
-  <div class="flex items-center justify-center gap-3 text-[13px]">
-    <span class="font-mono">target prefix</span><span>&rarr;</span><b>Decoder</b><span>&rarr;</span><span>next target token</span>
-  </div>
-  <div class="mt-4 text-[12px] text-slate-500">Used for sequence-to-sequence tasks such as translation.</div>
-</div>
-
-<div class="py-4 border-y-2 border-amber-500 text-center bg-amber-50/40">
-  <div class="text-lg font-bold text-amber-700">Decoder-only LLM</div>
-  <div class="mt-4 font-mono text-[13px] flex items-center justify-center gap-2">
-    <span class="px-2 py-1 bg-white border border-slate-300 rounded">prompt</span>
-    <span class="px-2 py-1 bg-white border border-slate-300 rounded">response prefix</span>
-    <span>&rarr;</span>
-    <b>Decoder blocks</b>
-  </div>
-  <div class="my-3 text-slate-400">&darr;</div>
-  <div class="font-mono text-[13px]">distribution over the next token</div>
-  <div class="mt-4 text-[12px] text-slate-500">No separate encoder and no cross-attention module.</div>
-</div>
-
+  <div class="text-2xl text-slate-400">&rarr;</div>
+  <div class="w-[185px] py-4 border-y-2 border-amber-500 font-bold">Causal decoder blocks</div>
+  <div class="text-2xl text-slate-400">&rarr;</div>
+  <div class="w-[115px] py-4 border-y border-sky-400">final state<br><span class="font-serif italic">h<sub>t</sub><sup>(L)</sup></span></div>
+  <div class="text-2xl text-slate-400">&rarr;</div>
+  <div class="w-[150px] py-4 border-y border-emerald-400">LM head<br><span class="font-mono text-[11px]">W<sub>lm</sub> + softmax</span></div>
+  <div class="text-2xl text-slate-400">&rarr;</div>
+  <div class="w-[145px] py-4 border-y-2 border-fuchsia-400 font-bold">next-token<br>distribution</div>
 </div>
 
 <div class="grid grid-cols-[0.9fr_1.1fr] gap-12 mt-8 items-center">
 
-<div class="text-center text-[0.95em] border-r border-slate-300 pr-8">
+<div class="text-center border-r border-slate-300 pr-8 text-[0.9em]">
+  <div class="text-[15px] font-bold mb-1">One forward pass</div>
 
-$$
-p_\theta(y_{1:T}\mid x)
-=\prod_{t=1}^{T}p_\theta(y_t\mid x,y_{<t}).
-$$
+  <div class="mt-4 font-serif italic text-[17px] leading-8">
+    <div>p<sub>&theta;</sub>(y<sub>t+1</sub> | x, y<sub>1:t</sub>)</div>
+    <div>= softmax(W<sub>lm</sub>h<sub>t</sub><sup>(L)</sup> + b)</div>
+  </div>
+
+  <div class="mt-4 font-serif italic text-[17px] leading-8">
+    p<sub>&theta;</sub>(y<sub>1:T</sub> | x)
+    = &prod;<sub>t=1</sub><sup>T</sup> p<sub>&theta;</sub>(y<sub>t</sub> | x, y<sub>&lt;t</sub>)
+  </div>
+
+  <div class="mt-5 pt-3 border-t border-slate-300 text-left text-[12px] leading-5 text-slate-600">
+    <div><b>Original decoder:</b> causal self-attention + encoder cross-attention.</div>
+    <div><b>GPT decoder:</b> causal self-attention only.</div>
+  </div>
 
 </div>
 
-<div class="text-[14px] leading-7">
-  <div><b>During training:</b> a causal mask allows all next-token losses to be computed in parallel.</div>
-  <div class="mt-2"><b>During inference:</b> sample one token, append it to the prefix, and run the decoder again.</div>
+<div>
+  <div class="text-[15px] font-bold mb-4">Autoregressive generation</div>
+  <div class="font-mono text-[13px] space-y-3">
+    <div class="flex items-center gap-2">
+      <span class="px-2 py-1 bg-slate-100 rounded">The answer is</span>
+      <span>&rarr;</span>
+      <span class="px-2 py-1 bg-emerald-100 border border-emerald-400 rounded font-bold">42</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="px-2 py-1 bg-slate-100 rounded">The answer is 42</span>
+      <span>&rarr;</span>
+      <span class="px-2 py-1 bg-emerald-100 border border-emerald-400 rounded font-bold">.</span>
+    </div>
+  </div>
+
+  <div class="mt-5 text-[14px] leading-6">
+    <div><b>Training:</b> the causal mask allows next-token losses at all positions to be computed in parallel.</div>
+    <div class="mt-2"><b>Inference:</b> sample one token, append it to the prefix, and run the decoder again until EOS.</div>
+  </div>
 </div>
 
 </div>
 
 ---
 
-# Next Token Prediction
+# From the Original Transformer to BERT and GPT
 
-<div class="text-sm leading-relaxed">
+<div class="grid grid-cols-[1fr_460px_1fr] gap-7 mt-2 items-center h-[445px]">
 
-**Input**: $X \in \mathbb{R}^{T \times D}$ (prompt of length $T$)
-
-<div class="grid grid-cols-2 gap-4 mt-3">
-
-<div>
-
-**For** each $t > T$:
-
-<div class="pl-6 space-y-2">
-
-$x_t = X[t]$ <span class="text-gray-500 text-xs">// Get the input embedding</span>
-
-$\text{attn\_outs} = []$ <span class="text-gray-500 text-xs">// For Multi-Head Attention</span>
-
-**for** head $h=1$ to $m$:
-
-<div class="ml-3 space-y-2">
-
-$z_t^h = \text{softmax}\left(\frac{q_t K_{1:t}^T}{\sqrt{d}}\right) V_{1:t}$
-
-put $z_t^h$ in $\text{attn\_outs}$
-
+<div class="text-center">
+  <div class="text-[14px] font-bold tracking-[0.14em] uppercase text-sky-700">Encoder only</div>
+  <div class="mt-3 text-4xl font-bold">BERT</div>
+  <div class="mt-3 text-[13px] leading-5 text-slate-600">
+    Bidirectional self-attention builds contextual representations of the input.
+  </div>
+  <div class="mt-7 flex items-center justify-end gap-3 text-sky-600">
+    <span class="text-[12px] font-semibold">keep the encoder</span>
+    <span class="text-4xl leading-none">&larr;</span>
+  </div>
 </div>
 
-$m_t = \text{concat}(\text{attn\_outs}) W^O$
-
-$o_t = \text{LayerNorm}(m_t + x_t)$
-
-$\text{ffn} = \text{max}(0,o_tW_1 + b_1)W_2+ b_2$ <span class="text-gray-500 text-xs">// Feed-Forward Network</span>
-
-$h_t = \text{LayerNorm}(\text{ffn} + o_t)$
-
+<div class="flex flex-col items-center">
+  <img
+    src="/figs/transformer-original-architecture.png"
+    class="h-[410px] w-full object-contain"
+    alt="Original Transformer encoder-decoder architecture"
+  />
+  <div class="mt-[-4px] text-[10px] text-slate-500">
+    Vaswani et al. (2017), <i>Attention Is All You Need</i>, Figure 1.
+  </div>
 </div>
 
-</div>
-
-<div>
-
-<div class="space-y-2">
-
-$\text{logits}_{t+1} = W_{\text{lm}} h_t + b$
-
-$\text{prob}_{t+1} = \text{softmax}(\text{logits}_{t+1})$
-
-$\text{token}_{t+1} \sim \text{prob}_{t+1}$ <span class="text-gray-500 text-xs">// Sample next token</span>
-
-$X = \text{append}(X, \text{token}_{t+1})$
-
-</div>
-
-<div class="mt-6 p-3 bg-blue-50 border-2 border-blue-200 rounded-lg text-xs leading-relaxed">
-
-### Key Points:
-
-<div class="mt-4">
-
-- **Causal Masking**: Only attend to tokens $1:t$
-- **Autoregressive**: Generated token → next input
-- **Residual Connections**: Add & Norm after each layer
-- **Stopping Criterion**: Generation ends when EOS token is produced
-
-</div>
-
-</div>
-
-</div>
-
+<div class="text-center">
+  <div class="text-[14px] font-bold tracking-[0.14em] uppercase text-amber-700">Decoder only</div>
+  <div class="mt-3 text-4xl font-bold">GPT</div>
+  <div class="mt-3 text-[13px] leading-5 text-slate-600">
+    Causal self-attention predicts and generates the next token autoregressively.
+  </div>
+  <div class="mt-7 flex items-center justify-start gap-3 text-amber-600">
+    <span class="text-4xl leading-none">&rarr;</span>
+    <span class="text-[12px] font-semibold">keep the decoder</span>
+  </div>
 </div>
 
 </div>
@@ -4369,95 +4349,10 @@ Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, and Chengchun 
 
 </div>
 
----
-
-# What Can Go Wrong?
-
-<div class="grid grid-cols-2 gap-8 mt-5">
-
-<div>
-
-## Optimization failures
-
-- Sparse rewards produce weak gradients.
-- Group normalization can distort reward scale.
-- Long answers may get rewarded for style rather than correctness.
-- Too much clipping can freeze learning.
-
-</div>
-
-<div>
-
-## Reasoning failures
-
-- The model learns answer patterns, not logic.
-- Verifiers can be incomplete.
-- Exploration collapses to one format.
-- More tokens can mean more confident mistakes.
-
-</div>
-
-</div>
-
-<div class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-500">
-Reasoning RL works best when the reward checks the thing we actually care about: correct reasoning, not just a lucky final answer.
-</div>
-
----
-layout: section
----
-
-# Applications and Future
 
 ---
 
-# Application Domains
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-### 🤖 Conversational Systems
-- Intelligent customer service
-- Personal assistants
-- Virtual companions
-
-### 💼 Office Automation
-- Email composition
-- Document summarization
-- Meeting transcription
-
-### 🎓 Education
-- Personalized tutoring
-- Homework grading
-- Knowledge Q&A
-
-</div>
-
-<div>
-
-### 💻 Programming Assistance
-- Code generation
-- Bug fixing
-- Code explanation
-
-### 🔬 Research Assistant
-- Literature review
-- Experiment design
-- Paper writing
-
-### 🎨 Creative Industries
-- Content creation
-- Script generation
-- Advertising copywriting
-
-</div>
-
-</div>
-
----
-
-# AI Detection: READER
+# Example: AI Detection
 
 <div class="mt-2 text-[14px] leading-5.5 text-slate-700 text-center">
 Given a text <MathTex tex="x" />, READER generates a structured rationale <MathTex tex="c" /> before predicting the authorship label <MathTex tex="y\in\{\mathrm{Human},\mathrm{AI}\}" />.
@@ -4486,218 +4381,6 @@ More than <b>20 percentage points</b> above prompted flagship LLMs while being <
 Pingfan Su, Kai Ye, Shijin Gong, Erhan Xu, Jin Zhu, Giulia Livieri, and Chengchun Shi. "READER: Reasoning-Enhanced AI-Generated Text Detection." arXiv preprint arXiv:2605.25281 (2026).
 </div>
 
----
-
-# Real-world Example: Code Assistant
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-**Input Prompt**
-
-```markdown
-Write a Python function to
-calculate the nth Fibonacci number
-using dynamic programming optimization
-```
-
-</div>
-
-<div>
-
-**LLM Output**
-
-```python
-def fibonacci(n):
-    """
-    Calculate Fibonacci using dynamic programming
-    Time complexity: O(n)
-    Space complexity: O(1)
-    """
-    if n <= 1:
-        return n
-    
-    prev, curr = 0, 1
-    for _ in range(2, n + 1):
-        prev, curr = curr, prev + curr
-    
-    return curr
-
-# Test
-print(fibonacci(10))  # Output: 55
-```
-
-</div>
-
-</div>
-
----
-layout: section
----
-
-# Challenges and Future of LLMs
-
----
-
-# Current Challenges
-
-<v-clicks>
-
-### 🎯 Technical Challenges
-- **Hallucination**: Generating inaccurate or false information
-- **Reasoning Ability**: Limitations in complex logic and math reasoning
-- **Long Context**: Context window limitations
-- **Computational Cost**: High training and inference costs
-
-### ⚖️ Ethical Challenges
-- **Bias and Fairness**: Biases in training data
-- **Privacy Protection**: Risk of sensitive information leakage
-- **Copyright Issues**: Ownership of generated content
-- **Security Risks**: Malicious use and abuse
-
-### 🌍 Social Impact
-- **Employment Impact**: Automation of certain jobs
-- **Education Transformation**: Changes in learning methods
-- **Information Authenticity**: Deepfake content
-
-</v-clicks>
-
----
-
-# Future Directions
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-### 🚀 Technical Evolution
-
-<v-clicks>
-
-- **Multimodal Fusion**
-  - Text + Image + Audio + Video
-
-- **Embodied Intelligence**
-  - Interaction with physical world
-
-- **Continual Learning**
-  - Real-time knowledge updates
-
-- **Efficient Architectures**
-  - Reduce computational costs
-
-</v-clicks>
-
-</div>
-
-<div>
-
-### 🎯 Application Deepening
-
-<v-clicks>
-
-- **Domain-Specific Models**
-  - Medical, legal, financial domains
-
-- **Personalization**
-  - Adapt to individual habits and needs
-
-- **Agent Systems**
-  - Autonomous planning and task execution
-
-- **Human-AI Collaboration**
-  - Augment human capabilities
-
-</v-clicks>
-
-</div>
-
-</div>
-
----
-
-# Important Open Source Projects
-
-<div class="grid grid-cols-2 gap-6 mt-4">
-
-<div class="space-y-4">
-
-<div class="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300 rounded-lg">
-<div class="text-lg font-bold text-blue-700 mb-3">🤖 Models</div>
-<div class="space-y-2 text-sm">
-<div class="flex items-center gap-2">
-<span class="text-blue-600">▸</span>
-<span><b>LLaMA Series</b> - Meta</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-blue-600">▸</span>
-<span><b>Qwen Series</b> - Alibaba</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-blue-600">▸</span>
-<span><b>GLM Series</b> - Zhipu AI</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-blue-600">▸</span>
-<span><b>Mistral</b> - Mistral AI</span>
-</div>
-</div>
-</div>
-
-<div class="p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-purple-300 rounded-lg">
-<div class="text-lg font-bold text-purple-700 mb-3">🔧 Training Frameworks</div>
-<div class="space-y-2 text-sm">
-<div class="flex items-center gap-2">
-<span class="text-purple-600">▸</span>
-<span><b>TRL</b> - HuggingFace</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-purple-600">▸</span>
-<span><b>Verl</b> - ByteDance</span>
-</div>
-</div>
-</div>
-
-</div>
-
-<div class="space-y-4">
-
-<div class="p-4 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-lg">
-<div class="text-lg font-bold text-green-700 mb-3">⚡ Inference Frameworks</div>
-<div class="space-y-2 text-sm">
-<div class="flex items-center gap-2">
-<span class="text-green-600">▸</span>
-<span><b>vLLM</b> - Efficient inference</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-green-600">▸</span>
-<span><b>llama.cpp</b> - CPU inference</span>
-</div>
-</div>
-</div>
-
-<div class="p-4 bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-300 rounded-lg">
-<div class="text-lg font-bold text-orange-700 mb-3">🚀 Application Frameworks</div>
-<div class="space-y-2 text-sm">
-<div class="flex items-center gap-2">
-<span class="text-orange-600">▸</span>
-<span><b>LangChain</b> - Application development</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-orange-600">▸</span>
-<span><b>LlamaIndex</b> - Knowledge retrieval</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-orange-600">▸</span>
-<span><b>Semantic Kernel</b> - Microsoft</span>
-</div>
-</div>
-</div>
-
-</div>
-
-</div>
 
 ---
 layout: center
