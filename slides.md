@@ -926,7 +926,7 @@ In this sentence, **it** is a pronoun. What does it refer to?
 At position <i>t</i>, attention constructs a new representation by deciding <b>how much information to take from each available token</b>.
 </div>
 
-<div class="grid grid-cols-[1.16fr_0.84fr] gap-10 mt-5">
+<div class="grid grid-cols-[1.23fr_0.77fr] gap-10 mt-5">
 
 <div class="min-w-0">
 
@@ -973,15 +973,15 @@ The weights <i>&alpha;</i><sub>tj</sub> depend on the current position and deter
 
 <div class="text-center text-[13px] leading-4">
   <div class="font-semibold">Input vectors <i>H</i><sup>(0)</sup></div>
-  <div class="my-1 text-slate-400 text-lg">&darr;</div>
-  <div class="py-1.5 border-y border-amber-300"><b>Block 1 attention</b></div>
-  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="my-0.5 text-slate-400 text-base">&darr;</div>
+  <div class="py-1 border-y border-amber-300"><b>Block 1 attention</b></div>
+  <div class="my-0.5 text-slate-400 text-base">&darr;</div>
   <div class="font-semibold">Contextual vectors <i>H</i><sup>(1)</sup></div>
-  <div class="my-1 text-slate-400 text-lg">&darr;</div>
-  <div class="py-1.5 border-y border-sky-300"><b>Block 2 attention</b></div>
-  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="my-0.5 text-slate-400 text-base">&darr;</div>
+  <div class="py-1 border-y border-sky-300"><b>Block 2 attention</b></div>
+  <div class="my-0.5 text-slate-400 text-base">&darr;</div>
   <div class="text-slate-400">...</div>
-  <div class="my-1 text-slate-400 text-lg">&darr;</div>
+  <div class="my-0.5 text-slate-400 text-base">&darr;</div>
   <div class="font-semibold">Final vectors <i>H</i><sup>(L)</sup></div>
 </div>
 
